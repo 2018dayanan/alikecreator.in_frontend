@@ -108,7 +108,7 @@ const ProductSection = () => {
                 }
 
                 if (categoriesRes.success && categoriesRes.data) {
-                     dispatch({ type: 'FETCH_CATEGORIES_SUCCESS', data: categoriesRes.data });
+                    dispatch({ type: 'FETCH_CATEGORIES_SUCCESS', data: categoriesRes.data });
                 }
             } catch (error: any) {
                 dispatch({ type: 'FETCH_FAILURE', error: error.message || "An error occurred" });
@@ -127,7 +127,7 @@ const ProductSection = () => {
             ell.setAttribute("style", "transform:scale(0);");
         });
         dispatch({ type: 'SET_ACTIVE_MENU', index: ind });
-        
+
         try {
             let json;
             if (categoryId) {
@@ -176,11 +176,12 @@ const ProductSection = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-6 col-md-12">
-                    <div className="site-filters clearfix style-1 align-items-center ms-lg-auto">
-                        <ul className="filters">
+                <div className="col-lg-6 col-md-12" style={{ overflow: 'hidden' }}>
+                    <div className="site-filters clearfix style-1 ms-lg-auto" style={{ overflowX: 'auto', display: 'block', width: '100%', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+                        <ul className="filters" style={{ display: 'inline-flex', flexWrap: 'nowrap', whiteSpace: 'nowrap', margin: 0, paddingBottom: '10px', width: 'max-content' }}>
                             <li className={`btn ${state.activeMenu === 0 ? "active" : ""}`}
                                 onClick={() => { filterCategory(null, 0); }}
+                                style={{ flexShrink: 0 }}
                             >
                                 <input type="radio" />
                                 <Link href={"#"}>All</Link>
@@ -188,6 +189,7 @@ const ProductSection = () => {
                             {state.categories && state.categories.length > 0 && state.categories.map((item: any, ind: number) => (
                                 <li className={`btn ${state.activeMenu === ind + 1 ? "active" : ""}`} key={ind + 1}
                                     onClick={() => { filterCategory(item._id, ind + 1); }}
+                                    style={{ flexShrink: 0 }}
                                 >
                                     <input type="radio" />
                                     <Link href={"#"}>{item.name}</Link>
