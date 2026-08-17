@@ -1,16 +1,21 @@
 "use client"
 import { useState } from "react";
 
-interface  nameType{
-    placeholder :  string;
+interface nameType {
+    placeholder: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-export default function PasswordInputBox(props : nameType){
+export default function PasswordInputBox(props: nameType) {
     const [showPassword, setShowPassword] = useState(false);
-    return(
+    return (
         <>
             <input 
-                type={`${showPassword ? "text":"password"}`} 
+                type={`${showPassword ? "text" : "password"}`} 
                 name="password" className="form-control dz-password" placeholder={props.placeholder} 
+                value={props.value}
+                onChange={props.onChange}
+                required
             />
             <div className={`show-pass ${showPassword ? "active" : ""}`}
                 onClick={()=>setShowPassword(!showPassword)}

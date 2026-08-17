@@ -1,3 +1,6 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import CommanBanner from "@/components/CommanBanner";
 import { countries } from "@/constant/Alldata";
@@ -9,6 +12,22 @@ import CommanLayout from "@/components/CommanLayout";
 
 
 export default function DashboardPage() {
+    const router = useRouter();
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            router.push("/login");
+        } else {
+            setIsAuthorized(true);
+        }
+    }, [router]);
+
+    if (!isAuthorized) {
+        return null; // Or a loading spinner
+    }
+
     return (
         <CommanLayout>
             <div className="page-content bg-light">

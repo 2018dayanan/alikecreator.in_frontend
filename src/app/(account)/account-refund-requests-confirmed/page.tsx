@@ -15,7 +15,7 @@ export default function AccountRefundRequestConfirm() {
                             <CommanSidebar />
                             <section className="col-xl-9 account-wrapper">
                                 <div className="account-card confirmed-request text-center">
-                                    <div className="cancel-btn m-auto mb-sm-4 mb-2"><i className="fa-solid fa-check"/></div>
+                                    <div className="cancel-btn m-auto mb-sm-4 mb-2"><i className="fa-solid fa-check" /></div>
                                     <h2>Cancellation Confirmed</h2>
                                     <Link className="btn btn-outline-secondary btn-lg btnhover20 m-t15" href="/account-order-details">Check Status</Link>
                                 </div>
