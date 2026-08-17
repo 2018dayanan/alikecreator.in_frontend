@@ -1,21 +1,41 @@
 "use client"
 
-import {Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
-import { ShopCatSlider } from "../constant/Alldata";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { ProductService } from "@/services/productService";
 
-export default function SearchCategorySlider(){
-    return(
+export default function SearchCategorySlider() {
+    const [products, setProducts] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await ProductService.getRandomProducts(10);
+                if (response.success && response.data) {
+                    setProducts(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching random products:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    if (products.length === 0) return null;
+
+    return (
         <Swiper className="category-swiper2"
-            slidesPerView={6}            
-            centeredSlides= {false}
-            spaceBetween = {20}
-            loop= {true}            
-            autoplay= {{
+            slidesPerView={6}
+            centeredSlides={false}
+            spaceBetween={20}
+            loop={true}
+            autoplay={{
                 delay: 3000,
-            }}            
-            breakpoints = {{
+            }}
+            breakpoints={{
                 1600: {
                     slidesPerView: 6,
                     spaceBetween: 40,
@@ -29,7 +49,7 @@ export default function SearchCategorySlider(){
                     spaceBetween: 20,
                 },
                 591: {
-                    slidesPerView: 3, 	
+                    slidesPerView: 3,
                     spaceBetween: 15,
                 },
                 320: {
@@ -37,21 +57,21 @@ export default function SearchCategorySlider(){
                     spaceBetween: 15,
                 },
             }}
-
-        >           
-            {ShopCatSlider.map((elem, ind)=>(
+        >
+            {products.map((elem, ind) => (
                 <SwiperSlide key={ind}>
                     <div className="shop-card">
                         <div className="dz-media">
-                            <Image src={elem.image} alt="cat" />
+                            {/* Assuming images is an array and we want the first one. Also fallback image could be useful */}
+                            <Image src={elem.images?.[0] || "/assets/images/default-product.png"} alt={elem.title || "Product"} width={200} height={200} />
                         </div>
                         <div className="dz-content">
-                            <h6 className="title"><Link href="/shop-list">{elem.name}</Link></h6>
-                            <h6 className="price">₹40.00</h6>
+                            <h6 className="title"><Link href={`/product/${elem.slug || elem._id}`}>{elem.title}</Link></h6>
+                            <h6 className="price">₹{elem.price}</h6>
                         </div>
                     </div>
                 </SwiperSlide>
-            ))}            
+            ))}
         </Swiper>
     )
 }

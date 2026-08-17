@@ -52,5 +52,22 @@ export const ProductService = {
             console.error(`Error fetching products for category ${categoryId}:`, error);
             throw error;
         }
+    },
+
+    /**
+     * Fetch random products
+     */
+    getRandomProducts: async (limit: number = 10) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/public/products/random?limit=${limit}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching random products:", error);
+            throw error;
+        }
     }
 };
