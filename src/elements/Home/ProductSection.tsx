@@ -12,12 +12,18 @@ import ProductShimmer from "../../components/Shimmer/ProductShimmer";
 
 interface MenuItem {
     image: string;
+    images?: string[];
     discount: string;
     name: string;
     price: string;
     category: string;
     hert: boolean;
     id: number;
+    description?: string;
+    originalPrice?: string;
+    rating?: number;
+    reviewCount?: number;
+    sku?: string;
 }
 
 type HeartIconsState = { [key: number]: boolean };
@@ -27,6 +33,7 @@ const initialState = {
     heartIcon: {} as HeartIconsState,
     basketIcon: {} as HeartIconsState,
     detailModal: false,
+    selectedProduct: null as MenuItem | null,
     showLoginModal: false,
     activeMenu: 0,
     data: [], // Initially empty, will be populated from backend
@@ -58,6 +65,7 @@ function reducer(state: typeof initialState, action: any) {
             return {
                 ...state,
                 detailModal: action.value,
+                selectedProduct: action.product || null,
             };
         case 'SET_ACTIVE_MENU':
             return {
@@ -104,7 +112,7 @@ const ProductSection = () => {
                     const token = localStorage.getItem("token");
                     if (token) {
                         try {
-                            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
+                            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
                             const favRes = await fetch(`${API_BASE_URL}/user/favorites`, {
                                 headers: { "Authorization": `Bearer ${token}` }
                             });
@@ -118,15 +126,21 @@ const ProductSection = () => {
                     }
 
                     const mappedData = productsRes.data.map((item: any) => ({
-                        image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null) || "https://via.placeholder.com/300",
+                        image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null),
+                        images: item.images && item.images.length > 0 ? item.images : [item.image],
                         discount: item.discount ? item.discount.toString() : "0",
                         name: item.title,
                         price: item.price.toString(),
                         category: item.categoryId ? item.categoryId.name : "Uncategorized",
                         hert: false,
                         id: item._id,
+                        description: item.description || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                        originalPrice: item.originalPrice ? item.originalPrice.toString() : (parseFloat(item.price) * 1.2).toFixed(2),
+                        rating: item.rating || 4.7,
+                        reviewCount: item.reviewCount || 5,
+                        sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
                     }));
-                    
+
                     const newHeartIcon: HeartIconsState = {};
                     mappedData.forEach((item: any, ind: number) => {
                         const isFav = favoritesData.some((f: any) => f.productId?._id === item.id);
@@ -170,12 +184,18 @@ const ProductSection = () => {
             if (json.success && json.data) {
                 const mappedData = json.data.map((item: any) => ({
                     image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null) || "https://via.placeholder.com/300",
+                    images: item.images && item.images.length > 0 ? item.images : [item.image || "https://via.placeholder.com/300"],
                     discount: item.discount ? item.discount.toString() : "0",
                     name: item.title,
                     price: item.price.toString(),
                     category: item.categoryId ? item.categoryId.name : "Uncategorized",
                     hert: false,
                     id: item._id,
+                    description: item.description || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                    originalPrice: item.originalPrice ? item.originalPrice.toString() : (parseFloat(item.price) * 1.2).toFixed(2),
+                    rating: item.rating || 4.7,
+                    reviewCount: item.reviewCount || 5,
+                    sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
                 }));
                 dispatch({ type: 'SET_DATA', data: mappedData });
             }
@@ -198,7 +218,7 @@ const ProductSection = () => {
         }
 
         try {
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
             const response = await fetch(`${API_BASE_URL}/user/favorites/toggle`, {
                 method: "POST",
                 headers: {
@@ -282,8 +302,10 @@ const ProductSection = () => {
                                         />
                                         <div className="shop-meta">
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
-                                                // onClick={()=>setDetailModal(true)}
-                                                onClick={() => dispatch({ type: 'SET_DETAIL_MODAL', value: true })}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
+                                                }}
                                             >
                                                 <i className="fa-solid fa-eye d-md-none d-block" />
                                                 <span className="d-md-block d-none">Quick View</span>
@@ -329,7 +351,7 @@ const ProductSection = () => {
                     <div className="row g-xl-4 g-3">
                         <div className="col-xl-6 col-md-6">
                             <div className="dz-product-detail mb-0">
-                                <ModalSlider />
+                                <ModalSlider images={state.selectedProduct?.images} />
                             </div>
                         </div>
                         <div className="col-xl-6 col-md-6">
@@ -337,38 +359,30 @@ const ProductSection = () => {
                                 <div className="dz-content">
                                     <div className="dz-content-footer">
                                         <div className="dz-content-start">
-                                            <span className="badge bg-secondary mb-2">SALE 20% Off</span>
-                                            <h4 className="title mb-1"><Link href="/shop-list">Cozy Knit Cardigan Sweater</Link></h4>
+                                            {state.selectedProduct?.discount && state.selectedProduct.discount !== "0" && (
+                                                <span className="badge bg-secondary mb-2">SALE {state.selectedProduct.discount}% Off</span>
+                                            )}
+                                            <h4 className="title mb-1"><Link href="/shop-list">{state.selectedProduct?.name}</Link></h4>
                                             <div className="review-num">
                                                 <ul className="dz-rating me-2">
-                                                    <li className="star-fill">
-                                                        <i className="flaticon-star-1" />
-                                                    </li>
-                                                    <li className="star-fill">
-                                                        <i className="flaticon-star-1" />
-                                                    </li>
-                                                    <li className="star-fill">
-                                                        <i className="flaticon-star-1" />
-                                                    </li>
-                                                    <li>
-                                                        <i className="flaticon-star-1" />
-                                                    </li>
-                                                    <li>
-                                                        <i className="flaticon-star-1" />
-                                                    </li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
                                                 </ul>
-                                                <span className="text-secondary me-2">4.7 Rating</span>
-                                                <Link href={"#"}>(5 customer reviews)</Link>
+                                                <span className="text-secondary me-2">{state.selectedProduct?.rating} Rating</span>
+                                                <Link href={"#"}>({state.selectedProduct?.reviewCount} customer reviews)</Link>
                                             </div>
                                         </div>
                                     </div>
                                     <p className="para-text">
-                                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has.
+                                        {state.selectedProduct?.description}
                                     </p>
                                     <div className="meta-content m-b20 d-flex align-items-end">
                                         <div className="me-3">
                                             <span className="form-label">Price</span>
-                                            <span className="price">$125.75 <del>$132.17</del></span>
+                                            <span className="price">${state.selectedProduct?.price} <del>${state.selectedProduct?.originalPrice}</del></span>
                                         </div>
                                         <div className="btn-quantity light me-0">
                                             <label className="form-label">Quantity</label>
@@ -387,13 +401,11 @@ const ProductSection = () => {
                                     <div className="dz-info mb-0">
                                         <ul>
                                             <li><strong>SKU:</strong></li>
-                                            <li>PRT584E63A</li>
+                                            <li>{state.selectedProduct?.sku}</li>
                                         </ul>
                                         <ul>
                                             <li><strong>Category:</strong></li>
-                                            {state.categories && state.categories.map((cat: any, ind: number) => (
-                                                <li key={ind}><Link href="/shop-standard">{cat.name}{ind < state.categories.length - 1 ? ',' : ''}</Link></li>
-                                            ))}
+                                            <li><Link href="/shop-standard">{state.selectedProduct?.category}</Link></li>
                                         </ul>
                                         <ul>
                                             <li><strong>Tags:</strong></li>
