@@ -7,6 +7,7 @@ import ModalSlider from "../../components/ModalSlider";
 import ProductInputButton from "../Shop/ProductInputButton";
 import Image from "next/image";
 import { ProductService } from "../../services/productService";
+import ProductShimmer from "../../components/Shimmer/ProductShimmer";
 
 
 interface MenuItem {
@@ -201,9 +202,7 @@ const ProductSection = () => {
             </div>
 
             {state.loading ? (
-                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
-                    <Spinner animation="border" variant="primary" />
-                </div>
+                <ProductShimmer count={8} />
             ) : state.error ? (
                 <div className="container mt-4">
                     <Alert variant="danger">{state.error}</Alert>
