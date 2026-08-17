@@ -27,6 +27,7 @@ const initialState = {
     heartIcon: {} as HeartIconsState,
     basketIcon: {} as HeartIconsState,
     detailModal: false,
+    showLoginModal: false,
     activeMenu: 0,
     data: [], // Initially empty, will be populated from backend
     categories: [], // Add this
@@ -68,10 +69,15 @@ function reducer(state: typeof initialState, action: any) {
                 ...state,
                 data: action.data,
             };
+        case 'SET_LOGIN_MODAL':
+            return {
+                ...state,
+                showLoginModal: action.value,
+            };
         case 'FETCH_INIT':
             return { ...state, loading: true, error: null };
         case 'FETCH_SUCCESS':
-            return { ...state, loading: false, data: action.data, error: null };
+            return { ...state, loading: false, data: action.data, error: null, heartIcon: action.heartIcon || state.heartIcon };
         case 'FETCH_CATEGORIES_SUCCESS':
             return { ...state, categories: action.data };
         case 'FETCH_FAILURE':
@@ -94,6 +100,23 @@ const ProductSection = () => {
                 ]);
 
                 if (productsRes.success && productsRes.data) {
+                    let favoritesData: any[] = [];
+                    const token = localStorage.getItem("token");
+                    if (token) {
+                        try {
+                            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
+                            const favRes = await fetch(`${API_BASE_URL}/user/favorites`, {
+                                headers: { "Authorization": `Bearer ${token}` }
+                            });
+                            const favJson = await favRes.json();
+                            if (favJson.success) {
+                                favoritesData = favJson.data;
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch favorites", e);
+                        }
+                    }
+
                     const mappedData = productsRes.data.map((item: any) => ({
                         image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null) || "https://via.placeholder.com/300",
                         discount: item.discount ? item.discount.toString() : "0",
@@ -103,7 +126,14 @@ const ProductSection = () => {
                         hert: false,
                         id: item._id,
                     }));
-                    dispatch({ type: 'FETCH_SUCCESS', data: mappedData });
+                    
+                    const newHeartIcon: HeartIconsState = {};
+                    mappedData.forEach((item: any, ind: number) => {
+                        const isFav = favoritesData.some((f: any) => f.productId?._id === item.id);
+                        newHeartIcon[ind] = isFav;
+                    });
+
+                    dispatch({ type: 'FETCH_SUCCESS', data: mappedData, heartIcon: newHeartIcon });
                 } else {
                     dispatch({ type: 'FETCH_FAILURE', error: "Failed to load products" });
                 }
@@ -160,8 +190,33 @@ const ProductSection = () => {
         }, 200);
     };
 
-    const toggleHeart = (index: number) => {
-        dispatch({ type: 'TOGGLE_HEART', index });
+    const toggleHeart = async (index: number, productId: number | string) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            dispatch({ type: 'SET_LOGIN_MODAL', value: true });
+            return;
+        }
+
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
+            const response = await fetch(`${API_BASE_URL}/user/favorites/toggle`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ productId })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                dispatch({ type: 'TOGGLE_HEART', index });
+            } else {
+                console.error("Failed to toggle favorite:", data.message);
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
     };
 
     const toggleBasket = (index: number) => {
@@ -235,7 +290,7 @@ const ProductSection = () => {
                                             </Link>
                                             <div className={`btn btn-primary meta-icon dz-wishicon ${state.heartIcon[ind] ? "active" : ""}`}
                                                 onClick={() => {
-                                                    toggleHeart(ind);
+                                                    toggleHeart(ind, item.id);
                                                 }}
                                             >
                                                 <i className="icon feather icon-heart dz-heart" />
@@ -373,6 +428,23 @@ const ProductSection = () => {
                     </div>
                 </div>
 
+            </Modal>
+
+            <Modal show={state.showLoginModal} onHide={() => dispatch({ type: 'SET_LOGIN_MODAL', value: false })} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Login Required</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>You need to be logged in to add products to your favorites.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button className="btn btn-outline-secondary" onClick={() => dispatch({ type: 'SET_LOGIN_MODAL', value: false })}>
+                        Cancel
+                    </button>
+                    <Link href="/login" className="btn btn-secondary">
+                        Go to Login
+                    </Link>
+                </Modal.Footer>
             </Modal>
         </>
     );

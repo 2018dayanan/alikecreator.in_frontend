@@ -14,6 +14,7 @@ import CommanLayout from "@/components/CommanLayout";
 export default function DashboardPage() {
     const router = useRouter();
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [userName, setUserName] = useState("User");
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -21,8 +22,24 @@ export default function DashboardPage() {
             router.push("/login");
         } else {
             setIsAuthorized(true);
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    if (parsedUser && parsedUser.name) {
+                        setUserName(parsedUser.name);
+                    }
+                } catch (e) { }
+            }
         }
     }, [router]);
+
+    const handleLogout = (e: React.MouseEvent) => {
+        e.preventDefault();
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.push("/login");
+    };
 
     if (!isAuthorized) {
         return null; // Or a loading spinner
@@ -35,12 +52,12 @@ export default function DashboardPage() {
                 <div className="content-inner-1">
                     <div className="container">
                         <div className="row">
-                        <CommanSidebar />
+                            <CommanSidebar />
                             <section className="col-xl-9 account-wrapper">
                                 <div className="account-card">
                                     <div className="m-b30">
-                                        <p>Hello <strong className="text-black">John Doe</strong> (not <strong className="text-black">John Doe</strong>? <Link href="/" className="text-underline">Log out</Link>)</p>
-                                        <p>From your account dashboard you can view your <Link href="/account-orders" className="text-underline">recent orders</Link>, manage your <Link href="/account-address" className="text-underline">shipping and billing addresses</Link>, and 
+                                        <p>Hello <strong className="text-black">{userName}</strong> (not <strong className="text-black">{userName}</strong>? <a href="#" onClick={handleLogout} className="text-underline" style={{ cursor: "pointer" }}>Log out</a>)</p>
+                                        <p>From your account dashboard you can view your <Link href="/account-orders" className="text-underline">recent orders</Link>, manage your <Link href="/account-address" className="text-underline">shipping and billing addresses</Link>, and
                                             <Link href="/account-profile" className="text-underline"> edit your password and account details</Link>.
                                         </p>
                                     </div>
@@ -89,7 +106,7 @@ export default function DashboardPage() {
                                             <div className="card countries-card px-3 pt-3 pb-2 mb-2">
                                                 <h6>Your Top Countries</h6>
                                                 <ul>
-                                                    {countries.map((item, ind)=>(
+                                                    {countries.map((item, ind) => (
                                                         <li key={ind} className={item.className}>
                                                             <div className="thumb-detail">
                                                                 <Image src={item.imgSrc} alt="country" />
@@ -97,7 +114,7 @@ export default function DashboardPage() {
                                                             </div>
                                                             <div className="thumb-content"><h6 className="amount">{item.amount}</h6></div>
                                                         </li>
-                                                    ))}                                               
+                                                    ))}
                                                 </ul>
                                             </div>
                                         </div>
