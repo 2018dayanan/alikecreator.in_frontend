@@ -29,7 +29,7 @@ export default function AccountShippingMethods() {
                                                         <span className="title">FedEx,</span>
                                                         <span className="text">Delivery, Tomorrow</span>
                                                     </span>
-                                                    <span className="price">$0.99</span>
+                                                    <span className="price">₹0.99</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -42,7 +42,7 @@ export default function AccountShippingMethods() {
                                                         <span className="title">American</span>
                                                         <span className="text">Delivery, Today</span>
                                                     </span>
-                                                    <span className="price">$0.99</span>
+                                                    <span className="price">₹0.99</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -55,7 +55,7 @@ export default function AccountShippingMethods() {
                                                         <span className="title">DHL Express</span>
                                                         <span className="text">Delivery, Today</span>
                                                     </span>
-                                                    <span className="price">$0.99</span>
+                                                    <span className="price">₹0.99</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -68,7 +68,7 @@ export default function AccountShippingMethods() {
                                                         <span className="title">DHL Express</span>
                                                         <span className="text">Delivery, Today</span>
                                                     </span>
-                                                    <span className="price">$0.99</span>
+                                                    <span className="price">₹0.99</span>
                                                 </label>
                                             </div>
                                         </div>

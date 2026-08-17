@@ -74,6 +74,18 @@ function reducer(state: State, action: Action): State {
 
 export default function Header2() {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const loadCartCount = () => {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartCount(cart.length);
+        };
+        loadCartCount();
+        window.addEventListener('cartUpdated', loadCartCount);
+        return () => window.removeEventListener('cartUpdated', loadCartCount);
+    }, []);
+
     const scrollHandler = () => {
         if (window.scrollY > 80) {
             dispatch({ type: 'FIX_HEADER', payload: true });
@@ -243,7 +255,7 @@ export default function Header2() {
                                                 onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                                             >
                                                 <i className="iconly-Broken-Buy" />
-                                                <span className="badge badge-circle">5</span>
+                                                <span className="badge badge-circle">{cartCount}</span>
                                             </Link>
                                         </li>
                                     </ul>

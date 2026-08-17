@@ -29,7 +29,7 @@ export default function AccountCancellationRequests() {
                                                     <span>March 21, 2025</span>
                                                     <h5 className="title mb-0">Collar Casual Shirt</h5>
                                                     <p className="mb-2">Quantity: <strong className="text-black">1</strong></p>
-                                                    <h6 className="mb-0">$105</h6>
+                                                    <h6 className="mb-0">₹105</h6>
                                                 </div>
                                             </Link>
                                         </div>
@@ -47,7 +47,7 @@ export default function AccountCancellationRequests() {
                                                     <span>March 21, 2025</span>
                                                     <h5 className="title mb-0">Collar Casual Shirt</h5>
                                                     <p className="mb-2">Quantity: <strong className="text-black">1</strong></p>
-                                                    <h6 className="mb-0">$304</h6>
+                                                    <h6 className="mb-0">₹304</h6>
                                                 </div>
                                             </Link>
                                         </div>

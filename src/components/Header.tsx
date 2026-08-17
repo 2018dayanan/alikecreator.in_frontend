@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import Link from "next/link";
 import Image from "next/image";
@@ -80,6 +80,18 @@ function reducer(state: State, action: Action): State {
 const Header = ({ design }: DesignType) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const loadCartCount = () => {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartCount(cart.length);
+        };
+        loadCartCount();
+        window.addEventListener('cartUpdated', loadCartCount);
+        return () => window.removeEventListener('cartUpdated', loadCartCount);
+    }, []);
+
 
     const scrollHandler = () => {
         if (window.scrollY > 80) {
@@ -195,7 +207,7 @@ const Header = ({ design }: DesignType) => {
                                                 onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                                             >
                                                 <i className="iconly-Broken-Buy" />
-                                                <span className="badge badge-circle">5</span>
+                                                <span className="badge badge-circle">{cartCount}</span>
                                             </Link>
                                         </li>
                                         <li className="nav-item filte-link">

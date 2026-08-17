@@ -35,7 +35,7 @@ export default function BestOfferBlog(){
                             <h6 className="mb-0">Total</h6>
                         </td>
                         <td className="price">
-                            $125.75
+                            ₹125.75
                         </td>
                     </tr>
                 </tbody>

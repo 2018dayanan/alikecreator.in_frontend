@@ -41,7 +41,7 @@ export default function BasicModalData() {
                     <div className="meta-content m-b20 d-flex align-items-end">
                         <div className="me-3">
                             <span className="form-label">Price</span>
-                            <span className="price">$125.75 <del>$132.17</del></span>
+                            <span className="price">₹125.75 <del>₹132.17</del></span>
                         </div>
                         <div className="btn-quantity light me-0">
                             <label className="form-label">Quantity</label>

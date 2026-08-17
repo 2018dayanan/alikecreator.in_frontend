@@ -51,8 +51,8 @@ const AllProduction = () => {
                                         <h6 className="title"><Link href="/shop-list">{name}</Link></h6>
                                     </div>
                                     <h6 className="price">
-                                        $80
-                                        <del>$95</del>
+                                        ₹80
+                                        <del>₹95</del>
                                     </h6>
                                 </div>
                             </div>

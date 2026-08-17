@@ -51,8 +51,8 @@ const BlockbusterDeal = () => {
                                 <h5 className="title"><Link href="/shop-list">{item.title}</Link></h5>
                             </div>
                             <h6 className="price">
-                                $80
-                                <del>$95</del>
+                                ₹80
+                                <del>₹95</del>
                             </h6>
                         </div>
                     </div>

@@ -22,7 +22,7 @@ export default function MainSliderIndex2() {
 										<h1 className="offer-title mb-0" data-swiper-parallax="-20">Your Ultimate <span className="text-primary d-flex align-items-center"><svg className="m-r10" xmlns="http://www.w3.org/2000/svg" width="68" height="68" viewBox="0 0 68 68" fill="none">
 											<path d="M34 0L43.6167 24.3833L68 34L43.6167 43.6167L34 68L24.3833 43.6167L0 34L24.3833 24.3833L34 0Z" fill="var(--primary)" />
 										</svg> Online Store</span>for All Your Needs.</h1>
-										<p className="sub-title mb-0" data-swiper-parallax="-40">No code need. Plus free shippng on <span>$99+</span> orders!</p>
+										<p className="sub-title mb-0" data-swiper-parallax="-40">No code need. Plus free shippng on <span>₹99+</span> orders!</p>
 									</div>
 									<div className="content-btn" data-swiper-parallax="-60">
 										<Link className="btn btn-secondary me-3" href="/shop-cart">ADD TO CART</Link>
@@ -44,7 +44,7 @@ export default function MainSliderIndex2() {
 										</div>
 										<div className="dz-info">
 											<h5 className="dz-title">Cozy Knit Cardigan</h5>
-											<h6 className="price text-primary">$80</h6>
+											<h6 className="price text-primary">₹80</h6>
 											<div className="btn btn-primary meta-icon dz-carticon">
 												<i className="flaticon flaticon-basket" />
 												<i className="flaticon flaticon-basket-on dz-heart-fill" />

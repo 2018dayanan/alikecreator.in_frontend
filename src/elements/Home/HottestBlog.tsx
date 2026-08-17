@@ -64,7 +64,7 @@ const HottestBlog = () => {
                 <div className="section-head style-1 d-lg-flex align-items-end justify-content-between">
                     <div className="left-content">
                         <h2 className="title">Discovering the Hottest Nearby Destinations in Your Area</h2>
-                        <p className="text-capitalize text-secondary m-0">Up to 60% off + up to $107 cashBACK</p>
+                        <p className="text-capitalize text-secondary m-0">Up to 60% off + up to ₹107 cashBACK</p>
                     </div>
                     <Link href="/shop-list" className="text-secondary font-14 d-flex align-items-center gap-1 m-b15">See All 
                         <i className="icon feather icon-chevron-right font-18" />

@@ -3,36 +3,59 @@ import Link from 'next/link'
 import CommanBanner from "@/components/CommanBanner";
 import { ShopProductItemData, ShopProductItemtype } from "@/constant/Alldata";
 import IMAGES from "@/constant/theme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
 
 
 
 export default function ShopCart(){
-    const [shopItem, setShopItem]  = useState<ShopProductItemtype[]>(ShopProductItemData);
-    const handleRemove = (index: number) => {
-        setShopItem((prevItems) => prevItems.filter((_, i) => i !== index));
+    const [shopItem, setShopItem]  = useState<any[]>([]);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+        const loadCart = () => {
+            const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+            setShopItem(storedCart);
+        };
+        loadCart();
+        window.addEventListener('cartUpdated', loadCart);
+        return () => window.removeEventListener('cartUpdated', loadCart);
+    }, []);
+
+    const saveCart = (items: any[]) => {
+        setShopItem(items);
+        localStorage.setItem('cart', JSON.stringify(items));
+        window.dispatchEvent(new Event('cartUpdated'));
     };
+
+    const handleRemove = (index: number) => {
+        const newItems = shopItem.filter((_, i) => i !== index);
+        saveCart(newItems);
+    };
+
     function handleIncrease(ind : number){
-        setShopItem((prev)=>{
-            const updateData = [...prev]            
-            updateData[ind] = {
-                ...updateData[ind],
-                quantity: updateData[ind].quantity + 1,
-            };
-            return updateData;                         
-        })
+        const updateData = [...shopItem];            
+        updateData[ind] = {
+            ...updateData[ind],
+            quantity: (updateData[ind].quantity || 1) + 1,
+        };
+        saveCart(updateData);                         
     }
+
     function handledDecrease(ind : number){
-        setShopItem((prev)=>{
-            const updateData = [...prev]
-            updateData[ind] = {
-                ...updateData[ind],
-                quantity: updateData[ind].quantity > 0 ? updateData[ind].quantity - 1 : updateData[ind].quantity,
-            };
-            return updateData;  
-        })
+        const updateData = [...shopItem];
+        const newQty = (updateData[ind].quantity || 1) - 1;
+        updateData[ind] = {
+            ...updateData[ind],
+            quantity: newQty > 0 ? newQty : 1,
+        };
+        saveCart(updateData);  
     }
+
+    const subtotal = shopItem.reduce((acc, item) => acc + parseFloat(item.price || 0) * (item.quantity || 1), 0);
+
+    if (!isClient) return null;
     return(
         <div className="page-content bg-light">
             <CommanBanner parentText="Home" currentText="Shop Cart" mainText="Shop Cart" image={IMAGES.BackBg1.src}  />
@@ -55,14 +78,16 @@ export default function ShopCart(){
                                     <tbody>
                                         {shopItem.map((data, ind)=>(
                                             <tr key={ind}>
-                                                <td className="product-item-img"><Image src={data.image} alt="/" /></td>
-                                                <td className="product-item-name">{data.title}</td>
-                                                <td className="product-item-price">${data.cutprice}.00</td>
+                                                <td className="product-item-img">
+                                                    {data.image ? <Image src={data.image} alt="/" width={100} height={100} style={{objectFit:'cover'}} unoptimized /> : null}
+                                                </td>
+                                                <td className="product-item-name">{data.name}</td>
+                                                <td className="product-item-price">₹{data.price}</td>
                                                 <td className="product-item-quantity">
                                                     <div className="quantity btn-quantity style-1 me-3">
                                                         <div className="input-group bootstrap-touchspin">
                                                             <span className="input-group-addon bootstrap-touchspin-prefix" style={{display: "none"}}></span>
-                                                            <input type="text" value={data.quantity} name="demo_vertical2" className="form-control" style={{display: "block"}} readOnly/>
+                                                            <input type="text" value={data.quantity || 1} name="demo_vertical2" className="form-control" style={{display: "block"}} readOnly/>
                                                             <span className="input-group-addon bootstrap-touchspin-postfix" style={{display: "none"}}></span>
                                                             <span className="input-group-btn-vertical">
                                                                 <button className="btn btn-default bootstrap-touchspin-up" type="button"
@@ -79,9 +104,9 @@ export default function ShopCart(){
                                                         </div> 
                                                     </div>
                                                 </td>
-                                                <td className="product-item-totle">${data.price * data.quantity}.00</td>
+                                                <td className="product-item-totle">₹{(parseFloat(data.price) * (data.quantity || 1)).toFixed(2)}</td>
                                                 <td className="product-item-close">
-                                                    <Link href="#"><i className="ti-close" onClick={()=>handleRemove(ind)}/></Link>
+                                                    <Link href="#" onClick={(e)=>{ e.preventDefault(); handleRemove(ind); }}><i className="ti-close" /></Link>
                                                 </td>
                                             </tr>
                                         ))}                                        
@@ -130,7 +155,7 @@ export default function ShopCart(){
                                 </div>
                                 <div className="save-text">
                                     <i className="icon feather icon-check-circle"></i>
-                                    <span className="m-l10">You will save ₹504 on this order</span>
+                                    <span className="m-l10">You will save ₹0 on this order</span>
                                 </div>
                                 <table>
                                     <tbody>
@@ -138,8 +163,7 @@ export default function ShopCart(){
                                             <td>
                                                 <h6 className="mb-0">Total</h6>
                                             </td>
-                                            <td className="price">
-                                                $125.75
+                                            <td className="price">₹{subtotal.toFixed(2)}
                                             </td>
                                         </tr>
                                     </tbody>

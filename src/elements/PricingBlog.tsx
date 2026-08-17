@@ -19,7 +19,7 @@ const PricingBlog = () => {
                                 <p className="text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                             </div>
                             <div className="pricingtable-price"> 
-                                <h2 className="pricingtable-bx">${data.price}<small className="pricingtable-type">/{data.duration}</small></h2>
+                                <h2 className="pricingtable-bx">₹{data.price}<small className="pricingtable-type">/{data.duration}</small></h2>
                             </div>
                             <div className="pricingtable-button"> 
                                 <Link href="/shop-registration" className="btn btn-outline-secondary">Try for free</Link> 

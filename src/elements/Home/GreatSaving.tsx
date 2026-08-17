@@ -23,7 +23,7 @@ const GreatSaving = () => {
                         <Image src={IMAGES.AboutPic1} alt="" />
                         <div className="media-contant">
                             <h2 className="title">Great saving on everyday essentials</h2> 
-                            <h5 className="sub-title">Up to 60% off + up to $107 cashBACK</h5>
+                            <h5 className="sub-title">Up to 60% off + up to ₹107 cashBACK</h5>
                             <Link href="/shop-list" className="btn btn-white btn-lg">See all</Link>
                         </div>
                         <svg className="title animation-text" viewBox="0 0 1320 300">

@@ -121,21 +121,21 @@ export default function AccountOrderDetails() {
                                                     <div className="tracking-product"><Image src={IMAGES.ShopSmallPic1} alt="smil" /></div>
                                                     <div className="tracking-product-content">
                                                         <h6 className="title">Collar Casual Shirt</h6>
-                                                        <small className="d-block"><strong>Price</strong> : $150</small>
+                                                        <small className="d-block"><strong>Price</strong> : ₹150</small>
                                                         <small className="d-block"><strong>Size</strong> : Xl</small>
                                                     </div>
                                                 </div>
                                                 <div className="tracking-item-content">
                                                     <span>Total Price</span>
-                                                    <h6>+ $150</h6>
+                                                    <h6>+ ₹150</h6>
                                                 </div>
                                                 <div className="tracking-item-content border-bottom border-light mb-2">
                                                     <span className="text-success">Total Discounts</span>
-                                                    <h6>- $55</h6>
+                                                    <h6>- ₹55</h6>
                                                 </div>
                                                 <div className="tracking-item-content">
                                                     <span>Order Total</span>
-                                                    <h6>$95</h6>
+                                                    <h6>₹95</h6>
                                                 </div>
                                             </Tab.Pane>
                                             <Tab.Pane eventKey={"Courier"}>
@@ -146,7 +146,7 @@ export default function AccountOrderDetails() {
                                                 <ul className="tracking-receiver">
                                                     <li>Order Number : <strong>#17493</strong></li>
                                                     <li>Date : <strong>17/04/2025, 02:34pm</strong></li>
-                                                    <li>Total : <strong>$95</strong></li>
+                                                    <li>Total : <strong>₹95</strong></li>
                                                     <li>Payment Methods : <strong>Cash on Delivery</strong></li>
                                                 </ul>
                                             </Tab.Pane>

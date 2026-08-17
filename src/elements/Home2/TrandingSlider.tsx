@@ -13,14 +13,14 @@ interface trandingType {
 }
 
 const trandingSliderData : trandingType[] = [
-    { price: '$80', image: IMAGES.shopproduct1, title:'Cozy Knit Cardigan Sweater'},
-    { price: '$70', image: IMAGES.shopproduct2, title:'Sophisticated Swagger Suit'},
-    { price: '$65', image: IMAGES.shopproduct3, title:'Classic Denim Skinny Jeans'},
-    { price: '$85', image: IMAGES.shopproduct4, title:'Athletic Mesh Sports Leggings'},
-    { price: '$78', image: IMAGES.shopproduct2, title:'Cozy Knit Cardigan Sweater'},
-    { price: '$63', image: IMAGES.shopproduct3, title:'Sophisticated Swagger Suit'},
-    { price: '$75', image: IMAGES.shopproduct1, title:'Classic Denim Skinny Jeans'},
-    { price: '$74', image: IMAGES.shopproduct4, title:'Athletic Mesh Sports Leggings'},    
+    { price: '₹80', image: IMAGES.shopproduct1, title:'Cozy Knit Cardigan Sweater'},
+    { price: '₹70', image: IMAGES.shopproduct2, title:'Sophisticated Swagger Suit'},
+    { price: '₹65', image: IMAGES.shopproduct3, title:'Classic Denim Skinny Jeans'},
+    { price: '₹85', image: IMAGES.shopproduct4, title:'Athletic Mesh Sports Leggings'},
+    { price: '₹78', image: IMAGES.shopproduct2, title:'Cozy Knit Cardigan Sweater'},
+    { price: '₹63', image: IMAGES.shopproduct3, title:'Sophisticated Swagger Suit'},
+    { price: '₹75', image: IMAGES.shopproduct1, title:'Classic Denim Skinny Jeans'},
+    { price: '₹74', image: IMAGES.shopproduct4, title:'Athletic Mesh Sports Leggings'},    
 ];
 
 interface modelType{

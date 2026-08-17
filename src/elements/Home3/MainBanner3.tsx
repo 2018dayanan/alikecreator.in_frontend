@@ -30,8 +30,8 @@ export default function MainBanner3(){
 										<div className="dz-content">
 											<h5 className="dz-title"><Link href="/shop-standard">Collar Casual Shirt</Link></h5>
 											<span className="price">
-												$19
-												<del className="ms-1">$27</del>
+												₹19
+												<del className="ms-1">₹27</del>
 											</span>
 										</div>
 									</div>
@@ -44,8 +44,8 @@ export default function MainBanner3(){
 										<div className="dz-content">
 											<h5 className="dz-title"><Link href="/shop-standard">Collar Check Shirt</Link></h5>
 											<span className="price">
-												$20
-												<del className="ms-1">$28</del>
+												₹20
+												<del className="ms-1">₹28</del>
 											</span>
 										</div>
 									</div>

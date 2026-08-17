@@ -30,7 +30,7 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
                 </p>
                 <div className="meta-content m-b20">
                     <span className="form-label">Price</span>
-                    <span className="price">$125.75 <del>$132.17</del></span>
+                    <span className="price">₹125.75 <del>₹132.17</del></span>
                 </div>
                 <div className="product-num gap-md-2 gap-xl-0">
                     <div className="btn-quantity light ">

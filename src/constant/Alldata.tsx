@@ -196,32 +196,32 @@ export const countries: CountryItem[] = [
     {
         imgSrc: IMAGES.CountryPic1,
         country: "United States",
-        amount: "$130.00",
+        amount: "₹130.00",
     },
     {
         imgSrc: IMAGES.CountryPic2,
         country: "India",
-        amount: "$110.00",
+        amount: "₹110.00",
     },
     {
         imgSrc: IMAGES.CountryPic3,
         country: "Africa",
-        amount: "$90.00",
+        amount: "₹90.00",
     },
     {
         imgSrc: IMAGES.CountryPic4,
         country: "Canada",
-        amount: "$75.00",
+        amount: "₹75.00",
     },
     {
         imgSrc: IMAGES.CountryPic5,
         country: "Brazil",
-        amount: "$60.00",
+        amount: "₹60.00",
     },
     {
         imgSrc: IMAGES.CountryPic6,
         country: "Jordan",
-        amount: "$50.00",
+        amount: "₹50.00",
         className: "border-bottom-0", // Optional
     },
 ]
@@ -242,56 +242,56 @@ export const AccoountOrdersTable: OrderRow[] = [
     {
         id: "#34VB5540K83",
         date: "Jan 21, 2025",
-        amount: "$358.75",
+        amount: "₹358.75",
         status: { label: "In Progress", badgeClass: "bg-info" },
         viewLink: "/account-order-details",
     },
     {
         id: "#78A643CD409",
         date: "Feb 09, 2025",
-        amount: "$760.50",
+        amount: "₹760.50",
         status: { label: "Canceled", badgeClass: "bg-danger" },
         viewLink: "/account-order-details",
     },
     {
         id: "#112P45A90V2",
         date: "Jan 15, 2025",
-        amount: "$1,264.00",
+        amount: "₹1,264.00",
         status: { label: "Delayed", badgeClass: "bg-warning" },
         viewLink: "/account-order-details",
     },
     {
         id: "#28BA67U0981",
         date: "Jan 19, 2025",
-        amount: "$198.35",
+        amount: "₹198.35",
         status: { label: "Delivered", badgeClass: "bg-success" },
         viewLink: "/account-order-details",
     },
     {
         id: "#502TR872W2",
         date: "Jan 04, 2025",
-        amount: "$2,133.90",
+        amount: "₹2,133.90",
         status: { label: "Delivered", badgeClass: "bg-success" },
         viewLink: "/account-order-details",
     },
     {
         id: "#47H76G09F33",
         date: "Jan 30, 2025",
-        amount: "$86.40",
+        amount: "₹86.40",
         status: { label: "Delivered", badgeClass: "bg-success" },
         viewLink: "/account-order-details",
     },
     {
         id: "#53U76G09E38",
         date: "Jan 21, 2025",
-        amount: "$86.40",
+        amount: "₹86.40",
         status: { label: "Delivered", badgeClass: "bg-success" },
         viewLink: "/account-order-details",
     },
     {
         id: "#31M76G09G76",
         date: "Jan 07, 2025",
-        amount: "$112.40",
+        amount: "₹112.40",
         status: { label: "Delivered", badgeClass: "bg-success" },
         viewLink: "/account-order-details",
     },
@@ -322,10 +322,10 @@ interface orderRequest {
 }
 
 export const ReturnReqData: orderRequest[] = [
-    { requestno: '#1374845', image: IMAGES.ShopSmallPic1, name: 'Collar Casual Shirt', price: '$105', status: 'Return Made' },
-    { requestno: '#2374237', image: IMAGES.ShopSmallPic2, name: 'Collar Casual Shirt', price: '$304', status: 'Request Submited' },
-    { requestno: '#4374528', image: IMAGES.ShopSmallPic1, name: 'Classic Denim Skinny Shirt', price: '$657', status: 'Request Submited' },
-    { requestno: '#5374619', image: IMAGES.ShopSmallPic2, name: 'Classic Denim Skinny Shirt', price: '$245', status: 'Request Submited' },
+    { requestno: '#1374845', image: IMAGES.ShopSmallPic1, name: 'Collar Casual Shirt', price: '₹105', status: 'Return Made' },
+    { requestno: '#2374237', image: IMAGES.ShopSmallPic2, name: 'Collar Casual Shirt', price: '₹304', status: 'Request Submited' },
+    { requestno: '#4374528', image: IMAGES.ShopSmallPic1, name: 'Classic Denim Skinny Shirt', price: '₹657', status: 'Request Submited' },
+    { requestno: '#5374619', image: IMAGES.ShopSmallPic2, name: 'Classic Denim Skinny Shirt', price: '₹245', status: 'Request Submited' },
 ];
 
 // Account Review 
@@ -1149,15 +1149,15 @@ interface shopStyletype {
 }
 
 export const shopStyleData: shopStyletype[] = [
-    { image: IMAGES.shopproduct1, inputtype: "favoriteCheck1", price: "$80.00", name: 'Sophisticated Swagger Suit' },
-    { image: IMAGES.shopproduct2, inputtype: "favoriteCheck2", price: "$94.00", name: 'Checkered Slim Collar Casual Shirt' },
-    { image: IMAGES.shopproduct3, inputtype: "favoriteCheck3", price: "$35.00", name: 'Solid Cut Away Collar Casual Shirt' },
-    { image: IMAGES.shopproduct4, inputtype: "favoriteCheck4", price: "$45.00", name: 'Athletic Mesh Sports Leggings' },
-    { image: IMAGES.shopproduct5, inputtype: "favoriteCheck5", price: "$70.00", name: 'Denim Overalls Shorts' },
-    { image: IMAGES.shopproduct6, inputtype: "favoriteCheck6", price: "$36.00", name: 'Plaid Wool Winter Coat' },
-    { image: IMAGES.shopproduct7, inputtype: "favoriteCheck7", price: "$75.00", name: 'Comfy Lounge Jogger Pants' },
-    { image: IMAGES.shopproduct8, inputtype: "favoriteCheck8", price: "$90.00", name: 'Water-Resistant Windbreaker Jacket' },
-    { image: IMAGES.shopproduct9, inputtype: "favoriteCheck9", price: "$50.00", name: 'Classic Denim Skinny Jeans' },
+    { image: IMAGES.shopproduct1, inputtype: "favoriteCheck1", price: "₹80.00", name: 'Sophisticated Swagger Suit' },
+    { image: IMAGES.shopproduct2, inputtype: "favoriteCheck2", price: "₹94.00", name: 'Checkered Slim Collar Casual Shirt' },
+    { image: IMAGES.shopproduct3, inputtype: "favoriteCheck3", price: "₹35.00", name: 'Solid Cut Away Collar Casual Shirt' },
+    { image: IMAGES.shopproduct4, inputtype: "favoriteCheck4", price: "₹45.00", name: 'Athletic Mesh Sports Leggings' },
+    { image: IMAGES.shopproduct5, inputtype: "favoriteCheck5", price: "₹70.00", name: 'Denim Overalls Shorts' },
+    { image: IMAGES.shopproduct6, inputtype: "favoriteCheck6", price: "₹36.00", name: 'Plaid Wool Winter Coat' },
+    { image: IMAGES.shopproduct7, inputtype: "favoriteCheck7", price: "₹75.00", name: 'Comfy Lounge Jogger Pants' },
+    { image: IMAGES.shopproduct8, inputtype: "favoriteCheck8", price: "₹90.00", name: 'Water-Resistant Windbreaker Jacket' },
+    { image: IMAGES.shopproduct9, inputtype: "favoriteCheck9", price: "₹50.00", name: 'Classic Denim Skinny Jeans' },
 ];
 
 interface ShopSlidertype {

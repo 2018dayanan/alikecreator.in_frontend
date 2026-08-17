@@ -57,7 +57,7 @@ const FeaturedNowSlider = () => {
                                 <span className="sale-title">Up to 40% Off</span>
                             </div>
                             <div className="d-flex align-items-center"> 
-                                <h6 className="price">$80<del>$95</del></h6>
+                                <h6 className="price">₹80<del>₹95</del></h6>
                                 <span className="review"><i className="fa-solid fa-star" />(2k Review)</span>
                             </div>	
                         </div>

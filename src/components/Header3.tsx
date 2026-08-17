@@ -2,7 +2,7 @@ import { Fragment } from "react/jsx-runtime";
 // import Menus from "./Menus";
 import { Offcanvas } from "react-bootstrap";
 import HeaderSidbar from "./HeaderSidbar";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import HeadSearchBar from "./HeadSearchBar";
 import HeaderSideShoppingCard from "./HeaderSideShopingCard";
 import Link from "next/link";
@@ -93,6 +93,18 @@ function reducer(state: reduType, action: Action): reduType {
 
 export default function Header3({ setOpenSidebar, openSidebar }: any) {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const loadCartCount = () => {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            setCartCount(cart.length);
+        };
+        loadCartCount();
+        window.addEventListener('cartUpdated', loadCartCount);
+        return () => window.removeEventListener('cartUpdated', loadCartCount);
+    }, []);
+
     const scrollHandler = () => {
         if (window.scrollY > 80) {
             dispatch({ type: 'FIX_HEADER', payload: true });
@@ -184,7 +196,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                                                 onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                                             >
                                                 <i className="iconly-Broken-Buy" />
-                                                <span className="badge badge-circle">5</span>
+                                                <span className="badge badge-circle">{cartCount}</span>
                                             </Link>
                                         </li>
                                         <li className="nav-item filte-link">

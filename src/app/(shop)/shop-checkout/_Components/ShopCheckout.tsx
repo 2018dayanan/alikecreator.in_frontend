@@ -145,7 +145,7 @@ export default function ShopCheckout(){
                                     </div>
                                     <div className="dz-content">
                                         <h6 className="title mb-0">Sophisticated <br />Swagger Suit</h6>
-                                        <span className="price">$40.00</span>
+                                        <span className="price">₹40.00</span>
                                     </div>
                                 </div>
                                 <div className="cart-item style-1 mb-0">
@@ -154,14 +154,14 @@ export default function ShopCheckout(){
                                     </div>
                                     <div className="dz-content">
                                         <h6 className="title mb-0">Cozy Knit Cardigan Sweater</h6>
-                                        <span className="price">$36.00</span>
+                                        <span className="price">₹36.00</span>
                                     </div>
                                 </div>
                                 <table>
                                     <tbody>
                                         <tr className="subtotal">
                                             <td>Subtotal</td>
-                                            <td className="price">$100</td>
+                                            <td className="price">₹100</td>
                                         </tr>
                                         <tr className="title">
                                             <td><h6 className="title font-weight-500">Shipping</h6></td>
@@ -186,7 +186,7 @@ export default function ShopCheckout(){
                                         </tr>
                                         <tr className="total">
                                             <td>Total</td>
-                                            <td className="price">$125.75</td>
+                                            <td className="price">₹125.75</td>
                                             
                                         </tr>
                                     </tbody>

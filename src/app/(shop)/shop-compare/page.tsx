@@ -71,8 +71,8 @@ const ShopComparePage = () =>{
                                                             </li>
                                                         </ul>
                                                         <h6 className="price">
-                                                            <del>$45.00</del>
-                                                            $40.00
+                                                            <del>₹45.00</del>
+                                                            ₹40.00
                                                         </h6>
                                                     </div>
                                                 </div>
