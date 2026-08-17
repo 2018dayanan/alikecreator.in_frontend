@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+.env
+.env.*
+*.local
+.DS_Store
+.vscode
+.idea
+logs
+*.log
+npm-debug.log*
+README.md
+nixpacks.toml
+.oxlintrc.json
