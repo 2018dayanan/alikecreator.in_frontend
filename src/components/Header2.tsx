@@ -1,7 +1,7 @@
 "use client"
 import { Offcanvas } from "react-bootstrap";
 import IMAGES from "../constant/theme";
-import { Fragment, useEffect, useReducer } from "react";
+import { Fragment, useEffect, useReducer, useState } from "react";
 import Link from "next/link";
 import HeadSearchBar from "./HeadSearchBar";
 import HeaderSideShoppingCard from "./HeaderSideShopingCard";
