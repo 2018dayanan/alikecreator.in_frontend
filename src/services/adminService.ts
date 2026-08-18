@@ -130,9 +130,67 @@ export const adminService = {
     }
   },
 
+  // Merchant Management
+  getAdminMerchants: async (page = 1, limit = 10, search = '', status = '') => {
+    let url = `${API_URL}/admin/merchant?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getAdminMerchantById: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/merchant/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  createMerchant: async (data: any) => {
+    const res = await fetch(`${API_URL}/admin/merchant`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateMerchant: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/admin/merchant/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteMerchant: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/merchant/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  verifyMerchant: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/merchant/${id}/verify`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   getMerchants: async () => {
     try {
-      const res = await fetch(`${API_URL}/admin/merchant`, { 
+      const res = await fetch(`${API_URL}/admin/merchant?limit=100`, { 
         method: 'GET',
         headers: getAuthHeaders(),
       });
