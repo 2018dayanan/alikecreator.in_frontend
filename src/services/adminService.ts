@@ -31,6 +31,14 @@ export const adminService = {
     return res.json();
   },
 
+  getProductById: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/product/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   deleteProduct: async (id: string) => {
     const res = await fetch(`${API_URL}/admin/product/${id}`, {
       method: 'DELETE',
@@ -39,6 +47,45 @@ export const adminService = {
     return res.json();
   },
 
-  // Example placeholder for future create/update
-  // createProduct: async (data: any) => { ... }
+  createProduct: async (data: any) => {
+    const res = await fetch(`${API_URL}/admin/product`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateProduct: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/admin/product/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  getCategories: async () => {
+    try {
+      const res = await fetch(`${API_URL}/public/categories`, {
+        method: 'GET',
+      });
+      return res.json();
+    } catch {
+      return { success: false, data: [] };
+    }
+  },
+
+  getMerchants: async () => {
+    // There might not be a direct route to get all merchants, fallback to empty array if it fails
+    try {
+      const res = await fetch(`${API_URL}/admin/merchant`, { 
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return res.json();
+    } catch {
+      return { status: false, data: [] };
+    }
+  }
 };

@@ -17,6 +17,8 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 // import SubscribeModal from "@/constant/SubscribeModal";
 import ScrollToTopButton from "@/constant/ScrollToTopButton";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
@@ -65,6 +67,7 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
       <body>
         {children}        
         <ScrollToTopButton />
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   );

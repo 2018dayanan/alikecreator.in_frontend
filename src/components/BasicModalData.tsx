@@ -66,12 +66,6 @@ export default function BasicModalData() {
                                 <li key={ind}><Link href="/shop-standard">{elem.name}</Link></li>
                             ))}
                         </ul>
-                        <ul>
-                            <li><strong>Tags:</strong></li>
-                            {modalCategoryBlog2.map((elem, ind) => (
-                                <li key={ind}><Link href="/shop-standard">{elem.name}</Link></li>
-                            ))}
-                        </ul>
                         <div className="dz-social-icon">
                             <ul>
                                 <li><Link target="_blank" className="text-dark" href="https://www.facebook.com/Eonpulsetech">
