@@ -188,6 +188,73 @@ export const adminService = {
     return res.json();
   },
 
+  // Customer / User Management
+  getAdminUsers: async (page = 1, limit = 10, search = '', status = '') => {
+    let url = `${API_URL}/admin/user?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getAdminUserById: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/user/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  createUser: async (data: any) => {
+    const res = await fetch(`${API_URL}/admin/user`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateUser: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/admin/user/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteUser: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/user/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  updateUserStatus: async (id: string, status: string) => {
+    const res = await fetch(`${API_URL}/admin/user/${id}/status`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ status }),
+    });
+    return res.json();
+  },
+
+  getUserOrders: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/user/${id}/orders`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   getMerchants: async () => {
     try {
       const res = await fetch(`${API_URL}/admin/merchant?limit=100`, { 

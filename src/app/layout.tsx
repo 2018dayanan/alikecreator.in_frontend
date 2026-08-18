@@ -39,22 +39,31 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
   }, [path]);
 
   useEffect(() => {
-    setTimeout(() => {
-      const { WOW } = require("wowjs");
-      const wow = new WOW({
-        boxClass: "wow",
-        animateClass: "animated",
-        offset: 0,
-        mobile: false,
-        once: true,
-        live: false,
-        callback: function (box : HTMLElement) {
-          box.classList.add("will-animate");
-          box.classList.add("animated");
-        },
-      });
-      wow.init();
-    }, 100);
+    if (typeof window !== "undefined") {
+      try {
+        const wowjs = require("wowjs");
+        const WOWConstructor = wowjs.WOW || wowjs.default || wowjs;
+        if (typeof WOWConstructor === "function") {
+          const wow = new WOWConstructor({
+            boxClass: "wow",
+            animateClass: "animated",
+            offset: 0,
+            mobile: false,
+            once: true,
+            live: false,
+            callback: function (box: HTMLElement) {
+              if (box) {
+                box.classList.add("will-animate");
+                box.classList.add("animated");
+              }
+            },
+          });
+          wow.init();
+        }
+      } catch (err) {
+        // Silently catch WOW initialization issues
+      }
+    }
   }, [path]);
   return (
     <html lang="en">
