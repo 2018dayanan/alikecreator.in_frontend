@@ -23,8 +23,15 @@ export const adminService = {
   },
 
   // Products
-  getProducts: async (page = 1, limit = 10) => {
-    const res = await fetch(`${API_URL}/admin/product?page=${page}&limit=${limit}`, {
+  getProducts: async (page = 1, limit = 10, merchantId = '', categoryId = '') => {
+    let url = `${API_URL}/admin/product?page=${page}&limit=${limit}`;
+    if (merchantId) {
+      url += `&merchantId=${encodeURIComponent(merchantId)}`;
+    }
+    if (categoryId) {
+      url += `&categoryId=${encodeURIComponent(categoryId)}`;
+    }
+    const res = await fetch(url, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
@@ -65,6 +72,53 @@ export const adminService = {
     return res.json();
   },
 
+  // Admin Categories
+  getAdminCategories: async (page = 1, limit = 10, merchantId = '') => {
+    let url = `${API_URL}/admin/category?page=${page}&limit=${limit}`;
+    if (merchantId) {
+      url += `&merchantId=${encodeURIComponent(merchantId)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getAdminCategoryById: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/category/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  createCategory: async (data: any) => {
+    const res = await fetch(`${API_URL}/admin/category`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateCategory: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/admin/category/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteCategory: async (id: string) => {
+    const res = await fetch(`${API_URL}/admin/category/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   getCategories: async () => {
     try {
       const res = await fetch(`${API_URL}/public/categories`, {
@@ -77,7 +131,6 @@ export const adminService = {
   },
 
   getMerchants: async () => {
-    // There might not be a direct route to get all merchants, fallback to empty array if it fails
     try {
       const res = await fetch(`${API_URL}/admin/merchant`, { 
         method: 'GET',

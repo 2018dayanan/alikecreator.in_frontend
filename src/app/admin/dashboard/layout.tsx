@@ -65,6 +65,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Nav.Link as={Link} href="/admin/dashboard/products" className={`text-dark rounded ${pathname === '/admin/dashboard/products' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Products
               </Nav.Link>
+              <Nav.Link as={Link} href="/admin/dashboard/categories" className={`text-dark rounded ${pathname === '/admin/dashboard/categories' ? 'bg-light fw-bold text-primary' : ''}`}>
+                Categories
+              </Nav.Link>
               <Nav.Link as={Link} href="/admin/dashboard/orders" className={`text-dark rounded ${pathname === '/admin/dashboard/orders' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Orders
               </Nav.Link>

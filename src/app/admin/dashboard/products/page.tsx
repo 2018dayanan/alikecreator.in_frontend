@@ -229,7 +229,9 @@ export default function AdminProductsPage() {
   const [merchantsLoading, setMerchantsLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
 
-  // Pagination state
+  // Filtering & Pagination state
+  const [selectedMerchantFilter, setSelectedMerchantFilter] = useState('');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -244,7 +246,6 @@ export default function AdminProductsPage() {
       }
     } catch (err) {
       console.error('Failed to fetch merchants', err);
-      toast.error('Failed to load merchants');
     } finally {
       setMerchantsLoading(false);
     }
@@ -259,13 +260,16 @@ export default function AdminProductsPage() {
       }
     } catch (err) {
       console.error('Failed to fetch categories', err);
-      toast.error('Failed to load categories');
     } finally {
       setCategoriesLoading(false);
     }
   };
 
-  const fetchProducts = async (page = 1) => {
+  const fetchProducts = async (
+    page = 1,
+    merchantId = selectedMerchantFilter,
+    categoryId = selectedCategoryFilter
+  ) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -274,13 +278,13 @@ export default function AdminProductsPage() {
         return;
       }
 
-      const data = await adminService.getProducts(page, 10);
+      const data = await adminService.getProducts(page, 10, merchantId, categoryId);
 
       if (data.status) {
-        setProducts(data.products);
+        setProducts(data.products || []);
         if (data.pagination) {
-          setTotalPages(data.pagination.totalPages);
-          setCurrentPage(data.pagination.currentPage);
+          setTotalPages(data.pagination.totalPages || 1);
+          setCurrentPage(data.pagination.currentPage || 1);
         }
       } else {
         setError(data.message || 'Failed to fetch products');
@@ -304,8 +308,27 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    fetchProducts(currentPage);
-  }, [currentPage]);
+    fetchProducts(currentPage, selectedMerchantFilter, selectedCategoryFilter);
+    fetchMerchants();
+    fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, selectedMerchantFilter, selectedCategoryFilter]);
+
+  const handleMerchantFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMerchantFilter(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategoryFilter(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedMerchantFilter('');
+    setSelectedCategoryFilter('');
+    setCurrentPage(1);
+  };
 
   const handleViewDetails = async (productId: string) => {
     try {
@@ -460,13 +483,64 @@ export default function AdminProductsPage() {
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Card className="shadow-sm border-0">
-        <Card.Header className="bg-white py-3 border-bottom">
+        <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
           <h5 className="mb-0 fw-bold text-dark">All Products</h5>
+
+          {/* Top Backend Filters */}
+          <div className="d-flex flex-wrap align-items-center gap-2">
+            <div className="d-flex align-items-center gap-1">
+              <span className="text-muted small fw-medium text-nowrap">Merchant:</span>
+              <Form.Select 
+                size="sm" 
+                value={selectedMerchantFilter} 
+                onChange={handleMerchantFilterChange}
+                style={{ minWidth: '180px' }}
+                className="border-primary-subtle"
+              >
+                <option value="">All Merchants ({merchants.length})</option>
+                {merchants.map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.business_name || m.name} ({m.email})
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+
+            <div className="d-flex align-items-center gap-1">
+              <span className="text-muted small fw-medium text-nowrap">Category:</span>
+              <Form.Select 
+                size="sm" 
+                value={selectedCategoryFilter} 
+                onChange={handleCategoryFilterChange}
+                style={{ minWidth: '160px' }}
+                className="border-primary-subtle"
+              >
+                <option value="">All Categories ({categories.length})</option>
+                {categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+
+            {(selectedMerchantFilter || selectedCategoryFilter) && (
+              <Button 
+                variant="outline-secondary" 
+                size="sm" 
+                onClick={handleClearFilters}
+                className="text-nowrap"
+              >
+                ✕ Reset
+              </Button>
+            )}
+          </div>
         </Card.Header>
         <Card.Body className="p-0">
           {loading ? (
             <div className="text-center p-5">
               <Spinner animation="border" variant="primary" />
+              <p className="mt-2 text-muted small">Loading products...</p>
             </div>
           ) : (
             <>
@@ -484,7 +558,9 @@ export default function AdminProductsPage() {
                 <tbody>
                   {products.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center p-4">No products found.</td>
+                      <td colSpan={6} className="text-center p-5 text-muted">
+                        No products found {selectedMerchantFilter || selectedCategoryFilter ? 'matching the selected filters' : ''}.
+                      </td>
                     </tr>
                   ) : (
                     products.map((product) => {
