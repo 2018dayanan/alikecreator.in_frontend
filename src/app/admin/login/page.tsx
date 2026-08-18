@@ -14,7 +14,7 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
@@ -45,16 +45,16 @@ export default function AdminLogin() {
         <Col md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }}>
           <Card className="shadow-sm border-0 rounded-lg mt-5">
             <Card.Header className="bg-primary text-white text-center py-4">
-              <h3 className="mb-0 font-weight-light">Admin Login</h3>
+              <h3 className="mb-0 font-weight-light text-white">Admin Login</h3>
             </Card.Header>
             <Card.Body className="p-4">
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label className="small mb-1">Email Address</Form.Label>
-                  <Form.Control 
-                    type="email" 
-                    placeholder="Enter email" 
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -63,9 +63,9 @@ export default function AdminLogin() {
 
                 <Form.Group className="mb-4" controlId="formBasicPassword">
                   <Form.Label className="small mb-1">Password</Form.Label>
-                  <Form.Control 
-                    type="password" 
-                    placeholder="Password" 
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
