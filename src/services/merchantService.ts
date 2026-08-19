@@ -1,0 +1,205 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// Helper to get auth headers for merchant
+const getAuthHeaders = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('merchantToken') : null;
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': token ? `Bearer ${token}` : '',
+  };
+};
+
+export const merchantService = {
+  // Authentication & Profile
+  login: async (email: string, password: string) => {
+    const res = await fetch(`${API_URL}/merchant/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    return res.json();
+  },
+
+  register: async (data: any) => {
+    const res = await fetch(`${API_URL}/merchant/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  getProfile: async () => {
+    const res = await fetch(`${API_URL}/merchant/auth/profile`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  updateProfile: async (data: any) => {
+    const res = await fetch(`${API_URL}/merchant/auth/profile`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const res = await fetch(`${API_URL}/merchant/auth/change-password`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    return res.json();
+  },
+
+  // Dashboard Overview
+  getDashboardStats: async () => {
+    const res = await fetch(`${API_URL}/merchant/dashboard/stats`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  // Product Management
+  getProducts: async (page = 1, limit = 10, categoryId = '', search = '') => {
+    let url = `${API_URL}/merchant/product?page=${page}&limit=${limit}`;
+    if (categoryId) {
+      url += `&categoryId=${encodeURIComponent(categoryId)}`;
+    }
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getProductById: async (id: string) => {
+    const res = await fetch(`${API_URL}/merchant/product/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  createProduct: async (data: any) => {
+    const res = await fetch(`${API_URL}/merchant/product`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateProduct: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/merchant/product/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteProduct: async (id: string) => {
+    const res = await fetch(`${API_URL}/merchant/product/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  // Category Management
+  getCategories: async (page = 1, limit = 10, search = '') => {
+    let url = `${API_URL}/merchant/category?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getAvailableCategories: async () => {
+    const res = await fetch(`${API_URL}/merchant/category/available`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getCategoryById: async (id: string) => {
+    const res = await fetch(`${API_URL}/merchant/category/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  createCategory: async (data: any) => {
+    const res = await fetch(`${API_URL}/merchant/category`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateCategory: async (id: string, data: any) => {
+    const res = await fetch(`${API_URL}/merchant/category/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteCategory: async (id: string) => {
+    const res = await fetch(`${API_URL}/merchant/category/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  // Order Management
+  getOrders: async (page = 1, limit = 10, status = '') => {
+    let url = `${API_URL}/merchant/order?page=${page}&limit=${limit}`;
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getOrderById: async (id: string) => {
+    const res = await fetch(`${API_URL}/merchant/order/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  updateOrderStatus: async (id: string, orderStatus: string, trackingNumber?: string) => {
+    const res = await fetch(`${API_URL}/merchant/order/${id}/status`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ orderStatus, trackingNumber }),
+    });
+    return res.json();
+  },
+};

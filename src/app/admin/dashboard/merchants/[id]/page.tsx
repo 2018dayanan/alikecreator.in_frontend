@@ -333,7 +333,6 @@ export default function MerchantDashboardPage() {
             <div
               style={{ width: '56px', height: '56px', backgroundColor: '#e9ecef', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}
             >
-              🏪
             </div>
           )}
           <div>
@@ -695,11 +694,11 @@ export default function MerchantDashboardPage() {
               {selectedProductDetail.images && selectedProductDetail.images.length > 0 && (
                 <div className="mb-3 d-flex gap-2 flex-wrap">
                   {(Array.isArray(selectedProductDetail.images) ? selectedProductDetail.images : [selectedProductDetail.images]).map((img: string, i: number) => (
-                    <img 
-                      key={i} 
-                      src={img} 
-                      alt={`Product preview ${i + 1}`} 
-                      style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }} 
+                    <img
+                      key={i}
+                      src={img}
+                      alt={`Product preview ${i + 1}`}
+                      style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
                     />
                   ))}
                 </div>
@@ -711,7 +710,7 @@ export default function MerchantDashboardPage() {
                   <h4 className="fw-bold text-dark mb-0">{selectedProductDetail.title}</h4>
                   <span className="badge bg-primary fs-6">₹{selectedProductDetail.price}</span>
                 </div>
-                
+
                 <div className="row g-2 mt-1">
                   <div className="col-md-4">
                     <span className="text-muted d-block small">Stock Quantity</span>
@@ -727,7 +726,7 @@ export default function MerchantDashboardPage() {
                     <span className="text-muted d-block small">Category</span>
                     <strong className="text-dark">{selectedProductDetail.categoryId?.name || 'Unassigned'}</strong>
                   </div>
-                  
+
                   {selectedProductDetail.purchaseType === 'external' && selectedProductDetail.externalLink && (
                     <div className="col-12 mt-2">
                       <span className="text-muted d-block small">External Purchase Link</span>
