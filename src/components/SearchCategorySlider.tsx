@@ -62,8 +62,7 @@ export default function SearchCategorySlider() {
                 <SwiperSlide key={ind}>
                     <div className="shop-card">
                         <div className="dz-media">
-                            {/* Assuming images is an array and we want the first one. Also fallback image could be useful */}
-                            <Image src={elem.images?.[0] || "/assets/images/default-product.png"} alt={elem.title || "Product"} width={200} height={200} />
+                            <Image src={(elem.images && elem.images[0]) || elem.image || "/assets/images/default-product.png"} alt={elem.title || "Product"} width={200} height={200} unoptimized />
                         </div>
                         <div className="dz-content">
                             <h6 className="title"><Link href={`/product/${elem.slug || elem._id}`}>{elem.title}</Link></h6>

@@ -127,7 +127,9 @@ export default function MerchantProductsPage() {
       discount: product.discount?.toString() || '',
       quantity: product.quantity?.toString() || '0',
       categoryId: product.categoryId?._id || product.categoryId || '',
-      images: Array.isArray(product.images) ? product.images.join(', ') : (product.images || ''),
+      images: Array.isArray(product.images) && product.images.length > 0
+        ? product.images.join(', ')
+        : (product.image || (typeof product.images === 'string' ? product.images : '')),
       purchaseType: product.purchaseType || 'internal',
       externalLink: product.externalLink || ''
     });
@@ -225,10 +227,15 @@ export default function MerchantProductsPage() {
     }
   };
 
-  const getImageUrl = (images: any) => {
-    if (!images) return null;
-    if (typeof images === 'string') return images;
-    if (Array.isArray(images) && images.length > 0) return images[0];
+  const getImageUrl = (productOrImages: any) => {
+    if (!productOrImages) return null;
+    if (typeof productOrImages === 'string') return productOrImages;
+    if (Array.isArray(productOrImages) && productOrImages.length > 0) return productOrImages[0];
+    if (typeof productOrImages === 'object') {
+      if (Array.isArray(productOrImages.images) && productOrImages.images.length > 0) return productOrImages.images[0];
+      if (typeof productOrImages.images === 'string' && productOrImages.images) return productOrImages.images;
+      if (productOrImages.image && typeof productOrImages.image === 'string') return productOrImages.image;
+    }
     return null;
   };
 
@@ -320,7 +327,7 @@ export default function MerchantProductsPage() {
                     </tr>
                   ) : (
                     products.map((product) => {
-                      const imageSrc = getImageUrl(product.images);
+                      const imageSrc = getImageUrl(product);
                       return (
                         <tr key={product._id} className="align-middle">
                           <td>
@@ -597,18 +604,26 @@ export default function MerchantProductsPage() {
             </div>
           ) : selectedProductDetail ? (
             <div>
-              {selectedProductDetail.images && selectedProductDetail.images.length > 0 && (
-                <div className="mb-3 d-flex flex-wrap gap-2">
-                  {selectedProductDetail.images.map((img: string, i: number) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={`Product ${i}`}
-                      style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
-                    />
-                  ))}
-                </div>
-              )}
+              {(() => {
+                const detailImages = Array.isArray(selectedProductDetail.images) && selectedProductDetail.images.length > 0
+                  ? selectedProductDetail.images
+                  : (selectedProductDetail.image ? [selectedProductDetail.image] : (typeof selectedProductDetail.images === 'string' && selectedProductDetail.images ? [selectedProductDetail.images] : []));
+
+                if (detailImages.length === 0) return null;
+
+                return (
+                  <div className="mb-3 d-flex flex-wrap gap-2">
+                    {detailImages.map((img: string, i: number) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt={`Product ${i}`}
+                        style={{ width: '90px', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
+                      />
+                    ))}
+                  </div>
+                );
+              })()}
               <h4 className="fw-bold text-dark mb-2">{selectedProductDetail.title}</h4>
               <p className="text-muted">{selectedProductDetail.description || 'No description provided.'}</p>
               <div className="row g-2 bg-light p-3 rounded">

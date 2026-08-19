@@ -608,7 +608,7 @@ export default function MerchantDashboardPage() {
                     </thead>
                     <tbody>
                       {products.map((p) => {
-                        const img = Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.images;
+                        const img = (Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null) || p.image || (typeof p.images === 'string' ? p.images : null);
                         return (
                           <tr key={p._id} className="align-middle">
                             <td>
@@ -691,18 +691,26 @@ export default function MerchantDashboardPage() {
           ) : selectedProductDetail ? (
             <div>
               {/* Image Previews */}
-              {selectedProductDetail.images && selectedProductDetail.images.length > 0 && (
-                <div className="mb-3 d-flex gap-2 flex-wrap">
-                  {(Array.isArray(selectedProductDetail.images) ? selectedProductDetail.images : [selectedProductDetail.images]).map((img: string, i: number) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={`Product preview ${i + 1}`}
-                      style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
-                    />
-                  ))}
-                </div>
-              )}
+              {(() => {
+                const detailImages = Array.isArray(selectedProductDetail.images) && selectedProductDetail.images.length > 0
+                  ? selectedProductDetail.images
+                  : (selectedProductDetail.image ? [selectedProductDetail.image] : (typeof selectedProductDetail.images === 'string' && selectedProductDetail.images ? [selectedProductDetail.images] : []));
+
+                if (detailImages.length === 0) return null;
+
+                return (
+                  <div className="mb-3 d-flex gap-2 flex-wrap">
+                    {detailImages.map((img: string, i: number) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt={`Product preview ${i + 1}`}
+                        style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
+                      />
+                    ))}
+                  </div>
+                );
+              })()}
 
               {/* Product Basic Info */}
               <div className="card border-0 bg-light p-3 mb-3 rounded-3">

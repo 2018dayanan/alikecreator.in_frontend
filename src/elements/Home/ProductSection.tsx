@@ -127,9 +127,36 @@ const ProductSection = () => {
                         }
                     }
 
+                    const extractProductImage = (item: any) => {
+                        if (Array.isArray(item.images) && item.images.length > 0 && typeof item.images[0] === 'string' && item.images[0].trim()) {
+                            return item.images[0].trim();
+                        }
+                        if (typeof item.images === 'string' && item.images.trim()) {
+                            return item.images.trim();
+                        }
+                        if (typeof item.image === 'string' && item.image.trim()) {
+                            return item.image.trim();
+                        }
+                        return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1";
+                    };
+
+                    const extractProductImages = (item: any) => {
+                        if (Array.isArray(item.images) && item.images.length > 0) {
+                            const valid = item.images.filter((img: any) => typeof img === 'string' && img.trim());
+                            if (valid.length > 0) return valid;
+                        }
+                        if (typeof item.images === 'string' && item.images.trim()) {
+                            return item.images.split(',').map((s: string) => s.trim()).filter(Boolean);
+                        }
+                        if (typeof item.image === 'string' && item.image.trim()) {
+                            return [item.image.trim()];
+                        }
+                        return ["https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"];
+                    };
+
                     const mappedData = productsRes.data.map((item: any) => ({
-                        image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null),
-                        images: item.images && item.images.length > 0 ? item.images : [item.image],
+                        image: extractProductImage(item),
+                        images: extractProductImages(item),
                         discount: item.discount ? item.discount.toString() : "0",
                         name: item.title,
                         price: item.price.toString(),
@@ -191,9 +218,36 @@ const ProductSection = () => {
             }
 
             if (json.success && json.data) {
+                const extractProductImage = (item: any) => {
+                    if (Array.isArray(item.images) && item.images.length > 0 && typeof item.images[0] === 'string' && item.images[0].trim()) {
+                        return item.images[0].trim();
+                    }
+                    if (typeof item.images === 'string' && item.images.trim()) {
+                        return item.images.trim();
+                    }
+                    if (typeof item.image === 'string' && item.image.trim()) {
+                        return item.image.trim();
+                    }
+                    return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1";
+                };
+
+                const extractProductImages = (item: any) => {
+                    if (Array.isArray(item.images) && item.images.length > 0) {
+                        const valid = item.images.filter((img: any) => typeof img === 'string' && img.trim());
+                        if (valid.length > 0) return valid;
+                    }
+                    if (typeof item.images === 'string' && item.images.trim()) {
+                        return item.images.split(',').map((s: string) => s.trim()).filter(Boolean);
+                    }
+                    if (typeof item.image === 'string' && item.image.trim()) {
+                        return [item.image.trim()];
+                    }
+                    return ["https://images.unsplash.com/photo-1593359677879-a4bb92f829d1"];
+                };
+
                 const mappedData = json.data.map((item: any) => ({
-                    image: item.image || (item.images && item.images.length > 0 ? item.images[0] : null) || "https://via.placeholder.com/300",
-                    images: item.images && item.images.length > 0 ? item.images : [item.image || "https://via.placeholder.com/300"],
+                    image: extractProductImage(item),
+                    images: extractProductImages(item),
                     discount: item.discount ? item.discount.toString() : "0",
                     name: item.title,
                     price: item.price.toString(),
