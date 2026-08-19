@@ -48,9 +48,6 @@ export default function MerchantLoginPage() {
         <Col md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }}>
           <Card className="shadow-lg border-0 rounded-4 overflow-hidden">
             <Card.Header className="bg-dark text-white text-center py-4">
-              <div className="d-inline-block p-2 rounded-circle bg-primary bg-opacity-25 mb-2">
-                <span style={{ fontSize: '40px' }}>🏪</span>
-              </div>
               <h3 className="mb-1 font-weight-bold text-white">Merchant Portal</h3>
             </Card.Header>
             <Card.Body className="p-4 bg-white">
