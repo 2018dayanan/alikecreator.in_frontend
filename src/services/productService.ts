@@ -2,13 +2,54 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
 
+/**
+ * Automatically extracts the merchant subdomain from:
+ * 1. Explicit parameter (if supplied)
+ * 2. URL search query: ?subdomain=daya
+ * 3. Hostname: daya.localhost, daya.example.com
+ */
+export const getActiveSubdomain = (explicitSubdomain?: string): string | undefined => {
+    if (explicitSubdomain && explicitSubdomain.trim()) {
+        return explicitSubdomain.trim().toLowerCase();
+    }
+    if (typeof window !== 'undefined') {
+        // 1. Check URL query param (?subdomain=xxx)
+        const urlParams = new URLSearchParams(window.location.search);
+        const querySubdomain = urlParams.get('subdomain');
+        if (querySubdomain && querySubdomain.trim()) {
+            return querySubdomain.trim().toLowerCase();
+        }
+
+        // 2. Check Hostname (e.g. daya.localhost or daya.mystore.com)
+        const hostname = window.location.hostname;
+        const parts = hostname.split('.');
+        if (parts.length > 1) {
+            const firstPart = parts[0].toLowerCase().trim();
+            // Ignore www, localhost, and IP addresses
+            if (
+                firstPart !== 'www' && 
+                firstPart !== 'localhost' && 
+                firstPart !== '127' && 
+                !/^\d+$/.test(firstPart)
+            ) {
+                return firstPart;
+            }
+        }
+    }
+    return undefined;
+};
+
 export const ProductService = {
     /**
-     * Fetch all public categories
+     * Fetch all public categories (with automatic subdomain filter)
      */
-    getPublicCategories: async () => {
+    getPublicCategories: async (subdomain?: string) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/public/categories`);
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain 
+                ? `${API_BASE_URL}/public/categories?subdomain=${encodeURIComponent(activeSubdomain)}`
+                : `${API_BASE_URL}/public/categories`;
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -21,12 +62,13 @@ export const ProductService = {
     },
 
     /**
-     * Fetch all public products (with optional subdomain filter)
+     * Fetch all public products (with automatic subdomain filter)
      */
     getPublicProducts: async (subdomain?: string) => {
         try {
-            const url = subdomain 
-                ? `${API_BASE_URL}/public/products?subdomain=${encodeURIComponent(subdomain)}`
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain 
+                ? `${API_BASE_URL}/public/products?subdomain=${encodeURIComponent(activeSubdomain)}`
                 : `${API_BASE_URL}/public/products`;
             const response = await fetch(url);
             if (!response.ok) {
@@ -41,12 +83,13 @@ export const ProductService = {
     },
 
     /**
-     * Fetch products by category (with optional subdomain filter)
+     * Fetch products by category (with automatic subdomain filter)
      */
     getProductsByCategory: async (categoryId: string, subdomain?: string) => {
         try {
-            const url = subdomain
-                ? `${API_BASE_URL}/public/categories/${categoryId}/products?subdomain=${encodeURIComponent(subdomain)}`
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain
+                ? `${API_BASE_URL}/public/categories/${categoryId}/products?subdomain=${encodeURIComponent(activeSubdomain)}`
                 : `${API_BASE_URL}/public/categories/${categoryId}/products`;
             const response = await fetch(url);
             if (!response.ok) {
@@ -61,12 +104,13 @@ export const ProductService = {
     },
 
     /**
-     * Fetch random products
+     * Fetch random products (with automatic subdomain filter)
      */
     getRandomProducts: async (limit: number = 10, subdomain?: string) => {
         try {
-            const url = subdomain
-                ? `${API_BASE_URL}/public/products/random?limit=${limit}&subdomain=${encodeURIComponent(subdomain)}`
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain
+                ? `${API_BASE_URL}/public/products/random?limit=${limit}&subdomain=${encodeURIComponent(activeSubdomain)}`
                 : `${API_BASE_URL}/public/products/random?limit=${limit}`;
             const response = await fetch(url);
             if (!response.ok) {
@@ -83,9 +127,13 @@ export const ProductService = {
     /**
      * Fetch merchant store details by subdomain
      */
-    getMerchantBySubdomain: async (subdomain: string) => {
+    getMerchantBySubdomain: async (subdomain?: string) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/public/merchant/subdomain/${encodeURIComponent(subdomain)}`);
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            if (!activeSubdomain) {
+                return null;
+            }
+            const response = await fetch(`${API_BASE_URL}/public/merchant/subdomain/${encodeURIComponent(activeSubdomain)}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
