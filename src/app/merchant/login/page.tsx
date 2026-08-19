@@ -49,10 +49,9 @@ export default function MerchantLoginPage() {
           <Card className="shadow-lg border-0 rounded-4 overflow-hidden">
             <Card.Header className="bg-dark text-white text-center py-4">
               <div className="d-inline-block p-2 rounded-circle bg-primary bg-opacity-25 mb-2">
-                <span style={{ fontSize: '24px' }}>🏪</span>
+                <span style={{ fontSize: '40px' }}>🏪</span>
               </div>
               <h3 className="mb-1 font-weight-bold text-white">Merchant Portal</h3>
-              <p className="small text-white-50 mb-0">Sign in to manage your products, categories & orders</p>
             </Card.Header>
             <Card.Body className="p-4 bg-white">
               {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}

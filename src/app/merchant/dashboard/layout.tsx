@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Nav, Navbar, Dropdown, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Navbar, Dropdown, Spinner, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -42,11 +42,11 @@ export default function MerchantDashboardLayout({ children }: { children: React.
   }
 
   const navLinks = [
-    { href: '/merchant/dashboard', label: 'Dashboard' },
-    { href: '/merchant/dashboard/products', label: 'Products' },
-    { href: '/merchant/dashboard/categories', label: 'Categories' },
-    { href: '/merchant/dashboard/orders', label: 'Orders' },
-    { href: '/merchant/dashboard/profile', label: 'Store Profile' },
+    { href: '/merchant/dashboard', label: 'Dashboard', icon: '📊' },
+    { href: '/merchant/dashboard/products', label: 'Products', icon: '📦' },
+    { href: '/merchant/dashboard/categories', label: 'Categories', icon: '🏷️' },
+    { href: '/merchant/dashboard/orders', label: 'Orders', icon: '🛒' },
+    { href: '/merchant/dashboard/profile', label: 'Store Profile', icon: '⚙️' },
   ];
 
   return (
@@ -60,10 +60,27 @@ export default function MerchantDashboardLayout({ children }: { children: React.
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="merchant-navbar-nav" />
         <Navbar.Collapse id="merchant-navbar-nav" className="justify-content-end">
+          {/* Mobile navigation links */}
+          <Nav className="d-lg-none py-2 border-bottom border-secondary mb-2">
+            {navLinks.map((link) => (
+              <Nav.Link
+                key={link.href}
+                as={Link}
+                href={link.href}
+                className={`text-light py-2 px-2 d-flex align-items-center gap-2 ${pathname === link.href ? 'text-primary fw-bold' : ''}`}
+              >
+                <span>{link.icon}</span>
+                <span>{link.label}</span>
+              </Nav.Link>
+            ))}
+          </Nav>
+
           <Nav className="align-items-center gap-3">
             <span className="text-light small d-none d-md-inline">
               Store: <strong className="text-warning">{merchantUser?.business_name || merchantUser?.name || 'Merchant'}</strong>
             </span>
+
+            {/* Profile Dropdown */}
             <Dropdown align="end">
               <Dropdown.Toggle variant="dark" id="merchant-profile-dropdown" className="border-0 d-flex align-items-center gap-2">
                 <div 
@@ -72,7 +89,7 @@ export default function MerchantDashboardLayout({ children }: { children: React.
                 >
                   {(merchantUser?.name || 'M').charAt(0).toUpperCase()}
                 </div>
-                <span>{merchantUser?.name || 'Merchant'}</span>
+                <span className="d-none d-sm-inline">{merchantUser?.name || 'Merchant'}</span>
               </Dropdown.Toggle>
               <Dropdown.Menu className="shadow border-0 mt-2">
                 <div className="px-3 py-2 border-bottom">
@@ -85,9 +102,24 @@ export default function MerchantDashboardLayout({ children }: { children: React.
                 <Dropdown.Divider />
                 <Dropdown.Item as={Link} href="/" target="_blank">View Main Store ↗</Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item onClick={handleLogout} className="text-danger">Logout</Dropdown.Item>
+                <Dropdown.Item onClick={handleLogout} className="text-danger fw-semibold">
+                  🚪 Logout
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
+
+            {/* Direct 1-Click Logout Button in Top Navbar */}
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={handleLogout}
+              className="d-flex align-items-center gap-1 px-3 py-1 fw-semibold"
+              style={{ fontSize: '13px', borderRadius: '6px' }}
+              title="Sign out of your merchant account"
+            >
+              <span>🚪</span>
+              <span>Logout</span>
+            </Button>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -96,8 +128,12 @@ export default function MerchantDashboardLayout({ children }: { children: React.
       <Container fluid className="flex-grow-1 p-0">
         <Row className="g-0 h-100">
           {/* Sidebar */}
-          <Col md={2} className="bg-white border-end shadow-sm d-none d-md-block h-100" style={{ minHeight: 'calc(100vh - 56px)' }}>
-            <div className="p-3">
+          <Col
+            md={2}
+            className="bg-white border-end shadow-sm d-none d-md-flex flex-column justify-content-between p-3"
+            style={{ minHeight: 'calc(100vh - 56px)' }}
+          >
+            <div>
               <div className="text-uppercase text-secondary fw-bold px-3 mb-2" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>
                 Store Management
               </div>
@@ -109,18 +145,49 @@ export default function MerchantDashboardLayout({ children }: { children: React.
                       key={link.href}
                       as={Link}
                       href={link.href}
-                      className={`text-dark rounded px-3 py-2 transition-all ${
+                      className={`text-dark rounded px-3 py-2 transition-all d-flex align-items-center gap-2 ${
                         isActive
                           ? 'bg-primary text-white fw-semibold shadow-sm'
                           : 'hover-bg-light'
                       }`}
                       style={isActive ? { color: '#fff !important' } : {}}
                     >
-                      {link.label}
+                      <span>{link.icon}</span>
+                      <span>{link.label}</span>
                     </Nav.Link>
                   );
                 })}
               </Nav>
+            </div>
+
+            {/* Sidebar Bottom Profile & Logout Card */}
+            <div className="pt-3 border-top mt-4">
+              <div className="d-flex align-items-center gap-2 mb-3 px-2">
+                <div 
+                  className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                  style={{ width: '36px', height: '36px', fontSize: '14px' }}
+                >
+                  {(merchantUser?.name || 'M').charAt(0).toUpperCase()}
+                </div>
+                <div className="overflow-hidden">
+                  <div className="fw-bold text-dark text-truncate small">
+                    {merchantUser?.name || 'Merchant'}
+                  </div>
+                  <div className="text-muted text-truncate" style={{ fontSize: '11px' }}>
+                    {merchantUser?.email || ''}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                variant="outline-danger"
+                className="w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold shadow-sm"
+                onClick={handleLogout}
+                style={{ borderRadius: '6px', fontSize: '13px', padding: '8px' }}
+              >
+                <span>🚪</span>
+                <span>Log Out</span>
+              </Button>
             </div>
           </Col>
 

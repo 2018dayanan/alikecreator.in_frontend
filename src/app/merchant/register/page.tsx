@@ -33,7 +33,7 @@ export default function MerchantRegisterPage() {
     setError('');
     setSuccess('');
 
-    if (!formData.name || !formData.business_name || !formData.email || !formData.mobile || !formData.password) {
+    if (!formData.name || !formData.business_name || !formData.email || !formData.mobile || !formData.password || !formData.subdomain) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -80,7 +80,6 @@ export default function MerchantRegisterPage() {
                 <span style={{ fontSize: '24px' }}>📝</span>
               </div>
               <h3 className="mb-1 font-weight-bold text-white">Merchant Registration</h3>
-              <p className="small text-white-50 mb-0">Join our marketplace and start selling your products</p>
             </Card.Header>
             <Card.Body className="p-4 bg-white">
               {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
@@ -177,13 +176,16 @@ export default function MerchantRegisterPage() {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label className="small fw-semibold text-secondary">Store Subdomain (Optional)</Form.Label>
+                      <Form.Label className="small fw-semibold text-secondary">
+                        Store Subdomain <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         name="subdomain"
                         placeholder="mystore (mystore.domain.com)"
                         value={formData.subdomain}
                         onChange={handleChange}
+                        required
                       />
                     </Form.Group>
                   </Col>
