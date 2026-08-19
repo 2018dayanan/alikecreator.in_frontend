@@ -16,6 +16,7 @@ export default function MerchantsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [verifiedFilter, setVerifiedFilter] = useState('');
 
   // Add / Edit Merchant Modal
   const [showMerchantModal, setShowMerchantModal] = useState(false);
@@ -38,7 +39,7 @@ export default function MerchantsPage() {
 
   const router = useRouter();
 
-  const fetchMerchants = async (page = 1, search = searchTerm, status = statusFilter) => {
+  const fetchMerchants = async (page = 1, search = searchTerm, status = statusFilter, is_verified = verifiedFilter) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -47,7 +48,7 @@ export default function MerchantsPage() {
         return;
       }
 
-      const data = await adminService.getAdminMerchants(page, 10, search, status);
+      const data = await adminService.getAdminMerchants(page, 10, search, status, is_verified);
 
       if (data.success || data.status) {
         setMerchants(data.data || []);
@@ -68,21 +69,22 @@ export default function MerchantsPage() {
   };
 
   useEffect(() => {
-    fetchMerchants(currentPage, searchTerm, statusFilter);
+    fetchMerchants(currentPage, searchTerm, statusFilter, verifiedFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, statusFilter]);
+  }, [currentPage, statusFilter, verifiedFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchMerchants(1, searchTerm, statusFilter);
+    fetchMerchants(1, searchTerm, statusFilter, verifiedFilter);
   };
 
   const handleClearFilters = () => {
     setSearchTerm('');
     setStatusFilter('');
+    setVerifiedFilter('');
     setCurrentPage(1);
-    fetchMerchants(1, '', '');
+    fetchMerchants(1, '', '', '');
   };
 
   // ---------------------------------------------------------------------------
@@ -180,17 +182,17 @@ export default function MerchantsPage() {
     }
   };
 
-  const handleVerifyMerchant = async (merchantId: string) => {
+  const handleVerifyMerchant = async (merchantId: string, shouldVerify?: boolean) => {
     try {
-      const data = await adminService.verifyMerchant(merchantId);
+      const data = await adminService.verifyMerchant(merchantId, shouldVerify);
       if (data.success || data.status) {
-        toast.success('Merchant approved & verified successfully');
+        toast.success(data.message || (shouldVerify ? 'Merchant verified successfully' : 'Merchant verification updated'));
         fetchMerchants(currentPage, searchTerm, statusFilter);
       } else {
-        toast.error(data.message || 'Failed to verify merchant');
+        toast.error(data.message || 'Failed to update merchant verification');
       }
     } catch (err) {
-      toast.error('Error verifying merchant');
+      toast.error('Error updating merchant verification');
     }
   };
 
@@ -245,7 +247,21 @@ export default function MerchantsPage() {
               <option value="suspended">Suspended</option>
             </Form.Select>
 
-            {(searchTerm || statusFilter) && (
+            <Form.Select
+              size="sm"
+              value={verifiedFilter}
+              onChange={(e) => {
+                setVerifiedFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              style={{ width: '150px' }}
+            >
+              <option value="">All Verification</option>
+              <option value="true">✓ Verified Only</option>
+              <option value="false">⏳ Unverified Only</option>
+            </Form.Select>
+
+            {(searchTerm || statusFilter || verifiedFilter) && (
               <Button variant="outline-secondary" size="sm" onClick={handleClearFilters}>
                 ✕ Reset
               </Button>
@@ -317,17 +333,37 @@ export default function MerchantsPage() {
                         </td>
                         <td>
                           {merchant.is_verified_by_admin ? (
-                            <span className="text-success small fw-bold">✓ Verified</span>
+                            <div className="d-flex align-items-center gap-2">
+                              <Badge bg="success" className="px-2 py-1">
+                                ✓ Verified
+                              </Badge>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                className="py-0 px-2"
+                                style={{ fontSize: '11px' }}
+                                title="Revoke verification"
+                                onClick={() => handleVerifyMerchant(merchant._id, false)}
+                              >
+                                Unverify
+                              </Button>
+                            </div>
                           ) : (
-                            <Button
-                              variant="outline-warning"
-                              size="sm"
-                              className="py-0 px-2"
-                              style={{ fontSize: '11px' }}
-                              onClick={() => handleVerifyMerchant(merchant._id)}
-                            >
-                              Approve
-                            </Button>
+                            <div className="d-flex align-items-center gap-2">
+                              <Badge bg="warning" text="dark" className="px-2 py-1">
+                                ⏳ Unverified
+                              </Badge>
+                              <Button
+                                variant="success"
+                                size="sm"
+                                className="py-0 px-2 fw-semibold"
+                                style={{ fontSize: '11px' }}
+                                title="Approve and verify merchant store"
+                                onClick={() => handleVerifyMerchant(merchant._id, true)}
+                              >
+                                ✓ Verify
+                              </Button>
+                            </div>
                           )}
                         </td>
                         <td>

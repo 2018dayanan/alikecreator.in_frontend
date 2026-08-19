@@ -131,13 +131,16 @@ export const adminService = {
   },
 
   // Merchant Management
-  getAdminMerchants: async (page = 1, limit = 10, search = '', status = '') => {
+  getAdminMerchants: async (page = 1, limit = 10, search = '', status = '', is_verified = '') => {
     let url = `${API_URL}/admin/merchant?page=${page}&limit=${limit}`;
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
     }
     if (status) {
       url += `&status=${encodeURIComponent(status)}`;
+    }
+    if (is_verified !== '') {
+      url += `&is_verified=${encodeURIComponent(is_verified)}`;
     }
     const res = await fetch(url, {
       method: 'GET',
@@ -180,10 +183,11 @@ export const adminService = {
     return res.json();
   },
 
-  verifyMerchant: async (id: string) => {
+  verifyMerchant: async (id: string, is_verified?: boolean) => {
     const res = await fetch(`${API_URL}/admin/merchant/${id}/verify`, {
       method: 'PUT',
       headers: getAuthHeaders(),
+      body: typeof is_verified !== 'undefined' ? JSON.stringify({ is_verified }) : undefined,
     });
     return res.json();
   },

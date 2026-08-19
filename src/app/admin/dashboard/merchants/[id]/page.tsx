@@ -169,17 +169,21 @@ export default function MerchantDashboardPage() {
     setProductPage(1);
   };
 
-  const handleVerifyMerchant = async () => {
+  const handleVerifyMerchant = async (shouldVerify?: boolean) => {
     try {
-      const data = await adminService.verifyMerchant(merchantId);
+      const data = await adminService.verifyMerchant(merchantId, shouldVerify);
       if (data.success || data.status) {
-        toast.success('Merchant approved & verified successfully');
-        setMerchant((prev: any) => ({ ...prev, is_verified_by_admin: true, status: 'active' }));
+        toast.success(data.message || (shouldVerify ? 'Merchant approved & verified successfully' : 'Merchant verification updated'));
+        setMerchant((prev: any) => ({
+          ...prev,
+          is_verified_by_admin: typeof shouldVerify !== 'undefined' ? shouldVerify : !prev.is_verified_by_admin,
+          status: shouldVerify ? 'active' : prev.status,
+        }));
       } else {
-        toast.error(data.message || 'Failed to verify merchant');
+        toast.error(data.message || 'Failed to update merchant verification');
       }
     } catch (err) {
-      toast.error('Error verifying merchant');
+      toast.error('Error updating merchant verification');
     }
   };
 
@@ -341,9 +345,13 @@ export default function MerchantDashboardPage() {
               <Badge bg={merchant.status === 'active' ? 'success' : merchant.status === 'suspended' ? 'danger' : 'secondary'}>
                 {merchant.status || 'inactive'}
               </Badge>
-              {merchant.is_verified_by_admin && (
-                <Badge bg="info" text="dark">
-                  Verified
+              {merchant.is_verified_by_admin ? (
+                <Badge bg="success" className="px-2 py-1">
+                  ✓ Verified Merchant
+                </Badge>
+              ) : (
+                <Badge bg="warning" text="dark" className="px-2 py-1">
+                  ⏳ Pending Verification
                 </Badge>
               )}
             </div>
@@ -353,11 +361,26 @@ export default function MerchantDashboardPage() {
           </div>
         </div>
 
-        {!merchant.is_verified_by_admin && (
-          <Button variant="warning" onClick={handleVerifyMerchant}>
-            Approve & Verify Merchant
-          </Button>
-        )}
+        <div>
+          {merchant.is_verified_by_admin ? (
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="fw-semibold"
+              onClick={() => handleVerifyMerchant(false)}
+            >
+              ✕ Revoke Verification
+            </Button>
+          ) : (
+            <Button
+              variant="success"
+              className="fw-semibold"
+              onClick={() => handleVerifyMerchant(true)}
+            >
+              ✓ Approve & Verify Merchant
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Dashboard Tabs */}

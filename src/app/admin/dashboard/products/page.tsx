@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, Table, Button, Spinner, Alert, Modal, Form, Pagination } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { adminService } from '@/services/adminService';
@@ -251,12 +251,20 @@ export default function AdminProductsPage() {
     }
   };
 
+  const getCategoryMerchantId = (c: any) => {
+    if (!c) return null;
+    if (typeof c.merchantId === 'object' && c.merchantId !== null) {
+      return c.merchantId._id || null;
+    }
+    return c.merchantId || null;
+  };
+
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
-      const data = await adminService.getCategories();
+      const data = await adminService.getAdminCategories(1, 500);
       if (data.status || data.success) {
-        setCategories(data.data || data.categories || []);
+        setCategories(data.categories || data.data || []);
       }
     } catch (err) {
       console.error('Failed to fetch categories', err);
@@ -315,7 +323,17 @@ export default function AdminProductsPage() {
   }, [currentPage, selectedMerchantFilter, selectedCategoryFilter]);
 
   const handleMerchantFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedMerchantFilter(e.target.value);
+    const newMerchant = e.target.value;
+    setSelectedMerchantFilter(newMerchant);
+    if (newMerchant) {
+      const isCurrentCategoryValid = categories.some((c) => {
+        const cMerchantId = getCategoryMerchantId(c);
+        return String(cMerchantId) === String(newMerchant) && String(c._id) === String(selectedCategoryFilter);
+      });
+      if (!isCurrentCategoryValid) {
+        setSelectedCategoryFilter('');
+      }
+    }
     setCurrentPage(1);
   };
 
@@ -466,17 +484,40 @@ export default function AdminProductsPage() {
     return null;
   };
 
-  // Map raw merchant/category records to the shape SearchableSelect expects
+  // Map raw merchant records to the shape SearchableSelect expects
   const merchantOptions: SearchableOption[] = merchants.map((m) => ({
     _id: m._id,
-    label: m.name || 'Unnamed merchant',
-    sublabel: m.email || '',
+    label: m.business_name ? `${m.business_name} (${m.name})` : (m.name || 'Unnamed merchant'),
+    sublabel: `${m.email || ''} ${m.subdomain ? `• ${m.subdomain}.store` : ''}`,
   }));
 
-  const categoryOptions: SearchableOption[] = categories.map((c) => ({
-    _id: c._id,
-    label: c.name || 'Unnamed category',
-  }));
+  // Categories belonging exclusively to the merchant selected in the Add/Edit modal
+  const modalCategoryOptions: SearchableOption[] = useMemo(() => {
+    if (!formData.merchantId) {
+      return [];
+    }
+    return categories
+      .filter((c) => {
+        const cMerchantId = getCategoryMerchantId(c);
+        return cMerchantId && String(cMerchantId) === String(formData.merchantId);
+      })
+      .map((c) => ({
+        _id: c._id,
+        label: c.name || 'Unnamed category',
+        sublabel: c.slug ? `Slug: ${c.slug}` : undefined,
+      }));
+  }, [categories, formData.merchantId]);
+
+  // Categories filtered for the top toolbar dropdown based on selectedMerchantFilter
+  const toolbarFilteredCategories = useMemo(() => {
+    if (!selectedMerchantFilter) {
+      return categories;
+    }
+    return categories.filter((c) => {
+      const cMerchantId = getCategoryMerchantId(c);
+      return cMerchantId && String(cMerchantId) === String(selectedMerchantFilter);
+    });
+  }, [categories, selectedMerchantFilter]);
 
   return (
     <div>
@@ -497,9 +538,9 @@ export default function AdminProductsPage() {
           <div className="d-flex flex-wrap align-items-center gap-2">
             <div className="d-flex align-items-center gap-1">
               <span className="text-muted small fw-medium text-nowrap">Merchant:</span>
-              <Form.Select 
-                size="sm" 
-                value={selectedMerchantFilter} 
+              <Form.Select
+                size="sm"
+                value={selectedMerchantFilter}
                 onChange={handleMerchantFilterChange}
                 style={{ minWidth: '180px' }}
                 className="border-primary-subtle"
@@ -515,15 +556,17 @@ export default function AdminProductsPage() {
 
             <div className="d-flex align-items-center gap-1">
               <span className="text-muted small fw-medium text-nowrap">Category:</span>
-              <Form.Select 
-                size="sm" 
-                value={selectedCategoryFilter} 
+              <Form.Select
+                size="sm"
+                value={selectedCategoryFilter}
                 onChange={handleCategoryFilterChange}
                 style={{ minWidth: '160px' }}
                 className="border-primary-subtle"
               >
-                <option value="">All Categories ({categories.length})</option>
-                {categories.map((c) => (
+                <option value="">
+                  {selectedMerchantFilter ? `Merchant Categories (${toolbarFilteredCategories.length})` : `All Categories (${categories.length})`}
+                </option>
+                {toolbarFilteredCategories.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.name}
                   </option>
@@ -532,9 +575,9 @@ export default function AdminProductsPage() {
             </div>
 
             {(selectedMerchantFilter || selectedCategoryFilter) && (
-              <Button 
-                variant="outline-secondary" 
-                size="sm" 
+              <Button
+                variant="outline-secondary"
+                size="sm"
                 onClick={handleClearFilters}
                 className="text-nowrap"
               >
@@ -689,27 +732,58 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="row">
-              <div className="col-md-6">
-                <SearchableSelect
-                  label="Category"
-                  required
-                  placeholder="Search by category name"
-                  options={categoryOptions}
-                  loading={categoriesLoading}
-                  value={formData.categoryId}
-                  onChange={(id) => setFormData((prev) => ({ ...prev, categoryId: id }))}
-                />
-              </div>
+              {/* 1. Merchant selection FIRST */}
               <div className="col-md-6">
                 <SearchableSelect
                   label="Merchant"
                   required
-                  placeholder="Search by name or email"
+                  placeholder="Select Merchant first"
                   options={merchantOptions}
                   loading={merchantsLoading}
                   value={formData.merchantId}
-                  onChange={(id) => setFormData((prev) => ({ ...prev, merchantId: id }))}
+                  onChange={(id) => {
+                    setFormData((prev) => {
+                      // Validate if existing category belongs to new merchant
+                      const isCatValid = categories.some((c) => {
+                        const cMerchantId = getCategoryMerchantId(c);
+                        return String(cMerchantId) === String(id) && String(c._id) === String(prev.categoryId);
+                      });
+                      return {
+                        ...prev,
+                        merchantId: id,
+                        categoryId: isCatValid ? prev.categoryId : '',
+                      };
+                    });
+                  }}
                 />
+              </div>
+
+              {/* 2. Merchant-specific Category selection */}
+              <div className="col-md-6">
+                <SearchableSelect
+                  label="Category"
+                  required
+                  placeholder={
+                    !formData.merchantId
+                      ? "⚠️ Please select a Merchant first"
+                      : modalCategoryOptions.length > 0
+                        ? "Search merchant's categories"
+                        : "No categories for this merchant"
+                  }
+                  options={modalCategoryOptions}
+                  loading={categoriesLoading}
+                  value={formData.categoryId}
+                  onChange={(id) => setFormData((prev) => ({ ...prev, categoryId: id }))}
+                />
+                {!formData.merchantId ? (
+                  <small className="text-warning d-block" style={{ marginTop: '-10px', marginBottom: '10px' }}>
+                    💡 Please select a merchant first to see their categories.
+                  </small>
+                ) : modalCategoryOptions.length === 0 && !categoriesLoading ? (
+                  <small className="text-danger d-block" style={{ marginTop: '-10px', marginBottom: '10px' }}>
+                    ⚠️ This merchant has no categories yet. Please add a category for them first.
+                  </small>
+                ) : null}
               </div>
             </div>
 
@@ -775,10 +849,10 @@ export default function AdminProductsPage() {
                     <div className="d-flex flex-wrap gap-2">
                       {detailImages.map((img: string, i: number) => (
                         <a key={i} href={img} target="_blank" rel="noopener noreferrer">
-                          <img 
-                            src={img} 
-                            alt={`Product ${i + 1}`} 
-                            style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }} 
+                          <img
+                            src={img}
+                            alt={`Product ${i + 1}`}
+                            style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
                           />
                         </a>
                       ))}
@@ -914,8 +988,8 @@ export default function AdminProductsPage() {
         </Modal.Body>
         <Modal.Footer>
           {selectedProductDetail && (
-            <Button 
-              variant="outline-primary" 
+            <Button
+              variant="outline-primary"
               onClick={() => {
                 setShowDetailModal(false);
                 handleOpenEditModal(selectedProductDetail);
