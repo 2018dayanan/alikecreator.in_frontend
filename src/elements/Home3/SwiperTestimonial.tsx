@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
 import { ProductService } from "@/services/productService";
+import VideoModal from "@/components/VideoModal";
 
 interface SliderDatatype {
     id?: string;
@@ -14,6 +15,7 @@ interface SliderDatatype {
     price?: number;
     badge?: string | null;
     link?: string;
+    video?: string | null;
 }
 
 const defaultTestimonialData: SliderDatatype[] = [
@@ -25,6 +27,7 @@ const defaultTestimonialData: SliderDatatype[] = [
 
 export default function SwiperTestimonial() {
     const [sliderItems, setSliderItems] = useState<SliderDatatype[]>(defaultTestimonialData);
+    const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
 
     useEffect(() => {
         const fetchDiscoverProducts = async () => {
@@ -45,7 +48,8 @@ export default function SwiperTestimonial() {
                             name: title,
                             price: prod.price,
                             badge: item.customBadge,
-                            link
+                            link,
+                            video: prod.video || null
                         };
                     });
 
@@ -118,6 +122,21 @@ export default function SwiperTestimonial() {
                                     {item.badge}
                                 </span>
                             )}
+                            {item.video && (
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm position-absolute top-0 end-0 m-3 rounded-pill d-flex align-items-center gap-1 shadow border-0"
+                                    style={{ zIndex: 5, padding: "4px 10px", fontSize: "11px", fontWeight: "600" }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setActiveVideo({ url: item.video!, title: item.name });
+                                    }}
+                                >
+                                    <i className="fa-brands fa-youtube" style={{ fontSize: "13px" }} />
+                                    <span>Watch Video</span>
+                                </button>
+                            )}
                             <div className="about-img">
                                 {typeof item.image === 'string' ? (
                                     <img
@@ -171,6 +190,14 @@ export default function SwiperTestimonial() {
                     <span className="swiper-pagination-bullet" tabIndex={0}>03</span>
                 </div>
             </div>
+
+            {/* Video Popup Modal */}
+            <VideoModal
+                show={Boolean(activeVideo)}
+                onHide={() => setActiveVideo(null)}
+                videoUrl={activeVideo?.url}
+                title={activeVideo?.title}
+            />
         </>
     );
 }

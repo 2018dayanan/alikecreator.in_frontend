@@ -41,6 +41,7 @@ export default function MerchantProductsPage() {
     quantity: '',
     categoryId: '',
     images: '',
+    video: '',
     purchaseType: 'internal',
     externalLink: ''
   });
@@ -111,6 +112,7 @@ export default function MerchantProductsPage() {
       quantity: '10',
       categoryId: categories[0]?._id || '',
       images: '',
+      video: '',
       purchaseType: 'internal',
       externalLink: ''
     });
@@ -130,6 +132,7 @@ export default function MerchantProductsPage() {
       images: Array.isArray(product.images) && product.images.length > 0
         ? product.images.join(', ')
         : (product.image || (typeof product.images === 'string' ? product.images : '')),
+      video: product.video || '',
       purchaseType: product.purchaseType || 'internal',
       externalLink: product.externalLink || ''
     });
@@ -549,7 +552,7 @@ export default function MerchantProductsPage() {
               )}
             </div>
 
-            <Form.Group className="mb-4" controlId="prodImages">
+            <Form.Group className="mb-3" controlId="prodImages">
               <Form.Label className="small fw-semibold">Image URLs (comma separated)</Form.Label>
               <Form.Control
                 type="text"
@@ -559,6 +562,18 @@ export default function MerchantProductsPage() {
                 placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
               />
               <Form.Text className="text-muted">Enter direct image URLs separated by comma</Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-4" controlId="prodVideo">
+              <Form.Label className="small fw-semibold">Product Video Link (YouTube / Video URL)</Form.Label>
+              <Form.Control
+                type="url"
+                name="video"
+                value={formData.video}
+                onChange={handleFormChange}
+                placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+              />
+              <Form.Text className="text-muted">Optional: Paste a YouTube link or direct video URL to showcase this product</Form.Text>
             </Form.Group>
 
             <div className="d-flex justify-content-end gap-2">
@@ -626,7 +641,7 @@ export default function MerchantProductsPage() {
               })()}
               <h4 className="fw-bold text-dark mb-2">{selectedProductDetail.title}</h4>
               <p className="text-muted">{selectedProductDetail.description || 'No description provided.'}</p>
-              <div className="row g-2 bg-light p-3 rounded">
+              <div className="row g-2 bg-light p-3 rounded mb-3">
                 <div className="col-sm-4">
                   <span className="text-muted small d-block">Price</span>
                   <strong className="text-success fs-5">₹{selectedProductDetail.price}</strong>
@@ -640,6 +655,33 @@ export default function MerchantProductsPage() {
                   <strong>{selectedProductDetail.categoryId?.name || 'N/A'}</strong>
                 </div>
               </div>
+
+              {selectedProductDetail.video && (
+                <div className="border rounded p-3 bg-white">
+                  <h6 className="fw-bold text-secondary text-uppercase mb-2" style={{ fontSize: '12px' }}>Product Video</h6>
+                  {selectedProductDetail.video.includes('youtube.com') || selectedProductDetail.video.includes('youtu.be') ? (
+                    <div className="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
+                      <iframe
+                        src={
+                          selectedProductDetail.video.includes('embed')
+                            ? selectedProductDetail.video
+                            : selectedProductDetail.video.includes('youtu.be')
+                            ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
+                            : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
+                        }
+                        title="Product Video"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  ) : (
+                    <div>
+                      <a href={selectedProductDetail.video} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm">
+                        ▶ Watch Video Link
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-muted">No details found</p>

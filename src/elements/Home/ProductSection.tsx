@@ -8,7 +8,7 @@ import ProductInputButton from "../Shop/ProductInputButton";
 import Image from "next/image";
 import { ProductService } from "../../services/productService";
 import ProductShimmer from "../../components/Shimmer/ProductShimmer";
-
+import VideoModal from "../../components/VideoModal";
 
 interface MenuItem {
     image: string;
@@ -25,6 +25,7 @@ interface MenuItem {
     reviewCount?: number;
     sku?: string;
     externalLink?: string | null;
+    video?: string | null;
 }
 
 type HeartIconsState = { [key: number]: boolean };
@@ -34,6 +35,8 @@ const initialState = {
     basketIcon: {} as HeartIconsState,
     detailModal: false,
     selectedProduct: null as MenuItem | null,
+    videoModal: false,
+    videoProduct: null as { url: string; title: string } | null,
     showLoginModal: false,
     activeMenu: 0,
     data: [], // Initially empty, will be populated from backend
@@ -67,6 +70,12 @@ function reducer(state: typeof initialState, action: any) {
                 ...state,
                 detailModal: action.value,
                 selectedProduct: action.product || null,
+            };
+        case 'SET_VIDEO_MODAL':
+            return {
+                ...state,
+                videoModal: action.value,
+                videoProduct: action.product || null,
             };
         case 'SET_ACTIVE_MENU':
             return {
@@ -177,6 +186,7 @@ const ProductSection = () => {
                         reviewCount: item.reviewCount || 5,
                         sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
                         externalLink: item.externalLink || null,
+                        video: item.video || null,
                     }));
 
                     const newHeartIcon: HeartIconsState = {};
@@ -274,6 +284,7 @@ const ProductSection = () => {
                     reviewCount: item.reviewCount || 5,
                     sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
                     externalLink: item.externalLink || null,
+                    video: item.video || null,
                 }));
 
                 const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -453,6 +464,25 @@ const ProductSection = () => {
                                             style={{ objectFit: "cover" }}
                                             unoptimized
                                         />
+                                        {item.video && (
+                                            <button
+                                                type="button"
+                                                className="btn btn-danger btn-sm position-absolute top-0 start-0 m-2 rounded-pill d-flex align-items-center gap-1 shadow-sm border-0"
+                                                style={{ zIndex: 5, padding: "4px 10px", fontSize: "11px", fontWeight: "600", letterSpacing: "0.3px" }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    dispatch({
+                                                        type: 'SET_VIDEO_MODAL',
+                                                        value: true,
+                                                        product: { url: item.video, title: item.name }
+                                                    });
+                                                }}
+                                            >
+                                                <i className="fa-brands fa-youtube" style={{ fontSize: "13px" }} />
+                                                <span>Video</span>
+                                            </button>
+                                        )}
                                         <div className="shop-meta">
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
                                                 onClick={(e) => {
@@ -539,6 +569,29 @@ const ProductSection = () => {
                                     <p className="para-text">
                                         {state.selectedProduct?.description}
                                     </p>
+
+                                    {state.selectedProduct?.video && (
+                                        <div className="mb-3">
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold rounded-3 shadow-sm"
+                                                onClick={() => {
+                                                    dispatch({
+                                                        type: 'SET_VIDEO_MODAL',
+                                                        value: true,
+                                                        product: {
+                                                            url: state.selectedProduct?.video,
+                                                            title: state.selectedProduct?.name
+                                                        }
+                                                    });
+                                                }}
+                                            >
+                                                <i className="fa-brands fa-youtube text-danger fs-5" />
+                                                <span>Watch Video Showcase</span>
+                                            </button>
+                                        </div>
+                                    )}
+
                                     <div className="meta-content m-b20 d-flex align-items-end">
                                         <div className="me-3">
                                             <span className="form-label">Price</span>
@@ -638,6 +691,14 @@ const ProductSection = () => {
                     </Link>
                 </Modal.Footer>
             </Modal>
+
+            {/* Video Popup Modal */}
+            <VideoModal
+                show={state.videoModal}
+                onHide={() => dispatch({ type: 'SET_VIDEO_MODAL', value: false, product: null })}
+                videoUrl={state.videoProduct?.url}
+                title={state.videoProduct?.title}
+            />
         </>
     );
 };

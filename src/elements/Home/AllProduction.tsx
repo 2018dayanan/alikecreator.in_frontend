@@ -5,6 +5,7 @@ import Link from "next/link";
 import ProductRollup from '../../components/ProductRollup';
 import Image from "next/image";
 import { ProductService } from "@/services/productService";
+import VideoModal from "@/components/VideoModal";
 
 interface CarouselBanner {
     _id?: string;
@@ -21,12 +22,14 @@ interface ProductCardItem {
     discount?: number | null;
     badge?: string | null;
     link: string;
+    video?: string | null;
 }
 
 const AllProduction = () => {
     const [banner, setBanner] = useState<CarouselBanner | null>(null);
     const [products, setProducts] = useState<ProductCardItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -66,7 +69,8 @@ const AllProduction = () => {
                             price: prod.price,
                             discount: prod.discount,
                             badge,
-                            link
+                            link,
+                            video: prod.video || null
                         };
                     });
                     setProducts(mapped);
@@ -86,7 +90,8 @@ const AllProduction = () => {
                                 price: prod.price,
                                 discount: prod.discount,
                                 badge,
-                                link: prod.externalLink || "/shop-list"
+                                link: prod.externalLink || "/shop-list",
+                                video: prod.video || null
                             };
                         });
                         setProducts(mapped);
@@ -167,7 +172,23 @@ const AllProduction = () => {
                     {products.length > 0 ? (
                         products.map((item) => (
                             <div className="col-lg-4 col-md-4 col-sm-6 m-b15" key={item._id}>
-                                <div className="shop-card style-5 h-100 border rounded-3 p-2 shadow-sm bg-white">
+                                <div className="shop-card style-5 h-100 border rounded-3 p-2 shadow-sm bg-white position-relative">
+                                    {item.video && (
+                                        <button
+                                            type="button"
+                                            className="btn btn-danger btn-sm position-absolute top-0 end-0 m-3 rounded-pill d-flex align-items-center gap-1 shadow-sm border-0"
+                                            style={{ zIndex: 5, padding: "3px 8px", fontSize: "10px", fontWeight: "600" }}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setActiveVideo({ url: item.video!, title: item.title });
+                                            }}
+                                            title="Watch Video"
+                                        >
+                                            <i className="fa-brands fa-youtube" style={{ fontSize: "12px" }} />
+                                            <span>Video</span>
+                                        </button>
+                                    )}
                                     <div
                                         className="dz-media rounded overflow-hidden mb-2 d-flex align-items-center justify-content-center bg-light"
                                         style={{ height: '180px' }}
@@ -225,6 +246,14 @@ const AllProduction = () => {
                     )}
                 </div>
             </div>
+
+            {/* Video Popup Modal */}
+            <VideoModal
+                show={Boolean(activeVideo)}
+                onHide={() => setActiveVideo(null)}
+                videoUrl={activeVideo?.url}
+                title={activeVideo?.title}
+            />
         </div>
     );
 };

@@ -215,10 +215,12 @@ export default function AdminProductsPage() {
     title: '',
     description: '',
     price: '',
+    discount: '',
     quantity: '',
     categoryId: '',
     merchantId: '',
     images: '',
+    video: '',
     purchaseType: 'internal',
     externalLink: '',
   });
@@ -397,10 +399,12 @@ export default function AdminProductsPage() {
       title: '',
       description: '',
       price: '',
+      discount: '',
       quantity: '',
       categoryId: '',
       merchantId: '',
       images: '',
+      video: '',
       purchaseType: 'internal',
       externalLink: '',
     });
@@ -415,12 +419,14 @@ export default function AdminProductsPage() {
       title: product.title || '',
       description: product.description || '',
       price: product.price?.toString() || '',
+      discount: product.discount?.toString() || '',
       quantity: product.quantity?.toString() || '',
       categoryId: product.categoryId?._id || product.categoryId || '',
       merchantId: product.merchantId?._id || product.merchantId || '',
       images: Array.isArray(product.images) && product.images.length > 0
         ? product.images.join(', ')
         : (product.image || (typeof product.images === 'string' ? product.images : '')),
+      video: product.video || '',
       purchaseType: product.purchaseType || 'internal',
       externalLink: product.externalLink || '',
     });
@@ -449,8 +455,10 @@ export default function AdminProductsPage() {
       const payload = {
         ...formData,
         price: Number(formData.price),
+        discount: formData.discount ? Number(formData.discount) : null,
         quantity: Number(formData.quantity) || 0,
-        images: formData.images ? formData.images.split(',').map((s) => s.trim()) : [],
+        video: formData.video.trim() || undefined,
+        images: formData.images ? formData.images.split(',').map((s) => s.trim()).filter(Boolean) : [],
       };
 
       let data;
@@ -692,13 +700,19 @@ export default function AdminProductsPage() {
                   <Form.Control type="text" name="title" value={formData.title} onChange={handleFormChange} placeholder="Enter product title" />
                 </Form.Group>
               </div>
-              <div className="col-md-3">
+              <div className="col-md-2">
                 <Form.Group className="mb-3">
                   <Form.Label>Price (₹) *</Form.Label>
                   <Form.Control type="number" name="price" value={formData.price} onChange={handleFormChange} placeholder="Price" />
                 </Form.Group>
               </div>
-              <div className="col-md-3">
+              <div className="col-md-2">
+                <Form.Group className="mb-3">
+                  <Form.Label>Discount %</Form.Label>
+                  <Form.Control type="number" name="discount" value={formData.discount} onChange={handleFormChange} placeholder="10" />
+                </Form.Group>
+              </div>
+              <div className="col-md-2">
                 <Form.Group className="mb-3">
                   <Form.Label>Quantity</Form.Label>
                   <Form.Control type="number" name="quantity" value={formData.quantity} onChange={handleFormChange} placeholder="Quantity" />
@@ -788,9 +802,15 @@ export default function AdminProductsPage() {
             </div>
 
             <Form.Group className="mb-3">
-              <Form.Label>Image URLs</Form.Label>
+              <Form.Label>Image URLs (comma separated)</Form.Label>
               <Form.Control type="text" name="images" value={formData.images} onChange={handleFormChange} placeholder="https://image1.jpg, https://image2.jpg" />
               <Form.Text className="text-muted">Comma-separated list of image URLs.</Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Product Video Link (YouTube / Video URL)</Form.Label>
+              <Form.Control type="url" name="video" value={formData.video} onChange={handleFormChange} placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..." />
+              <Form.Text className="text-muted">Optional: Paste a YouTube video URL or direct video link</Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -920,6 +940,34 @@ export default function AdminProductsPage() {
                   <p className="text-muted mb-0">No category assigned</p>
                 )}
               </div>
+
+              {/* Product Video Section */}
+              {selectedProductDetail.video && (
+                <div className="card border p-3 mb-4 rounded-3">
+                  <h6 className="fw-bold text-primary mb-3">🎥 Product Video</h6>
+                  {selectedProductDetail.video.includes('youtube.com') || selectedProductDetail.video.includes('youtu.be') ? (
+                    <div className="ratio ratio-16x9 rounded overflow-hidden shadow-sm">
+                      <iframe
+                        src={
+                          selectedProductDetail.video.includes('embed')
+                            ? selectedProductDetail.video
+                            : selectedProductDetail.video.includes('youtu.be')
+                            ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
+                            : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
+                        }
+                        title="Product Video"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  ) : (
+                    <div>
+                      <a href={selectedProductDetail.video} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm">
+                        ▶ Watch Video Link
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Merchant Details Card */}
               <div className="card bg-primary text-white border-0 p-3 mb-3 rounded-3 shadow-sm">
