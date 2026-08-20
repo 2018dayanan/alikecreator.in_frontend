@@ -192,22 +192,79 @@
 		background-color: #ffffff !important;
 	}
 
+	/* Mobile Side Menu Drawer Background */
+	.mo-left .header-nav,
 	.site-header .header-nav.w3menu {
-		background-color: #ffffff;
+		background-color: #7D1C2D !important;
+		background: #7D1C2D !important;
 	}
 
-	.site-header .header-nav.w3menu .nav > li > a {
-		color: #151F37;
+	.site-header .header-nav.w3menu .logo-header {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	/* Navigation Links & Text */
+	.site-header .header-nav.w3menu .nav > li {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+	}
+
+	.site-header .header-nav.w3menu .nav > li > a,
+	.site-header .header-nav.w3menu .nav > li > a span {
+		color: #ffffff !important;
 	}
 
 	.site-header .header-nav.w3menu .nav > li.active > a,
-	.site-header .header-nav.w3menu .nav > li:hover > a {
-		color: #7D1C2D !important;
+	.site-header .header-nav.w3menu .nav > li:hover > a,
+	.site-header .header-nav.w3menu .nav > li.active > a span,
+	.site-header .header-nav.w3menu .nav > li:hover > a span {
+		color: #FFDFE7 !important;
+	}
+
+	/* Mobile Dropdown Toggler Chevrons */
+	.header-nav.w3menu .nav > li.menu-item-has-children > a i,
+	.header-nav.w3menu .nav > li.sub-menu-down > a i {
+		background-color: rgba(255, 255, 255, 0.2) !important;
+		color: #ffffff !important;
+		border-radius: 6px;
+	}
+
+	/* Mobile Submenu Items */
+	.site-header .header-nav.w3menu .nav > li .sub-menu,
+	.site-header .header-nav.w3menu .nav > li .mega-menu {
+		background-color: #631422 !important;
+		border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+	}
+
+	.site-header .header-nav.w3menu .nav > li .sub-menu li {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+	}
+
+	.site-header .header-nav.w3menu .nav > li .sub-menu li > a {
+		color: #ffffff !important;
+		padding: 10px 15px;
+	}
+
+	.site-header .header-nav.w3menu .nav > li .sub-menu li:hover > a,
+	.site-header .header-nav.w3menu .nav > li .sub-menu li.active > a {
+		color: #FFDFE7 !important;
+		background-color: #4d0f1a !important;
+	}
+
+	/* Mobile Drawer Social Icons */
+	.site-header .header-nav .dz-social-icon {
+		border-top: 1px solid rgba(255, 255, 255, 0.15);
+		padding: 20px;
+	}
+
+	.site-header .header-nav .dz-social-icon ul li a {
+		color: #ffffff !important;
+		border-color: rgba(255, 255, 255, 0.4) !important;
+		background: transparent;
 	}
 
 	.site-header .header-nav .dz-social-icon ul li a:hover {
-		background-color: #7D1C2D !important;
-		color: #ffffff !important;
-		border-color: #7D1C2D !important;
+		background-color: #ffffff !important;
+		color: #7D1C2D !important;
+		border-color: #ffffff !important;
 	}
 }
