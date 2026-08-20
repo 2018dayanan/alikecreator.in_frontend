@@ -375,6 +375,88 @@ export const merchantService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to update status' };
     }
+  },
+
+  // Merchant News / Articles Management
+  getMyNews: async (page = 1, limit = 10, search = '', is_active = '') => {
+    try {
+      let url = `${API_URL}/merchant/news?page=${page}&limit=${limit}`;
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
+      if (is_active !== '') {
+        url += `&is_active=${encodeURIComponent(is_active)}`;
+      }
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch news articles' };
+    }
+  },
+
+  getNewsById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/news/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch news article' };
+    }
+  },
+
+  createNews: async (data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/news`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to create news article' };
+    }
+  },
+
+  updateNews: async (id: string, data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/news/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update news article' };
+    }
+  },
+
+  deleteNews: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/news/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to delete news article' };
+    }
+  },
+
+  toggleNewsStatus: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/news/${id}/toggle-status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update news status' };
+    }
   }
 };
 

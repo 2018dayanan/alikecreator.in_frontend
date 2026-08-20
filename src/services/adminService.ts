@@ -354,6 +354,91 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to update status' };
     }
+  },
+
+  // News / Articles Management
+  getNews: async (page = 1, limit = 10, merchantId = '', search = '', is_active = '') => {
+    try {
+      let url = `${API_URL}/admin/news?page=${page}&limit=${limit}`;
+      if (merchantId) {
+        url += `&merchantId=${encodeURIComponent(merchantId)}`;
+      }
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
+      if (is_active !== '') {
+        url += `&is_active=${encodeURIComponent(is_active)}`;
+      }
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch news' };
+    }
+  },
+
+  getNewsById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/news/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch news article' };
+    }
+  },
+
+  createNews: async (data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/news`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to create news article' };
+    }
+  },
+
+  updateNews: async (id: string, data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/news/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update news article' };
+    }
+  },
+
+  deleteNews: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/news/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to delete news article' };
+    }
+  },
+
+  toggleNewsStatus: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/news/${id}/toggle-status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update news status' };
+    }
   }
 };
 

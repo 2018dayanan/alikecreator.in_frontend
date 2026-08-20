@@ -185,5 +185,48 @@ export const ProductService = {
             console.error("Error fetching public discover collection:", error);
             return { success: false, data: [] };
         }
+    },
+
+    /**
+     * Fetch active public news articles (with optional merchant subdomain filter, search & pagination)
+     */
+    getPublicNews: async (subdomain?: string, page = 1, limit = 10, search = '') => {
+        try {
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            let url = `${API_BASE_URL}/public/news?page=${page}&limit=${limit}`;
+            if (activeSubdomain) {
+                url += `&subdomain=${encodeURIComponent(activeSubdomain)}`;
+            }
+            if (search) {
+                url += `&search=${encodeURIComponent(search)}`;
+            }
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching public news:", error);
+            return { success: false, data: [] };
+        }
+    },
+
+    /**
+     * Fetch single public news article by ID
+     */
+    getPublicNewsById: async (id: string) => {
+        try {
+            const url = `${API_BASE_URL}/public/news/${id}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching public news by id:", error);
+            return { success: false, data: null };
+        }
     }
 };

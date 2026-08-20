@@ -80,6 +80,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Nav.Link as={Link} href="/admin/dashboard/carousels" className={`text-dark rounded ${pathname === '/admin/dashboard/carousels' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Carousels / Banners
               </Nav.Link>
+              <Nav.Link as={Link} href="/admin/dashboard/news" className={`text-dark rounded ${pathname === '/admin/dashboard/news' ? 'bg-light fw-bold text-primary' : ''}`}>
+                News / Articles
+              </Nav.Link>
               <Nav.Link as={Link} href="/admin/dashboard/settings" className={`text-dark rounded ${pathname === '/admin/dashboard/settings' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Settings
               </Nav.Link>
