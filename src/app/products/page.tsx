@@ -39,6 +39,29 @@ interface CategoryOption {
     image?: string;
 }
 
+const DEFAULT_PRODUCT_IMAGE = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1";
+
+const getSafeProductImage = (p: any): string => {
+    if (typeof p?.image === 'string' && p.image.trim()) return p.image.trim();
+    if (Array.isArray(p?.images) && p.images.length > 0 && typeof p.images[0] === 'string' && p.images[0].trim()) return p.images[0].trim();
+    if (typeof p?.images === 'string' && p.images.trim()) return p.images.trim();
+    return DEFAULT_PRODUCT_IMAGE;
+};
+
+const getSafeProductImages = (p: any): string[] => {
+    if (Array.isArray(p?.images) && p.images.length > 0) {
+        const valid = p.images.filter((img: any) => typeof img === 'string' && img.trim());
+        if (valid.length > 0) return valid;
+    }
+    if (typeof p?.images === 'string' && p.images.trim()) {
+        return p.images.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof p?.image === 'string' && p.image.trim()) {
+        return [p.image.trim()];
+    }
+    return [DEFAULT_PRODUCT_IMAGE];
+};
+
 export default function AllProductsPage() {
     const { toggleFavorite, isFavorite } = useWishlist();
 
@@ -111,8 +134,8 @@ export default function AllProductsPage() {
                             price: numPrice,
                             originalPrice: origPrice,
                             discount: p.discount || (origPrice > numPrice ? Math.round(((origPrice - numPrice) / origPrice) * 100) : null),
-                            image: p.image || (Array.isArray(p.images) && p.images[0]) || IMAGES.Product1.src,
-                            images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [p.image || IMAGES.Product1.src],
+                            image: getSafeProductImage(p),
+                            images: getSafeProductImages(p),
                             category: catName,
                             categoryId: typeof p.categoryId === 'object' ? p.categoryId?._id : p.categoryId,
                             description: p.description || 'Premium quality crafted with meticulous attention to detail and timeless elegance.',
@@ -227,36 +250,11 @@ export default function AllProductsPage() {
                     parentText="Home"
                     currentText={merchant ? `${merchant.business_name || merchant.name} Catalog` : "All Products"}
                     mainText={merchant ? `Explore ${merchant.business_name || merchant.name}'s Collection` : "Discover All Products"}
-                    image={IMAGES.BackBg1.src}
+                    image={IMAGES.BackBg1?.src || ''}
                 />
 
                 <section className="content-inner py-5">
                     <div className="container">
-                        {/* Merchant Branding Bar (if active) */}
-                        {merchant && (
-                            <div className="p-4 bg-white rounded-4 shadow-sm mb-4 border d-flex align-items-center justify-content-between flex-wrap gap-3">
-                                <div className="d-flex align-items-center gap-3">
-                                    <div
-                                        className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm"
-                                        style={{ width: '56px', height: '56px', fontSize: '22px' }}
-                                    >
-                                        {(merchant.business_name || merchant.name || 'M').charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <h4 className="fw-bold mb-1 text-dark">
-                                            {merchant.business_name || merchant.name}
-                                        </h4>
-                                        <span className="badge bg-light text-dark border">
-                                            Official Storefront @{merchant.subdomain}
-                                        </span>
-                                    </div>
-                                </div>
-                                <Link href={`/?subdomain=${merchant.subdomain}`} className="btn btn-outline-primary btn-sm rounded-pill px-4">
-                                    ← Storefront Home
-                                </Link>
-                            </div>
-                        )}
-
                         {/* Search, Categories & Controls Header */}
                         <div className="bg-white p-4 rounded-4 shadow-sm mb-4 border">
                             <Row className="g-3 align-items-center">
@@ -406,7 +404,7 @@ export default function AllProductsPage() {
                                                         src={item.image}
                                                         alt={item.name}
                                                         className="w-100 h-100 object-fit-cover transition-all"
-                                                        onError={(e: any) => { e.target.src = IMAGES.Product1.src; }}
+                                                        onError={(e: any) => { e.target.src = DEFAULT_PRODUCT_IMAGE; }}
                                                     />
 
                                                     {/* Video Badge Button */}
@@ -534,7 +532,7 @@ export default function AllProductsPage() {
                                                             src={item.image}
                                                             alt={item.name}
                                                             className="w-100 h-100 object-fit-cover"
-                                                            onError={(e: any) => { e.target.src = IMAGES.Product1.src; }}
+                                                            onError={(e: any) => { e.target.src = DEFAULT_PRODUCT_IMAGE; }}
                                                         />
                                                         {item.discount && (
                                                             <span className="badge bg-danger position-absolute top-0 end-0 m-2 rounded-pill">
@@ -620,7 +618,7 @@ export default function AllProductsPage() {
                                             src={quickViewProduct.image}
                                             alt={quickViewProduct.name}
                                             className="w-100 h-100 object-fit-cover"
-                                            onError={(e: any) => { e.target.src = IMAGES.Product1.src; }}
+                                            onError={(e: any) => { e.target.src = DEFAULT_PRODUCT_IMAGE; }}
                                         />
                                     </div>
                                 </Col>
