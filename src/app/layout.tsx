@@ -19,6 +19,7 @@ import { usePathname } from "next/navigation";
 import ScrollToTopButton from "@/constant/ScrollToTopButton";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
@@ -74,7 +75,9 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
         />
       </head> 
       <body>
-        {children}        
+        <WishlistProvider>
+          {children}
+        </WishlistProvider>        
         <ScrollToTopButton />
         <ToastContainer position="top-right" autoClose={3000} />
       </body>

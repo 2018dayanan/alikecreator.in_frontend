@@ -1,5 +1,6 @@
+"use client";
+
 import { Fragment } from "react/jsx-runtime";
-// import Menus from "./Menus";
 import { Offcanvas } from "react-bootstrap";
 import HeaderSidbar from "./HeaderSidbar";
 import { useEffect, useReducer, useState } from "react";
@@ -7,9 +8,10 @@ import HeadSearchBar from "./HeadSearchBar";
 import HeaderSideShoppingCard from "./HeaderSideShopingCard";
 import Link from "next/link";
 import IMAGES from "../constant/theme";
-import { accountMenuItem, menuData2, menuData3, menuData4, menuDataOne, portfolioMenu } from "../constant/Alldata";
+import { accountMenuItem } from "../constant/Alldata";
 import CountdownBlog from "./CountdownBlog";
 import Image from "next/image";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface reduType {
     headerFix: boolean;
@@ -22,10 +24,7 @@ interface reduType {
     headShoppingSidebar: boolean;
     basketShoppingCard: boolean;
     home: boolean;
-    openMenu: number | null,
-    // type : string;        
-    // index : number;
-
+    openMenu: number | null;
 }
 
 type Action =
@@ -42,12 +41,7 @@ type Action =
     | { type: 'home' }
     | { type: 'toggleMenu'; index: number };
 
-// interface stateType {
-//     home: boolean;
-//     openMenu: number | null; 
-// }
-
-const initialState = {
+const initialState: reduType = {
     headerFix: false,
     isBottom: false,
     isActive: false,
@@ -89,11 +83,12 @@ function reducer(state: reduType, action: Action): reduType {
         default:
             return state;
     }
-};
+}
 
 export default function Header3({ setOpenSidebar, openSidebar }: any) {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [cartCount, setCartCount] = useState(0);
+    const { wishlistCount } = useWishlist();
 
     useEffect(() => {
         const loadCartCount = () => {
@@ -122,7 +117,6 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
 
                 dispatch({ type: 'FIX_BOTTOM', payload: currentScroll + windowHeight >= bodyHeight });
                 dispatch({ type: 'SET_IS_ACTIVE', payload: currentScroll > state.previousScroll });
-
                 dispatch({ type: 'SET_PREVIOUS_SCROLL', payload: currentScroll });
             }
         };
@@ -139,6 +133,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
     }, [state.previousScroll]);
 
     let year = new Date().getFullYear();
+
     return (
         <Fragment>
             <header className="site-header mo-left header style-3">
@@ -168,7 +163,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                                 </Link>
                             </div>
 
-                            {/* <!-- EXTRA NAV --> */}
+                            {/* EXTRA NAV */}
                             <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
                                 <div className="extra-cell">
                                     <ul className="header-right">
@@ -189,6 +184,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                                                 onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
                                             >
                                                 <i className="iconly-Light-Heart2" />
+                                                {wishlistCount > 0 && <span className="badge badge-circle">{wishlistCount}</span>}
                                             </Link>
                                         </li>
                                         <li className="nav-item cart-link">
@@ -218,7 +214,6 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 </div>
 
             </header>
-            {/* <!-- Header End --> */}
 
             <div className={`header-menu navbar-collapse collapse ${openSidebar ? "show" : ""}`} >
                 <div className="row h-100">
@@ -228,10 +223,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                                 <li>
                                     <Link href="/"><span>Home</span></Link>
                                 </li>
-
                                 <li><Link href="/blog"><span>Blog</span></Link></li>
-
-
                                 <li><Link href="/about-us"><span>About Us</span></Link></li>
                                 <li><Link href="/contact-us-2"><span>Contact Us</span></Link></li>
                                 <li className={`sub-menu-down ${state.openMenu === 6 ? "open active" : ""}`}
@@ -275,15 +267,13 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 </div>
             </div>
 
-            {/*  SearchBar  */}
+            {/* SearchBar */}
             <Offcanvas className="dz-search-area dz-offcanvas offcanvas-top"
                 show={state.openSearchBar}
-                // onHide={setOpenSearchBar}
                 onHide={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                 placement={'top'}
             >
                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"
-                    // onClick={()=>setOpenSearchBar(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                 >
                     &times;
@@ -291,16 +281,13 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 <HeadSearchBar />
             </Offcanvas>
 
-            {/*  Sidebar finter */}
+            {/* Sidebar filter */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end"
                 show={state.headSideBar}
-                // onHide={setHeadSideBar}
                 onHide={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
             >
                 <button type="button" className="btn-close"
-                    // onClick={()=>setHeadSideBar(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
-
                 >
                     &times;
                 </button>
@@ -309,15 +296,13 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 </div>
             </Offcanvas>
 
-            {/*  Sidebar cart  */}
+            {/* Sidebar cart */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1}
                 show={state.headShoppingSidebar}
-                // onHide={setHeadShoppingSidebar}
                 onHide={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
             >
                 <button type="button" className="btn-close"
                     onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
-                // onClick={()=>setHeadShoppingSidebar(false)}
                 >
                     &times;
                 </button>
@@ -328,14 +313,12 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 </div>
             </Offcanvas>
 
-            {/*  Shopping Sidebar Basket   */}
+            {/* Shopping Sidebar Basket */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1}
                 show={state.basketShoppingCard}
-                // onHide={setBasketShoppingCard}
                 onHide={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
             >
                 <button type="button" className="btn-close"
-                    // onClick={()=>setBasketShoppingCard(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                 >
                     &times;
@@ -347,5 +330,5 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 </div>
             </Offcanvas>
         </Fragment>
-    )
+    );
 }

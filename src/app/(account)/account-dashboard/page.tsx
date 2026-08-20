@@ -9,12 +9,13 @@ import CommanSidebar from "@/elements/MyAccount/CommanSidebar";
 import SalesChart from "@/elements/MyAccount/SalesChart";
 import Image from "next/image";
 import CommanLayout from "@/components/CommanLayout";
-
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function DashboardPage() {
     const router = useRouter();
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [userName, setUserName] = useState("User");
+    const { wishlistCount } = useWishlist();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -91,7 +92,7 @@ export default function DashboardPage() {
                                                 </div>
                                                 <div className="total-detail">
                                                     <span className="text">Total Wishlist</span>
-                                                    <h2 className="title">31576</h2>
+                                                    <h2 className="title">{wishlistCount}</h2>
                                                 </div>
                                             </div>
                                         </div>

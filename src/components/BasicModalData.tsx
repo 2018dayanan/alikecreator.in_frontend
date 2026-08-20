@@ -1,9 +1,25 @@
+"use client";
+
 import Link from "next/link";
 import { SVGICON } from "../constant/theme";
-import { modalCategoryBlog, modalCategoryBlog2 } from "../constant/Alldata";
+import { modalCategoryBlog } from "../constant/Alldata";
 import ProductInputButton from "../elements/Shop/ProductInputButton";
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function BasicModalData() {
+    const { toggleFavorite, isFavorite } = useWishlist();
+
+    const sampleProduct = {
+        id: "sample-cardigan-01",
+        title: "Cozy Knit Cardigan Sweater",
+        name: "Cozy Knit Cardigan Sweater",
+        price: 125.75,
+        originalPrice: 132.17,
+        image: ""
+    };
+
+    const isFav = isFavorite(sampleProduct.id);
+
     return (
         <>
             <div className="dz-product-detail style-2 ps-xl-3 ps-0 pt-2 mb-0">
@@ -11,24 +27,14 @@ export default function BasicModalData() {
                     <div className="dz-content-footer">
                         <div className="dz-content-start">
                             <span className="badge bg-secondary mb-2">SALE 20% Off</span>
-                            <h4 className="title mb-1"><Link href="/shop-list">Cozy Knit Cardigan Sweater</Link></h4>
+                            <h4 className="title mb-1"><Link href="/shop-list">{sampleProduct.title}</Link></h4>
                             <div className="review-num">
                                 <ul className="dz-rating me-2">
-                                    <li className="star-fill">
-                                        <i className="flaticon-star-1" />
-                                    </li>
-                                    <li className="star-fill">
-                                        <i className="flaticon-star-1" />
-                                    </li>
-                                    <li className="star-fill">
-                                        <i className="flaticon-star-1" />
-                                    </li>
-                                    <li>
-                                        <i className="flaticon-star-1" />
-                                    </li>
-                                    <li>
-                                        <i className="flaticon-star-1" />
-                                    </li>
+                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                    <li><i className="flaticon-star-1" /></li>
+                                    <li><i className="flaticon-star-1" /></li>
                                 </ul>
                                 <span className="text-secondary me-2">4.7 Rating</span>
                                 <Link href="#">(5 customer reviews)</Link>
@@ -36,12 +42,12 @@ export default function BasicModalData() {
                         </div>
                     </div>
                     <p className="para-text">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has.
+                        High quality comfortable knit sweater for all occasions.
                     </p>
                     <div className="meta-content m-b20 d-flex align-items-end">
                         <div className="me-3">
                             <span className="form-label">Price</span>
-                            <span className="price">₹125.75 <del>₹132.17</del></span>
+                            <span className="price">₹{sampleProduct.price} <del>₹{sampleProduct.originalPrice}</del></span>
                         </div>
                         <div className="btn-quantity light me-0">
                             <label className="form-label">Quantity</label>
@@ -50,10 +56,14 @@ export default function BasicModalData() {
                     </div>
                     <div className=" cart-btn">
                         <Link href="/shop-cart" className="btn btn-secondary text-uppercase">Add To Cart</Link>
-                        <Link href="/shop-wishlist" className="btn btn-md btn-outline-secondary btn-icon">
-                            <svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: SVGICON.BlankHeart }}></svg>
-                            Add To Wishlist
-                        </Link>
+                        <button
+                            type="button"
+                            className={`btn btn-md ${isFav ? 'btn-primary' : 'btn-outline-secondary'} btn-icon`}
+                            onClick={() => toggleFavorite(sampleProduct)}
+                        >
+                            <svg width="19" height="17" viewBox="0 0 19 17" fill={isFav ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: SVGICON.BlankHeart }}></svg>
+                            {isFav ? "In Wishlist" : "Add To Wishlist"}
+                        </button>
                     </div>
                     <div className="dz-info mb-0">
                         <ul>
@@ -66,28 +76,9 @@ export default function BasicModalData() {
                                 <li key={ind}><Link href="/shop-standard">{elem.name}</Link></li>
                             ))}
                         </ul>
-                        <div className="dz-social-icon">
-                            <ul>
-                                <li><Link target="_blank" className="text-dark" href="https://www.facebook.com/Eonpulsetech">
-                                    <i className="fab fa-facebook-f" />
-                                </Link></li>
-                                <li><Link target="_blank" className="text-dark" href="https://twitter.com/Eonpulsetechs">
-                                    <i className="fab fa-twitter" />
-                                </Link></li>
-                                <li><Link target="_blank" className="text-dark" href="https://www.youtube.com/@Eonpulsetech1723">
-                                    <i className="fa-brands fa-youtube" />
-                                </Link></li>
-                                <li><Link target="_blank" className="text-dark" href="https://www.linkedin.com/showcase/3686700/admin/">
-                                    <i className="fa-brands fa-linkedin-in" />
-                                </Link></li>
-                                <li><Link target="_blank" className="text-dark" href="https://www.instagram.com/Eonpulsetech/">
-                                    <i className="fab fa-instagram" />
-                                </Link></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }

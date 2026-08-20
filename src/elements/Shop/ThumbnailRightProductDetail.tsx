@@ -2,6 +2,7 @@ import Link from "next/link";
 import ProductInputButton from "./ProductInputButton";
 import ShopCardColour from "./ShopCardColour";
 import StarRating from "./StarRating";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface thumbnailCardtype {
     title: string;
@@ -9,6 +10,8 @@ interface thumbnailCardtype {
 }
 
 export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
+    const { toggleFavorite, isFavorite } = useWishlist();
+    const isFav = isFavorite(props.title);
     return (
         <>
             <div className="dz-content">
@@ -59,10 +62,14 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
                 </div>
                 <div className="btn-group cart-btn">
                     <Link href="/shop-cart" className="btn btn-secondary text-uppercase">Add To Cart</Link>
-                    <Link href="/shop-wishlist" className="btn btn-outline-secondary btn-icon">
-                        <i className="icon feather icon-heart"></i>
-                        Add To Wishlist
-                    </Link>
+                    <button 
+                        type="button" 
+                        className={`btn ${isFav ? 'btn-primary' : 'btn-outline-secondary'} btn-icon`}
+                        onClick={() => toggleFavorite({ id: props.title, title: props.title, price: 125.75 })}
+                    >
+                        <i className={`icon feather ${isFav ? 'icon-heart-on' : 'icon-heart'}`}></i>
+                        {isFav ? "In Wishlist" : "Add To Wishlist"}
+                    </button>
                 </div>
                 <div className="dz-info">
                     <ul>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useReducer, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
@@ -9,9 +9,10 @@ import Menus from "./Menus";
 import HeadSearchBar from "./HeadSearchBar";
 import HeaderSidbar from "./HeaderSidbar";
 import HeaderSideShoppingCard from "./HeaderSideShopingCard";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface DesignType {
-    design: string
+    design: string;
 }
 
 interface State {
@@ -37,7 +38,6 @@ type Action =
     | { type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' }
     | { type: 'TOGGLE_BASKET_SHOPPING_CARD' };
 
-
 const initialState = {
     headerFix: false,
     isBottom: false,
@@ -49,7 +49,6 @@ const initialState = {
     headShoppingSidebar: false,
     basketShoppingCard: false,
 };
-
 
 function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -76,11 +75,10 @@ function reducer(state: State, action: Action): State {
     }
 }
 
-
 const Header = ({ design }: DesignType) => {
-
     const [state, dispatch] = useReducer(reducer, initialState);
     const [cartCount, setCartCount] = useState(0);
+    const { wishlistCount } = useWishlist();
 
     useEffect(() => {
         const loadCartCount = () => {
@@ -91,7 +89,6 @@ const Header = ({ design }: DesignType) => {
         window.addEventListener('cartUpdated', loadCartCount);
         return () => window.removeEventListener('cartUpdated', loadCartCount);
     }, []);
-
 
     const scrollHandler = () => {
         if (window.scrollY > 80) {
@@ -110,7 +107,6 @@ const Header = ({ design }: DesignType) => {
 
                 dispatch({ type: 'FIX_BOTTOM', payload: currentScroll + windowHeight >= bodyHeight });
                 dispatch({ type: 'SET_IS_ACTIVE', payload: currentScroll > state.previousScroll });
-
                 dispatch({ type: 'SET_PREVIOUS_SCROLL', payload: currentScroll });
             }
         };
@@ -125,31 +121,31 @@ const Header = ({ design }: DesignType) => {
             window.removeEventListener("scroll", combinedHandler);
         };
     }, [state.previousScroll]);
+
     return (
         <>
             <header className={`site-header mo-left header ${design}`}>
-                {/*  Main Header  */}
+                {/* Main Header */}
                 <div className={`sticky-header main-bar-wraper navbar-expand-lg ${state.headerFix ? 'is-fixed' : ''}`}>
                     <div className="main-bar clearfix">
                         <div className="container-fluid clearfix d-lg-flex d-block">
-                            {design === "header-text-white header-transparent" ?
+                            {design === "header-text-white header-transparent" ? (
                                 ''
-                                :
+                            ) : (
                                 <div className="logo-header logo-dark me-md-5">
                                     <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
                                 </div>
-                            }
-                            {design === "header-text-white header-transparent" ?
+                            )}
+                            {design === "header-text-white header-transparent" ? (
                                 <div className="logo-header me-md-5">
-                                    <Link href="/" className=" logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" /></Link>
+                                    <Link href="/" className="logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" /></Link>
                                     <Link href="/" className="logo-dark"><Image src={IMAGES.logopng} alt="logo" /></Link>
                                 </div>
-                                :
+                            ) : (
                                 ''
-                            }
-                            <button className={`navbar-toggler collapsed navicon justify-content-end ${state.openSidebar ? "open" : ""}`}
-                                // onClick={()=>setOpenSidebar(!openSidebar)}
-                                // onClick={}
+                            )}
+                            <button
+                                className={`navbar-toggler collapsed navicon justify-content-end ${state.openSidebar ? "open" : ""}`}
                                 onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
                             >
                                 <span></span>
@@ -157,16 +153,14 @@ const Header = ({ design }: DesignType) => {
                                 <span></span>
                             </button>
 
-                            {/*  Main Nav  */}
+                            {/* Main Nav */}
                             <div className={`header-nav w3menu navbar-collapse collapse justify-content-start ${state.openSidebar ? "show" : ""}`}
                                 id="navbarNavDropdown"
                             >
                                 <div className="logo-header logo-dark">
                                     <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
                                 </div>
-                                {/* All menus item */}
                                 <Menus />
-                                {/* All menus item end*/}
                                 <div className="dz-social-icon">
                                     <ul>
                                         <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/Eonpulsetech"></Link></li>
@@ -176,7 +170,8 @@ const Header = ({ design }: DesignType) => {
                                     </ul>
                                 </div>
                             </div>
-                            {/* EXTRA NAV  */}
+
+                            {/* EXTRA NAV */}
                             <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
                                 <div className="extra-cell">
                                     <ul className="header-right">
@@ -187,7 +182,6 @@ const Header = ({ design }: DesignType) => {
                                         </li>
                                         <li className="nav-item search-link">
                                             <Link className="nav-link" href="#"
-                                                // onClick={()=>setOpenSearchBar(true)}
                                                 onClick={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                                             >
                                                 <i className="iconly-Light-Search" />
@@ -195,15 +189,14 @@ const Header = ({ design }: DesignType) => {
                                         </li>
                                         <li className="nav-item wishlist-link">
                                             <Link className="nav-link" href="#"
-                                                // onClick={()=>setHeadShoppingSidebar(true)}
                                                 onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
                                             >
                                                 <i className="iconly-Light-Heart2" />
+                                                {wishlistCount > 0 && <span className="badge badge-circle">{wishlistCount}</span>}
                                             </Link>
                                         </li>
                                         <li className="nav-item cart-link">
                                             <Link href="#" className="nav-link cart-btn"
-                                                // onClick={()=>setBasketShoppingCard(true)}
                                                 onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                                             >
                                                 <i className="iconly-Broken-Buy" />
@@ -212,7 +205,6 @@ const Header = ({ design }: DesignType) => {
                                         </li>
                                         <li className="nav-item filte-link">
                                             <Link href="#" className="nav-link filte-btn"
-                                                // onClick={() => setHeadSideBar(true)}
                                                 onClick={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 13" fill="none">
@@ -227,30 +219,27 @@ const Header = ({ design }: DesignType) => {
                         </div>
                     </div>
                 </div>
-                {/*  Main Header End  */}
+                {/* Main Header End */}
             </header>
-            {/*  SearchBar  */}
+
+            {/* SearchBar */}
             <Offcanvas className="dz-search-area dz-offcanvas offcanvas-top"
                 show={state.openSearchBar} onHide={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                 placement={'top'}
             >
                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"
-                    // onClick={()=>setOpenSearchBar(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                 >
                     &times;
                 </button>
                 <HeadSearchBar />
             </Offcanvas>
-            {/*  SearchBar  */}
 
-            {/* - Sidebar finter */}
+            {/* Sidebar filter */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" show={state.headSideBar}
-                // onHide={setHeadSideBar}
                 onHide={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
             >
                 <button type="button" className="btn-close"
-                    // onClick={()=>setHeadSideBar(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
                 >
                     &times;
@@ -259,13 +248,12 @@ const Header = ({ design }: DesignType) => {
                     <HeaderSidbar />
                 </div>
             </Offcanvas>
-            {/*  Sidebar cart  */}
+
+            {/* Sidebar cart - Wishlist Tab */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1} show={state.headShoppingSidebar}
-                // onHide={setHeadShoppingSidebar}
                 onHide={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
             >
                 <button type="button" className="btn-close"
-                    // onClick={()=>setHeadShoppingSidebar(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
                 >
                     &times;
@@ -277,13 +265,11 @@ const Header = ({ design }: DesignType) => {
                 </div>
             </Offcanvas>
 
-            {/*  Shopping Sidebar Basket   */}
+            {/* Shopping Sidebar Basket - Cart Tab */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1} show={state.basketShoppingCard}
-                // onHide={setBasketShoppingCard}
                 onHide={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
             >
                 <button type="button" className="btn-close"
-                    // onClick={()=>setBasketShoppingCard(false)}
                     onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
                 >
                     &times;

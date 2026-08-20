@@ -1,15 +1,36 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useWishlist } from "@/context/WishlistContext";
 
-interface varibleType{
-    image : string;
-    title : string;
-    price? : string;
-    inputtype? : string;
+interface varibleType {
+    id?: string | number;
+    image: any;
+    title: string;
+    price?: string;
+    inputtype?: string;
 }
 
-export default function ShopListCard(props: varibleType){
-    return(
+export default function ShopListCard(props: varibleType) {
+    const { toggleFavorite, isFavorite } = useWishlist();
+    const itemId = props.id || props.title;
+    const isFav = isFavorite(String(itemId));
+
+    const handleToggle = () => {
+        const numPrice = props.price ? parseFloat(props.price.replace(/[^0-9.]/g, '')) || 0 : 0;
+        const imgUrl = typeof props.image === 'string' ? props.image : (props.image as any)?.src || '';
+        toggleFavorite({
+            id: itemId,
+            _id: itemId,
+            title: props.title,
+            name: props.title,
+            price: numPrice,
+            image: imgUrl
+        });
+    };
+
+    return (
         <div className="dz-shop-card style-2">
             <div className="dz-media">
                 <Image src={props.image} alt="shop" />
@@ -25,21 +46,11 @@ export default function ShopListCard(props: varibleType){
                     </div>
                     <div className="review-num">
                         <ul className="dz-rating">
-                            <li className="star-fill">
-                                <i className="flaticon-star-1"/>
-                            </li>										
-                            <li className="star-fill">
-                                <i className="flaticon-star-1"/>
-                            </li>
-                            <li className="star-fill">
-                                <i className="flaticon-star-1"/>
-                            </li>
-                            <li>
-                                <i className="flaticon-star-1"/>
-                            </li>
-                            <li>
-                                <i className="flaticon-star-1"/>
-                            </li>
+                            <li className="star-fill"><i className="flaticon-star-1" /></li>
+                            <li className="star-fill"><i className="flaticon-star-1" /></li>
+                            <li className="star-fill"><i className="flaticon-star-1" /></li>
+                            <li><i className="flaticon-star-1" /></li>
+                            <li><i className="flaticon-star-1" /></li>
                         </ul>
                         <span><Link href="#"> 250 Review</Link></span>
                     </div>
@@ -47,7 +58,7 @@ export default function ShopListCard(props: varibleType){
                 <div className="dz-body">
                     <div className="dz-rating-box">
                         <div>
-                            <p className="dz-para">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has.</p>
+                            <p className="dz-para">High quality crafted item made with premium materials for everyday style.</p>
                         </div>
                     </div>
                     <div className="rate">
@@ -57,15 +68,21 @@ export default function ShopListCard(props: varibleType){
                                 <span className="price">{props.price}</span>
                             </div>
                         </div>
-                        <div className="d-flex">
+                        <div className="d-flex align-items-center gap-2">
                             <Link href="/shop-cart" className="btn btn-secondary btn-md btn-icon">
-                                <i className="icon feather icon-shopping-cart d-md-none d-block"/>
+                                <i className="icon feather icon-shopping-cart d-md-none d-block" />
                                 <span className="d-md-block d-none">Add to cart</span>
                             </Link>
                             <div className="bookmark-btn style-1">
-                                <input className="form-check-input" type="checkbox" id={props.inputtype} />
-                                <label className="form-check-label" htmlFor={props.inputtype}>
-                                    <i className="fa-solid fa-heart"/>
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={props.inputtype || `fav-${props.title}`}
+                                    checked={isFav}
+                                    onChange={handleToggle}
+                                />
+                                <label className="form-check-label" htmlFor={props.inputtype || `fav-${props.title}`}>
+                                    <i className="fa-solid fa-heart" />
                                 </label>
                             </div>
                         </div>
@@ -73,5 +90,5 @@ export default function ShopListCard(props: varibleType){
                 </div>
             </div>
         </div>
-    )
+    );
 }

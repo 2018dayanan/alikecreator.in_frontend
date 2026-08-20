@@ -5,6 +5,7 @@ import IMAGES from "../../constant/theme";
 import Link from "next/link";
 import Image from "next/image";
 import { useReducer } from "react";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface trandingType {
     price: string;
@@ -77,6 +78,7 @@ function reducer(state: typeof initialState, action: any) {
 
 function TrandingSlider({showdetailModal} :  modelType) {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const { toggleFavorite, isFavorite } = useWishlist();
     const toggleHeart = (index: number) => {
         dispatch({ type: 'TOGGLE_HEART', index });
     };
@@ -131,9 +133,15 @@ function TrandingSlider({showdetailModal} :  modelType) {
                                     <i className="fa-solid fa-eye d-md-none d-block"/>
                                     <span className="d-md-block d-none">Quick View</span>
                                 </Link>
-                                <div className={`btn btn-primary meta-icon dz-wishicon ${state.heartIcon[ind] ? "active": ""}`}
+                                <div className={`btn btn-primary meta-icon dz-wishicon ${isFavorite(elem.title) ? "active": ""}`}
                                     onClick={()=>{
-                                        toggleHeart(ind);
+                                        const numPrice = parseFloat(elem.price.replace(/[^0-9.]/g, '')) || 0;
+                                        toggleFavorite({
+                                            id: elem.title,
+                                            title: elem.title,
+                                            price: numPrice,
+                                            image: typeof elem.image === 'string' ? elem.image : (elem.image as any)?.src || ''
+                                        });
                                     }}
                                 >
                                     <i className="icon feather icon-heart dz-heart"/>

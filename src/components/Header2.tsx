@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { Offcanvas } from "react-bootstrap";
 import IMAGES from "../constant/theme";
 import { Fragment, useEffect, useReducer, useState } from "react";
@@ -9,7 +10,7 @@ import Header2Menus from "./Header2Menus";
 import CategoryMenuItem from "./CategoryMenuItem";
 import Categorydropdown from "./CategoryDropdown";
 import Image from "next/image";
-
+import { useWishlist } from "@/context/WishlistContext";
 
 interface State {
     headerFix: boolean;
@@ -33,7 +34,6 @@ type Action =
     | { type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' }
     | { type: 'TOGGLE_BASKET_SHOPPING_CARD' }
     | { type: 'TOGGLE_CATEGORY_ACTIVE' };
-
 
 const initialState = {
     headerFix: false,
@@ -75,6 +75,7 @@ function reducer(state: State, action: Action): State {
 export default function Header2() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [cartCount, setCartCount] = useState(0);
+    const { wishlistCount } = useWishlist();
 
     useEffect(() => {
         const loadCartCount = () => {
@@ -118,16 +119,17 @@ export default function Header2() {
             window.removeEventListener("scroll", combinedHandler);
         };
     }, [state.previousScroll]);
+
     return (
         <Fragment>
             <header className="site-header mo-left header style-2">
                 <div className="header-info-bar">
                     <div className="container clearfix">
-                        {/* <!-- Website Logo --> */}
+                        {/* Website Logo */}
                         <div className="logo-header logo-dark">
                             <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
                         </div>
-                        {/* <!-- EXTRA NAV --> */}
+                        {/* EXTRA NAV */}
                         <div className="extra-nav d-md-flex d-none m-l15">
                             <div className="extra-cell">
                                 <ul className="navbar-nav header-right m-0">
@@ -148,7 +150,7 @@ export default function Header2() {
                             </div>
                         </div>
 
-                        {/* <!-- header search nav --> */}
+                        {/* header search nav */}
                         <div className="header-search-nav">
                             <form className="header-item-search">
                                 <div className="input-group search-input">
@@ -163,17 +165,15 @@ export default function Header2() {
                     </div>
                 </div>
 
-
-
                 <div className={`sticky-header main-bar-wraper navbar-expand-lg ${state.headerFix ? 'is-fixed' : ''}`}>
                     <div className="main-bar clearfix">
                         <div className="container clearfix d-lg-flex d-block">
-                            {/* <!-- Website Logo --> */}
+                            {/* Website Logo */}
                             <div className="logo-header logo-dark">
                                 <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
                             </div>
 
-                            {/* <!-- Nav Toggle Button --> */}
+                            {/* Nav Toggle Button */}
                             <button className={`navbar-toggler collapsed navicon justify-content-end ${state.openSidebar ? "open" : ""}`}
                                 onClick={() => dispatch({ type: "TOGGLE_SIDEBAR" })}
                             >
@@ -182,7 +182,7 @@ export default function Header2() {
                                 <span></span>
                             </button>
 
-                            {/* <!-- Main Nav --> */}
+                            {/* Main Nav */}
                             <div className={`header-nav w3menu navbar-collapse collapse justify-content-start ${state.openSidebar ? "show" : ""}`}>
                                 <div className="logo-header">
                                     <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
@@ -213,9 +213,7 @@ export default function Header2() {
                                     </div>
                                 </div>
                                 <ul className="nav navbar-nav">
-                                    {/* All menus item */}
                                     <Header2Menus />
-                                    {/* All menus item end*/}
                                 </ul>
                                 <div className="dz-social-icon">
                                     <ul>
@@ -227,7 +225,7 @@ export default function Header2() {
                                 </div>
                             </div>
 
-                            {/* <!-- EXTRA NAV --> */}
+                            {/* EXTRA NAV */}
                             <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
                                 <div className="extra-cell">
                                     <ul className="header-right">
@@ -248,6 +246,7 @@ export default function Header2() {
                                                 onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
                                             >
                                                 <i className="iconly-Light-Heart2" />
+                                                {wishlistCount > 0 && <span className="badge badge-circle">{wishlistCount}</span>}
                                             </Link>
                                         </li>
                                         <li className="nav-item cart-link">
@@ -267,7 +266,7 @@ export default function Header2() {
                 </div>
             </header>
 
-            {/*  SearchBar  */}
+            {/* SearchBar */}
             <Offcanvas className="dz-search-area dz-offcanvas offcanvas-top"
                 show={state.openSearchBar} onHide={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
                 placement={'top'}
@@ -279,9 +278,8 @@ export default function Header2() {
                 </button>
                 <HeadSearchBar />
             </Offcanvas>
-            {/*  SearchBar  */}
 
-            {/*  Sidebar cart  */}
+            {/* Sidebar cart */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1} show={state.headShoppingSidebar}
                 onHide={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
             >
@@ -297,7 +295,7 @@ export default function Header2() {
                 </div>
             </Offcanvas>
 
-            {/*  Shopping Sidebar Basket   */}
+            {/* Shopping Sidebar Basket */}
             <Offcanvas className="dz-offcanvas offcanvas-end" placement="end" tabIndex={-1} show={state.basketShoppingCard}
                 onHide={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
             >
@@ -313,5 +311,5 @@ export default function Header2() {
                 </div>
             </Offcanvas>
         </Fragment>
-    )
+    );
 }

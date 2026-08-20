@@ -1,9 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import IMAGES, { SVGICON } from "../../constant/theme";
 import Image from "next/image";
+import { useWishlist } from "@/context/WishlistContext";
 
-export default function BestOfferBlog(){
-    return(
+export default function BestOfferBlog() {
+    const { toggleFavorite, isFavorite } = useWishlist();
+    const isFav = isFavorite("best-offer-item");
+
+    return (
         <div className="cart-detail">
             <Link href={"#"} className="btn btn-outline-secondary w-100 m-b20">Bank Offer 5% Cashback</Link>
             <div className="icon-bx-wraper style-4 m-b15">
@@ -40,14 +46,18 @@ export default function BestOfferBlog(){
                     </tr>
                 </tbody>
             </table>
-            <Link href="/shop-wishlist" className="btn btn-outline-secondary btn-icon m-b20">
-                <svg width="19" height="17" viewBox="0 0 19 17" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    dangerouslySetInnerHTML={{__html : SVGICON.BlankHeart}}
+            <button
+                type="button"
+                className={`btn ${isFav ? 'btn-primary' : 'btn-outline-secondary'} btn-icon m-b20 w-100`}
+                onClick={() => toggleFavorite({ id: "best-offer-item", title: "Special Offer Product", price: 125.75 })}
+            >
+                <svg width="19" height="17" viewBox="0 0 19 17" fill={isFav ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg"
+                    dangerouslySetInnerHTML={{ __html: SVGICON.BlankHeart }}
                 >
                 </svg>
-                Add To Wishlist
-            </Link>
+                {isFav ? "In Wishlist" : "Add To Wishlist"}
+            </button>
             <Link href="/shop-cart" className="btn btn-secondary w-100">ADD TO CART</Link>
-        </div>	
-    )
+        </div>
+    );
 }
