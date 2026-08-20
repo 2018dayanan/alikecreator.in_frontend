@@ -96,3 +96,118 @@
 .pagination .page-link {
 	color: #7D1C2D;
 }
+
+/* =========================================================
+   Main Header Background & Contrast Styling (Web & Mobile)
+   ========================================================= */
+
+/* Main Header Background */
+.site-header .main-bar,
+.site-header.style-1 .main-bar,
+.site-header.header-transparent .main-bar,
+.site-header .sticky-header.main-bar-wraper,
+.site-header .is-fixed .main-bar,
+.site-header .is-fixed.main-bar-wraper {
+	background-color: #7D1C2D !important;
+	background: #7D1C2D !important;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+	box-shadow: 0 4px 20px rgba(125, 28, 45, 0.25);
+}
+
+/* Desktop Navigation Menu Items */
+@media only screen and (min-width: 992px) {
+	.site-header .header-nav.w3menu .nav > li > a,
+	.site-header .header-nav.w3menu .nav > li > a span {
+		color: #ffffff !important;
+		transition: all 0.25s ease;
+	}
+
+	.site-header .header-nav.w3menu .nav > li:hover > a,
+	.site-header .header-nav.w3menu .nav > li:hover > a span,
+	.site-header .header-nav.w3menu .nav > li.active > a,
+	.site-header .header-nav.w3menu .nav > li.active > a span {
+		color: #FFDFE7 !important;
+		opacity: 0.95;
+	}
+
+	.site-header .header-nav.w3menu .nav > li > a i {
+		color: #ffffff !important;
+	}
+}
+
+/* Submenu Dropdown Styling */
+.site-header .header-nav.w3menu .nav > li .sub-menu,
+.site-header .header-nav.w3menu .nav > li .mega-menu {
+	border-top: 3px solid #7D1C2D;
+	background-color: #ffffff;
+}
+
+.site-header .header-nav.w3menu .nav > li .sub-menu li > a {
+	color: #5E626F;
+	transition: all 0.2s ease;
+}
+
+.site-header .header-nav.w3menu .nav > li .sub-menu li:hover > a,
+.site-header .header-nav.w3menu .nav > li .sub-menu li.active > a {
+	color: #7D1C2D !important;
+	padding-left: 32px;
+}
+
+/* Header Right / Extra Nav Icons & Links (Web & Mobile) */
+.site-header .extra-nav .extra-cell .login-link,
+.site-header .extra-nav .extra-cell .login-link a,
+.site-header .extra-nav .header-right .login-link .nav-link,
+.site-header .extra-nav .header-right .nav-item .nav-link,
+.site-header .extra-nav .header-right .nav-item .nav-link i {
+	color: #ffffff !important;
+	transition: opacity 0.25s ease;
+}
+
+.site-header .extra-nav .header-right .nav-item .nav-link:hover,
+.site-header .extra-nav .header-right .nav-item .nav-link:hover i {
+	color: #FFDFE7 !important;
+}
+
+.site-header .extra-nav .filte-link svg rect,
+.site-header .extra-nav .filte-btn svg rect {
+	fill: #ffffff !important;
+}
+
+/* Badges (Wishlist & Cart Count) */
+.site-header .extra-nav .header-right .badge,
+.site-header .extra-nav .header-right .badge-circle {
+	background-color: #ffffff !important;
+	color: #7D1C2D !important;
+	font-weight: 700;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile View Adjustments (<= 991px) */
+@media only screen and (max-width: 991px) {
+	.site-header .navbar-toggler.navicon span {
+		background-color: #ffffff !important;
+	}
+
+	.site-header .navbar-toggler.navicon.open span {
+		background-color: #ffffff !important;
+	}
+
+	.site-header .header-nav.w3menu {
+		background-color: #ffffff;
+	}
+
+	.site-header .header-nav.w3menu .nav > li > a {
+		color: #151F37;
+	}
+
+	.site-header .header-nav.w3menu .nav > li.active > a,
+	.site-header .header-nav.w3menu .nav > li:hover > a {
+		color: #7D1C2D !important;
+	}
+
+	.site-header .header-nav .dz-social-icon ul li a:hover {
+		background-color: #7D1C2D !important;
+		color: #ffffff !important;
+		border-color: #7D1C2D !important;
+	}
+}
