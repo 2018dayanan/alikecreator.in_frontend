@@ -1,5 +1,5 @@
-:root{
-	
+:root {
+
 	/* Primary */
 	--primary: #7D1C2D;
 	--primary-hover: #631422;
@@ -8,17 +8,17 @@
 	--bs-primary-rgb: 125, 28, 45;
 	--bs-link-color: #7D1C2D;
 	--bs-link-hover-color: #631422;
-	
+
 	--secondary: #000;
 	--secondary-hover: #000;
 	--secondary-light: #A7BFFE;
 	--title: #000;
 	--bg-light: #FFFAF3;
-	--light-dark: #FEEB9D;
+	--light-dark: #7d1d2d38;
 	--theme-text-color: #000000;
 	--dark: #151F37;
-    --dark-light: #F9F9F9;
-	
+	--dark-light: #F9F9F9;
+
 	/* Primary RGBA */
 	--rgba-primary-1: rgba(125, 28, 45, 0.1);
 	--rgba-primary-2: rgba(125, 28, 45, 0.2);
@@ -29,7 +29,7 @@
 	--rgba-primary-7: rgba(125, 28, 45, 0.7);
 	--rgba-primary-8: rgba(125, 28, 45, 0.8);
 	--rgba-primary-9: rgba(125, 28, 45, 0.9);
-	
+
 	/* Gradient */
 	--gradient1: linear-gradient(307deg, #FEEB9D 1.9%, #FFDFE7 67.57%);
 	--gradient2: linear-gradient(307deg, #FFEA96 1.9%, #FFB0B0 85.96%);
@@ -65,7 +65,8 @@
 	border-color: #7D1C2D !important;
 }
 
-.btn-outline-primary:hover, .btn-outline-primary:active {
+.btn-outline-primary:hover,
+.btn-outline-primary:active {
 	background-color: #7D1C2D !important;
 	border-color: #7D1C2D !important;
 	color: #ffffff !important;

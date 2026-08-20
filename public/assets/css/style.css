@@ -54791,4 +54791,12 @@ footer.footer-dark .icon-bx-wraper {
   width: 150px;
 }
 
+.about-wraper {
+  position: relative;
+  background-color: rgba(125, 28, 45, 0.05);
+  border: 1px solid rgba(125, 28, 45, 0.12);
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
 /*# sourceMappingURL=style.css.map */
