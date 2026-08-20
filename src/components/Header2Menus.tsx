@@ -45,7 +45,7 @@ export default function Header2Menus() {
                 <Link href="/"><span>Home</span></Link>
             </li>
 
-            <li><Link href="/blog"><span>Blog</span></Link></li>
+            <li><Link href="/photos"><span>Photos</span></Link></li>
 
 
             <li><Link href="/about-us"><span>About Us</span></Link></li>
