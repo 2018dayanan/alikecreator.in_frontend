@@ -269,5 +269,91 @@ export const adminService = {
     } catch {
       return { status: false, data: [] };
     }
+  },
+
+  // Carousel / Banner Management
+  getAdminCarousels: async (page = 1, limit = 10, merchantId = '', isActive?: boolean, search = '') => {
+    let url = `${API_URL}/admin/carousel?page=${page}&limit=${limit}`;
+    if (merchantId) {
+      url += `&merchantId=${encodeURIComponent(merchantId)}`;
+    }
+    if (typeof isActive === 'boolean') {
+      url += `&isActive=${isActive}`;
+    }
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch carousels' };
+    }
+  },
+
+  getAdminCarouselById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/carousel/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch carousel' };
+    }
+  },
+
+  createCarousel: async (data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/carousel`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to create carousel' };
+    }
+  },
+
+  updateCarousel: async (id: string, data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/carousel/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update carousel' };
+    }
+  },
+
+  deleteCarousel: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/carousel/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to delete carousel' };
+    }
+  },
+
+  toggleCarouselStatus: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/carousel/${id}/status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update status' };
+    }
   }
 };
+
