@@ -64,6 +64,7 @@ export default function MerchantLoginPage() {
                     required
                     size="lg"
                     className="fs-6"
+                    autoComplete="username"
                   />
                 </Form.Group>
 
@@ -77,6 +78,7 @@ export default function MerchantLoginPage() {
                     required
                     size="lg"
                     className="fs-6"
+                    autoComplete="current-password"
                   />
                 </Form.Group>
 

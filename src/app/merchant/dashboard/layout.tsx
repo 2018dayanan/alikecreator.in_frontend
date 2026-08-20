@@ -46,6 +46,7 @@ export default function MerchantDashboardLayout({ children }: { children: React.
     { href: '/merchant/dashboard/products', label: 'Products', icon: '📦' },
     { href: '/merchant/dashboard/categories', label: 'Categories', icon: '🏷️' },
     { href: '/merchant/dashboard/carousels', label: 'Carousels / Banners', icon: '🖼️' },
+    { href: '/merchant/dashboard/discover', label: 'Discover Collection', icon: '✨' },
     { href: '/merchant/dashboard/orders', label: 'Orders', icon: '🛒' },
     { href: '/merchant/dashboard/profile', label: 'Store Profile', icon: '⚙️' },
   ];

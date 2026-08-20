@@ -164,5 +164,26 @@ export const ProductService = {
             console.error("Error fetching public carousels:", error);
             return { success: false, data: [] };
         }
+    },
+
+    /**
+     * Fetch active public Discover / Latest Collection products by subdomain
+     */
+    getPublicDiscover: async (subdomain?: string) => {
+        try {
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain
+                ? `${API_BASE_URL}/public/discover?subdomain=${encodeURIComponent(activeSubdomain)}`
+                : `${API_BASE_URL}/public/discover`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching public discover collection:", error);
+            return { success: false, data: [] };
+        }
     }
 };
