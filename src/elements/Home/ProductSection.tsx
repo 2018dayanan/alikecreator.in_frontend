@@ -347,7 +347,7 @@ const ProductSection = () => {
         try {
             const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
             const existingItemIndex = currentCart.findIndex((item: any) => item.id === product.id);
-            
+
             if (existingItemIndex !== -1) {
                 currentCart.splice(existingItemIndex, 1);
             } else {
@@ -361,51 +361,6 @@ const ProductSection = () => {
     };
     return (
         <>
-            {/* Merchant Subdomain Storefront Header */}
-            {state.merchant && (
-                <div 
-                    className="card shadow-sm border-0 mb-4 p-4 rounded-4" 
-                    style={{ 
-                        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', 
-                        color: '#fff',
-                        borderLeft: '5px solid #3b82f6'
-                    }}
-                >
-                    <div className="d-flex flex-column flex-md-row align-items-md-center gap-3">
-                        {state.merchant.profile_picture ? (
-                            <img
-                                src={state.merchant.profile_picture}
-                                alt={state.merchant.business_name || state.merchant.name}
-                                style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.2)' }}
-                            />
-                        ) : (
-                            <div 
-                                className="rounded-circle bg-primary d-flex align-items-center justify-content-center fw-bold shadow" 
-                                style={{ width: '70px', height: '70px', fontSize: '28px' }}
-                            >
-                                🏪
-                            </div>
-                        )}
-                        <div className="flex-grow-1">
-                            <div className="d-flex flex-wrap align-items-center gap-2 mb-1">
-                                <h3 className="fw-bold mb-0 text-white">{state.merchant.business_name || state.merchant.name}</h3>
-                                <span className="badge bg-primary text-uppercase px-2 py-1" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>
-                                    ✓ Official Store
-                                </span>
-                                {state.merchant.subdomain && (
-                                    <span className="badge bg-dark border border-secondary text-lowercase px-2 py-1" style={{ fontSize: '11px' }}>
-                                        {state.merchant.subdomain}.store
-                                    </span>
-                                )}
-                            </div>
-                            {state.merchant.store_description && (
-                                <p className="text-light text-opacity-75 mb-0 small">{state.merchant.store_description}</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <div className="row justify-content-md-between align-items-start">
                 <div className="col-lg-6 col-md-12">
                     <div className="section-head style-1 m-b30 ">
@@ -608,8 +563,8 @@ const ProductSection = () => {
                                                 Buy Now <i className="fa-solid fa-arrow-up-right-from-square ms-2" />
                                             </Link>
                                         ) : (
-                                            <Link 
-                                                href="/shop-cart" 
+                                            <Link
+                                                href="/shop-cart"
                                                 className="btn btn-secondary text-uppercase"
                                                 onClick={() => {
                                                     if (state.selectedProduct) {
