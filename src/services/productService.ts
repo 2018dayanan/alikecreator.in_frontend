@@ -62,14 +62,21 @@ export const ProductService = {
     },
 
     /**
-     * Fetch all public products (with automatic subdomain filter)
+     * Fetch all public products (with automatic subdomain filter, pagination, category & search)
      */
-    getPublicProducts: async (subdomain?: string) => {
+    getPublicProducts: async (subdomain?: string, page = 1, limit = 12, categoryId = '', search = '') => {
         try {
             const activeSubdomain = getActiveSubdomain(subdomain);
-            const url = activeSubdomain 
-                ? `${API_BASE_URL}/public/products?subdomain=${encodeURIComponent(activeSubdomain)}`
-                : `${API_BASE_URL}/public/products`;
+            let url = `${API_BASE_URL}/public/products?page=${page}&limit=${limit}`;
+            if (activeSubdomain) {
+                url += `&subdomain=${encodeURIComponent(activeSubdomain)}`;
+            }
+            if (categoryId) {
+                url += `&categoryId=${encodeURIComponent(categoryId)}`;
+            }
+            if (search) {
+                url += `&search=${encodeURIComponent(search)}`;
+            }
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

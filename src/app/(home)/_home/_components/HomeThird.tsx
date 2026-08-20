@@ -44,7 +44,7 @@ const HomeThird = () => {
                             <h2 className="title">Featured offer for you</h2>
                         </div>
                         <Link
-                            href="/shop-list"
+                            href="/products"
                             className="text-secondary font-14 d-flex align-items-center gap-1"
                         >
                             See All
@@ -66,7 +66,7 @@ const HomeThird = () => {
                             <h2 className="title">Sponsored</h2>
                         </div>
                         <Link
-                            href="/shop-list"
+                            href="/products"
                             className="text-secondary font-14 d-flex align-items-center gap-1"
                         >
                             See All

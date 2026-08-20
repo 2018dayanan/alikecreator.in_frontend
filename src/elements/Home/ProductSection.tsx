@@ -421,25 +421,6 @@ const ProductSection = () => {
                                             style={{ objectFit: "cover" }}
                                             unoptimized
                                         />
-                                        {item.video && (
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger btn-sm position-absolute top-0 start-0 m-2 rounded-pill d-flex align-items-center gap-1 shadow-sm border-0"
-                                                style={{ zIndex: 5, padding: "4px 10px", fontSize: "11px", fontWeight: "600", letterSpacing: "0.3px" }}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    dispatch({
-                                                        type: 'SET_VIDEO_MODAL',
-                                                        value: true,
-                                                        product: { url: item.video, title: item.name }
-                                                    });
-                                                }}
-                                            >
-                                                <i className="fa-brands fa-youtube" style={{ fontSize: "13px" }} />
-                                                <span>Video</span>
-                                            </button>
-                                        )}
                                         <div className="shop-meta">
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
                                                 onClick={(e) => {
@@ -448,7 +429,7 @@ const ProductSection = () => {
                                                 }}
                                             >
                                                 <i className="fa-solid fa-eye d-md-none d-block" />
-                                                <span className="d-md-block d-none">Quick View</span>
+                                                <span className="d-md-block d-none">View Photo</span>
                                             </Link>
                                             <div className={`btn btn-primary meta-icon dz-wishicon ${isFavorite(item.id || (item as any)._id) ? "active" : ""}`}
                                                 onClick={(e) => {
@@ -580,7 +561,7 @@ const ProductSection = () => {
                                                         }
                                                     }
                                                 }}
-                                            >Add To Cart</Link>
+                                            >View Product</Link>
                                         )}
                                         <button
                                             type="button"
@@ -605,13 +586,6 @@ const ProductSection = () => {
                                         <ul>
                                             <li><strong>Category:</strong></li>
                                             <li><Link href="/shop-standard">{state.selectedProduct?.category}</Link></li>
-                                        </ul>
-                                        <ul>
-                                            <li><strong>Tags:</strong></li>
-                                            <li><Link href="/shop-standard">Casual</Link></li>
-                                            <li><Link href="/shop-standard">Athletic,</Link></li>
-                                            <li><Link href="/shop-standard">Workwear,</Link></li>
-                                            <li><Link href="/shop-standard">Accessories</Link></li>
                                         </ul>
                                         <div className="dz-social-icon">
                                             <ul>
