@@ -357,6 +357,39 @@
 
 /* Mobile View Adjustments (<= 991px) */
 @media only screen and (max-width: 991px) {
+	/* Header container padding and right-alignment */
+	.site-header .container-fluid,
+	.header-transparent .container-fluid {
+		padding-left: 15px !important;
+		padding-right: 15px !important;
+	}
+
+	.site-header .extra-nav-wrapper {
+		margin-left: auto !important;
+		margin-right: 0 !important;
+		padding-right: 0 !important;
+	}
+
+	.site-header .extra-nav,
+	.site-header .extra-nav .extra-cell {
+		padding-right: 0 !important;
+		margin-right: 0 !important;
+	}
+
+	.site-header .extra-nav .extra-cell > * {
+		margin-right: 0 !important;
+	}
+
+	.site-header .extra-nav .header-right {
+		margin-right: 0 !important;
+		padding-right: 0 !important;
+	}
+
+	.site-header .navbar-toggler.navicon {
+		margin-right: 0 !important;
+		margin-left: 6px !important;
+	}
+
 	/* Mobile Side Menu Drawer Background */
 	.mo-left .header-nav,
 	.site-header .header-nav.w3menu {

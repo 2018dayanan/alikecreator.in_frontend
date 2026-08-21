@@ -161,7 +161,7 @@ const Header = ({ design }: DesignType) => {
                             </div>
 
                             {/* Right Actions: Header-right (Search, Wishlist, Cart, Filter) + Navbar Toggler */}
-                            <div className="extra-nav-wrapper d-flex align-items-center">
+                            <div className="extra-nav-wrapper d-flex align-items-center ms-auto">
                                 <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
                                     <div className="extra-cell">
                                         <ul className="header-right d-flex align-items-center">
