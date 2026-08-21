@@ -469,7 +469,13 @@ const ProductSection = () => {
                         {state.data && state.data.map((item: MenuItem, ind: number) => (
                             <div className="card-container col-6 col-xl-3 col-lg-3 col-md-4 col-sm-6 Tops wow fadeInUp" data-wow-delay="0.6s" key={ind}>
                                 <div className="shop-card">
-                                    <div className="dz-media" style={{ position: "relative", aspectRatio: "3 / 4" }}>
+                                    <div 
+                                        className="dz-media" 
+                                        style={{ position: "relative", aspectRatio: "3 / 4", cursor: "pointer" }}
+                                        onClick={() => {
+                                            dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
+                                        }}
+                                    >
                                         <Image
                                             src={item.image}
                                             alt="media"
@@ -477,7 +483,10 @@ const ProductSection = () => {
                                             style={{ objectFit: "cover" }}
                                             unoptimized
                                         />
-                                        <div className="shop-meta">
+                                        <div 
+                                            className="shop-meta"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
                                                 onClick={(e) => {
                                                     e.preventDefault();
@@ -514,7 +523,17 @@ const ProductSection = () => {
                                         </div>
                                     </div>
                                     <div className="dz-content">
-                                        <h5 className="title"><Link href="/shop-list">{item.name}</Link></h5>
+                                        <h5 className="title">
+                                            <Link 
+                                                href={"#"}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
+                                                }}
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        </h5>
                                         <h5 className="price">₹{item.price}</h5>
                                     </div>
                                     <div className="product-tag">
