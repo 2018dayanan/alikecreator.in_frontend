@@ -14,14 +14,14 @@ const HomeThird = () => {
     return (
         <Fragment>
             <MainBanner3 />
-            <section className="content-inner overflow-hidden bg-light-dark">
-                <div className="container">
-                    <LatestoCollection />
-                </div>
-            </section>
             <section className="content-inner">
                 <div className="container">
                     <ProductSection />
+                </div>
+            </section>
+            <section className="content-inner overflow-hidden bg-light-dark">
+                <div className="container">
+                    <LatestoCollection />
                 </div>
             </section>
             <section className=" adv-area">
