@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useState, useRef } from "react";
 
 import { Modal, Spinner, Alert } from "react-bootstrap";
 import { masonryData, headfilterData } from "../../constant/Alldata";
@@ -118,6 +118,33 @@ function reducer(state: typeof initialState, action: any) {
 const ProductSection = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { isFavorite, toggleFavorite } = useWishlist();
+    const categoryScrollRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+
+    const updateScrollButtons = () => {
+        if (categoryScrollRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = categoryScrollRef.current;
+            setCanScrollLeft(scrollLeft > 5);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+        }
+    };
+
+    useEffect(() => {
+        const timer = setTimeout(updateScrollButtons, 300);
+        window.addEventListener('resize', updateScrollButtons);
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', updateScrollButtons);
+        };
+    }, [state.categories]);
+
+    const scrollCategory = (direction: 'left' | 'right') => {
+        if (categoryScrollRef.current) {
+            const scrollAmount = direction === 'left' ? -220 : 220;
+            categoryScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -363,36 +390,65 @@ const ProductSection = () => {
     };
     return (
         <>
-            <div className="row justify-content-md-between align-items-start">
-                <div className="col-lg-6 col-md-12">
-                    <div className="section-head style-1 m-b30 ">
+            <div className="row justify-content-between align-items-center mb-4 g-3">
+                <div className="col-xl-4 col-lg-4 col-md-12">
+                    <div className="section-head style-1 mb-0">
                         <div className="left-content">
-                            <h2 className="title">
+                            <h2 className="title mb-0">
                                 {state.merchant ? `${state.merchant.business_name || state.merchant.name}'s Products` : 'Most popular products'}
                             </h2>
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-6 col-md-12" style={{ overflow: 'hidden' }}>
-                    <div className="site-filters clearfix style-1 ms-lg-auto" style={{ overflowX: 'auto', display: 'block', width: '100%', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
-                        <ul className="filters" style={{ display: 'inline-flex', flexWrap: 'nowrap', whiteSpace: 'nowrap', margin: 0, paddingBottom: '10px', width: 'max-content' }}>
-                            <li className={`btn ${state.activeMenu === 0 ? "active" : ""}`}
-                                onClick={() => { filterCategory(null, 0); }}
-                                style={{ flexShrink: 0 }}
+                <div className="col-xl-8 col-lg-8 col-md-12">
+                    <div className="category-filter-nav-wrap">
+                        {canScrollLeft && (
+                            <button
+                                className="category-nav-arrow category-nav-prev"
+                                onClick={() => scrollCategory('left')}
+                                aria-label="Scroll categories left"
+                                type="button"
                             >
-                                <input type="radio" />
-                                <Link href={"#"}>All</Link>
-                            </li>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="15 18 9 12 15 6" />
+                                </svg>
+                            </button>
+                        )}
+                        <div
+                            className="category-chips-scroll"
+                            ref={categoryScrollRef}
+                            onScroll={updateScrollButtons}
+                        >
+                            <button
+                                type="button"
+                                className={`category-filter-chip ${state.activeMenu === 0 ? "active" : ""}`}
+                                onClick={() => filterCategory(null, 0)}
+                            >
+                                <span>All</span>
+                            </button>
                             {state.categories && state.categories.length > 0 && state.categories.map((item: any, ind: number) => (
-                                <li className={`btn ${state.activeMenu === ind + 1 ? "active" : ""}`} key={ind + 1}
-                                    onClick={() => { filterCategory(item._id, ind + 1); }}
-                                    style={{ flexShrink: 0 }}
+                                <button
+                                    type="button"
+                                    className={`category-filter-chip ${state.activeMenu === ind + 1 ? "active" : ""}`}
+                                    key={item._id || ind + 1}
+                                    onClick={() => filterCategory(item._id, ind + 1)}
                                 >
-                                    <input type="radio" />
-                                    <Link href={"#"}>{item.name}</Link>
-                                </li>
+                                    <span>{item.name}</span>
+                                </button>
                             ))}
-                        </ul>
+                        </div>
+                        {canScrollRight && (
+                            <button
+                                className="category-nav-arrow category-nav-next"
+                                onClick={() => scrollCategory('right')}
+                                aria-label="Scroll categories right"
+                                type="button"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

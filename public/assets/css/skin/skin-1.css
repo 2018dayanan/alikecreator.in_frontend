@@ -466,3 +466,118 @@
 		border-color: #ffffff !important;
 	}
 }
+
+/* =========================================================
+   Modern Category Filter Chips UI / UX
+   ========================================================= */
+
+.category-filter-nav-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: 6px;
+	background: transparent;
+}
+
+.category-chips-scroll {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	padding: 6px 2px;
+	width: 100%;
+	-webkit-overflow-scrolling: touch;
+}
+
+.category-chips-scroll::-webkit-scrollbar {
+	display: none;
+}
+
+/* Category Filter Chip Button */
+.category-filter-chip {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 9px 20px;
+	font-size: 13.5px;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	border-radius: 30px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: #ffffff;
+	color: #495057;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	white-space: nowrap;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	outline: none;
+	user-select: none;
+}
+
+.category-filter-chip span {
+	display: inline-block;
+	transition: transform 0.2s ease;
+}
+
+.category-filter-chip:hover {
+	background: #FFF0F3;
+	border-color: #7D1C2D;
+	color: #7D1C2D;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(125, 28, 45, 0.15);
+}
+
+.category-filter-chip:hover span {
+	transform: scale(1.02);
+}
+
+.category-filter-chip.active {
+	background: #7D1C2D !important;
+	border-color: #7D1C2D !important;
+	color: #ffffff !important;
+	font-weight: 600;
+	box-shadow: 0 4px 14px rgba(125, 28, 45, 0.35);
+	transform: translateY(-1px);
+}
+
+.category-filter-chip:active {
+	transform: scale(0.95);
+}
+
+/* Navigation Arrow Buttons */
+.category-nav-arrow {
+	flex-shrink: 0;
+	width: 34px;
+	height: 34px;
+	min-width: 34px;
+	border-radius: 50%;
+	background: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	color: #444444;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+	transition: all 0.25s ease;
+	outline: none;
+	padding: 0;
+	z-index: 2;
+}
+
+.category-nav-arrow:hover {
+	background: #7D1C2D;
+	color: #ffffff;
+	border-color: #7D1C2D;
+	transform: scale(1.1);
+	box-shadow: 0 4px 12px rgba(125, 28, 45, 0.3);
+}
+
+.category-nav-arrow:active {
+	transform: scale(0.92);
+}
