@@ -153,19 +153,157 @@
 	padding-left: 32px;
 }
 
-/* Header Right / Extra Nav Icons & Links (Web & Mobile) */
-.site-header .extra-nav .extra-cell .login-link,
-.site-header .extra-nav .extra-cell .login-link a,
-.site-header .extra-nav .header-right .login-link .nav-link,
-.site-header .extra-nav .header-right .nav-item .nav-link,
-.site-header .extra-nav .header-right .nav-item .nav-link i {
-	color: #ffffff !important;
-	transition: opacity 0.25s ease;
+/* =========================================================
+   Sleek Modern Menu Icon (Hamburger) & Interactive Hover Styles
+   ========================================================= */
+
+/* Mobile / Header Menu Toggler (Navicon) */
+.site-header .navbar-toggler.navicon {
+	width: 38px !important;
+	height: 38px !important;
+	min-width: 38px !important;
+	padding: 0 !important;
+	background: rgba(255, 255, 255, 0.1) !important;
+	border: 1px solid rgba(255, 255, 255, 0.22) !important;
+	border-radius: 10px !important;
+	position: relative !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	backdrop-filter: blur(4px);
+	outline: none !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	margin: 0 0 0 6px !important;
+	float: none !important;
 }
 
+.site-header .navbar-toggler.navicon:hover {
+	background: rgba(255, 255, 255, 0.22) !important;
+	border-color: rgba(255, 255, 255, 0.45) !important;
+	transform: translateY(-2px) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.site-header .navbar-toggler.navicon:active {
+	transform: scale(0.94) !important;
+}
+
+/* Navicon Spans (3 Sleek Rounded Bars) */
+.site-header .navbar-toggler.navicon span {
+	display: block !important;
+	position: absolute !important;
+	height: 2px !important;
+	background-color: #ffffff !important;
+	border-radius: 2px !important;
+	left: 9px !important;
+	opacity: 1 !important;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.site-header .navbar-toggler.navicon span:nth-child(1) {
+	top: 11px !important;
+	width: 20px !important;
+}
+
+.site-header .navbar-toggler.navicon span:nth-child(2) {
+	top: 18px !important;
+	width: 14px !important;
+}
+
+.site-header .navbar-toggler.navicon span:nth-child(3) {
+	top: 25px !important;
+	width: 20px !important;
+}
+
+/* Hover on Menu Toggler - Middle bar expands smoothly */
+.site-header .navbar-toggler.navicon:hover span:nth-child(2) {
+	width: 20px !important;
+}
+
+/* Open State (Crisp Close "X" Transformation) */
+.site-header .navbar-toggler.navicon.open {
+	background: rgba(255, 255, 255, 0.2) !important;
+	border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.site-header .navbar-toggler.navicon.open span:nth-child(1) {
+	top: 18px !important;
+	width: 20px !important;
+	transform: rotate(45deg) !important;
+}
+
+.site-header .navbar-toggler.navicon.open span:nth-child(2) {
+	opacity: 0 !important;
+	transform: translateX(-12px) !important;
+	width: 0 !important;
+}
+
+.site-header .navbar-toggler.navicon.open span:nth-child(3) {
+	top: 18px !important;
+	width: 20px !important;
+	transform: rotate(-45deg) !important;
+}
+
+/* =========================================================
+   Header Action Icons (Search, Wishlist, Cart, Filter) & Hover Effects
+   ========================================================= */
+
+.site-header .extra-nav .header-right {
+	display: flex !important;
+	align-items: center !important;
+	gap: 6px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	list-style: none !important;
+}
+
+.site-header .extra-nav .header-right .nav-item .nav-link,
+.site-header .extra-nav .extra-cell ul li button,
+.site-header .extra-nav .extra-cell ul li a {
+	width: 38px !important;
+	height: 38px !important;
+	min-width: 38px !important;
+	padding: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	border-radius: 10px !important;
+	background: rgba(255, 255, 255, 0.1) !important;
+	border: 1px solid rgba(255, 255, 255, 0.22) !important;
+	color: #ffffff !important;
+	position: relative !important;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	backdrop-filter: blur(4px);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.site-header .extra-nav .header-right .nav-item .nav-link i {
+	font-size: 18px !important;
+	color: #ffffff !important;
+	transition: transform 0.25s ease, color 0.25s ease !important;
+}
+
+/* Icon Hover State */
 .site-header .extra-nav .header-right .nav-item .nav-link:hover,
+.site-header .extra-nav .extra-cell ul li button:hover,
+.site-header .extra-nav .extra-cell ul li a:hover {
+	background: rgba(255, 255, 255, 0.22) !important;
+	border-color: rgba(255, 255, 255, 0.45) !important;
+	color: #ffffff !important;
+	transform: translateY(-2px) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
 .site-header .extra-nav .header-right .nav-item .nav-link:hover i {
+	transform: scale(1.1) !important;
 	color: #FFDFE7 !important;
+}
+
+.site-header .extra-nav .header-right .nav-item .nav-link:active,
+.site-header .extra-nav .extra-cell ul li a:active {
+	transform: scale(0.94) !important;
 }
 
 .site-header .extra-nav .filte-link svg rect,
@@ -176,22 +314,43 @@
 /* Badges (Wishlist & Cart Count) */
 .site-header .extra-nav .header-right .badge,
 .site-header .extra-nav .header-right .badge-circle {
+	position: absolute !important;
+	top: -5px !important;
+	right: -5px !important;
 	background-color: #ffffff !important;
 	color: #7D1C2D !important;
-	font-weight: 700;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	font-weight: 700 !important;
+	font-size: 11px !important;
+	min-width: 19px !important;
+	height: 19px !important;
+	line-height: 19px !important;
+	padding: 0 4px !important;
+	border-radius: 10px !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.site-header .extra-nav .header-right .nav-item:hover .badge,
+.site-header .extra-nav .header-right .nav-item:hover .badge-circle {
+	transform: scale(1.15) !important;
+}
+
+/* Login Link on Desktop */
+.site-header .extra-nav .header-right .login-link .nav-link {
+	width: auto !important;
+	height: 38px !important;
+	padding: 0 16px !important;
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	letter-spacing: 0.3px;
+	border-radius: 8px !important;
 }
 
 /* Mobile View Adjustments (<= 991px) */
 @media only screen and (max-width: 991px) {
-	.site-header .navbar-toggler.navicon span {
-		background-color: #ffffff !important;
-	}
-
-	.site-header .navbar-toggler.navicon.open span {
-		background-color: #ffffff !important;
-	}
-
 	/* Mobile Side Menu Drawer Background */
 	.mo-left .header-nav,
 	.site-header .header-nav.w3menu {
