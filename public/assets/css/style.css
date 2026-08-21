@@ -50200,7 +50200,30 @@ table.wishlist_table {
 }
 @media only screen and (max-width: 991px) {
   .site-header .extra-nav {
-    height: 80px;
+    height: auto;
+    padding-left: 0;
+    float: none;
+    display: flex;
+    align-items: center;
+  }
+  .site-header .extra-nav-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  .site-header .extra-nav-wrapper .navbar-toggler {
+    margin: 0 0 0 10px !important;
+    float: none !important;
+  }
+  .site-header .logo-header {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    float: none;
+  }
+  .site-header .logo-header img {
+    max-height: 42px;
+    max-width: 140px;
+    object-fit: contain;
   }
 }
 @media only screen and (max-width: 1680px) {
@@ -50210,31 +50233,55 @@ table.wishlist_table {
 }
 @media only screen and (max-width: 767px) {
   .site-header .extra-nav {
-    width: 100%;
-    background: #fff;
-    position: fixed;
-    bottom: -80px;
-    left: 0;
-    padding: 0 20px;
-    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
-    height: 50px;
-    transition: all 0.5s ease 0.5s;
-  }
-  .site-header .extra-nav.active {
-    bottom: 0;
-  }
-  .site-header .extra-nav.bottom-end {
-    bottom: -80px;
+    width: auto;
+    background: transparent;
+    position: static;
+    bottom: auto;
+    left: auto;
+    padding: 0;
+    box-shadow: none;
+    height: auto;
+    transition: none;
+    display: flex;
+    align-items: center;
   }
   .site-header .extra-nav .extra-cell {
-    width: 100%;
+    width: auto;
+  }
+  .site-header .extra-nav .extra-cell > * {
+    margin-left: 0;
+    margin-right: 0;
   }
   .site-header .extra-nav .extra-cell ul {
-    width: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .site-header .extra-nav .extra-cell ul li button,
+  .site-header .extra-nav .extra-cell ul li a {
+    min-width: 36px;
+    padding: 0 6px;
   }
   .site-header .extra-nav .extra-cell ul .login-link {
-    margin-right: auto;
-    margin-left: -15px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .site-header .extra-nav-wrapper .navbar-toggler {
+    margin: 0 0 0 8px !important;
+    float: none !important;
+  }
+  .site-header .logo-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    float: none;
+    margin: 0 !important;
+  }
+  .site-header .logo-header img {
+    max-height: 38px;
+    max-width: 130px;
+    object-fit: contain;
   }
 }
 .site-header .extra-nav #quik-search-btn {

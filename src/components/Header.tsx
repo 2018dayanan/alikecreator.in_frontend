@@ -128,30 +128,19 @@ const Header = ({ design }: DesignType) => {
                 {/* Main Header */}
                 <div className={`sticky-header main-bar-wraper navbar-expand-lg ${state.headerFix ? 'is-fixed' : ''}`}>
                     <div className="main-bar clearfix">
-                        <div className="container-fluid clearfix d-lg-flex d-block">
-                            {design === "header-text-white header-transparent" ? (
-                                ''
-                            ) : (
-                                <div className="logo-header logo-dark me-md-5">
-                                    <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
-                                </div>
-                            )}
-                            {design === "header-text-white header-transparent" ? (
-                                <div className="logo-header me-md-5">
-                                    <Link href="/" className="logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" /></Link>
-                                    <Link href="/" className="logo-dark"><Image src={IMAGES.logopng} alt="logo" /></Link>
-                                </div>
-                            ) : (
-                                ''
-                            )}
-                            <button
-                                className={`navbar-toggler collapsed navicon justify-content-end ${state.openSidebar ? "open" : ""}`}
-                                onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
-                            >
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </button>
+                        <div className="container-fluid clearfix d-flex align-items-center justify-content-between">
+                            <div className="logo-header-wrap d-flex align-items-center">
+                                {design === "header-text-white header-transparent" ? (
+                                    <div className="logo-header me-md-5">
+                                        <Link href="/" className="logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" /></Link>
+                                        <Link href="/" className="logo-dark"><Image src={IMAGES.logopng} alt="logo" /></Link>
+                                    </div>
+                                ) : (
+                                    <div className="logo-header logo-dark me-md-5">
+                                        <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Main Nav */}
                             <div className={`header-nav w3menu navbar-collapse collapse justify-content-start ${state.openSidebar ? "show" : ""}`}
@@ -171,50 +160,63 @@ const Header = ({ design }: DesignType) => {
                                 </div>
                             </div>
 
-                            {/* EXTRA NAV */}
-                            <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
-                                <div className="extra-cell">
-                                    <ul className="header-right">
-                                        <li className="nav-item login-link">
-                                            <Link className="nav-link" href="/login">
-                                                Login / Register
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item search-link">
-                                            <Link className="nav-link" href="#"
-                                                onClick={() => dispatch({ type: 'TOGGLE_SEARCH_BAR' })}
-                                            >
-                                                <i className="iconly-Light-Search" />
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item wishlist-link">
-                                            <Link className="nav-link" href="#"
-                                                onClick={() => dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' })}
-                                            >
-                                                <i className="iconly-Light-Heart2" />
-                                                {wishlistCount > 0 && <span className="badge badge-circle">{wishlistCount}</span>}
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item cart-link">
-                                            <Link href="#" className="nav-link cart-btn"
-                                                onClick={() => dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' })}
-                                            >
-                                                <i className="iconly-Broken-Buy" />
-                                                <span className="badge badge-circle">{cartCount}</span>
-                                            </Link>
-                                        </li>
-                                        <li className="nav-item filte-link">
-                                            <Link href="#" className="nav-link filte-btn"
-                                                onClick={() => dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' })}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 13" fill="none">
-                                                    <rect y="11" width="30" height="2" fill="black" />
-                                                    <rect width="30" height="2" fill="black" />
-                                                </svg>
-                                            </Link>
-                                        </li>
-                                    </ul>
+                            {/* Right Actions: Header-right (Search, Wishlist, Cart, Filter) + Navbar Toggler */}
+                            <div className="extra-nav-wrapper d-flex align-items-center">
+                                <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
+                                    <div className="extra-cell">
+                                        <ul className="header-right d-flex align-items-center">
+                                            <li className="nav-item login-link d-none d-lg-inline-block">
+                                                <Link className="nav-link" href="/login">
+                                                    Login / Register
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item search-link">
+                                                <Link className="nav-link" href="#"
+                                                    onClick={(e) => { e.preventDefault(); dispatch({ type: 'TOGGLE_SEARCH_BAR' }); }}
+                                                >
+                                                    <i className="iconly-Light-Search" />
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item wishlist-link">
+                                                <Link className="nav-link" href="#"
+                                                    onClick={(e) => { e.preventDefault(); dispatch({ type: 'TOGGLE_HEAD_SHOPPING_SIDEBAR' }); }}
+                                                >
+                                                    <i className="iconly-Light-Heart2" />
+                                                    {wishlistCount > 0 && <span className="badge badge-circle">{wishlistCount}</span>}
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item cart-link">
+                                                <Link href="#" className="nav-link cart-btn"
+                                                    onClick={(e) => { e.preventDefault(); dispatch({ type: 'TOGGLE_BASKET_SHOPPING_CARD' }); }}
+                                                >
+                                                    <i className="iconly-Broken-Buy" />
+                                                    <span className="badge badge-circle">{cartCount}</span>
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item filte-link d-none d-lg-inline-block">
+                                                <Link href="#" className="nav-link filte-btn"
+                                                    onClick={(e) => { e.preventDefault(); dispatch({ type: 'TOGGLE_HEAD_SIDEBAR' }); }}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 13" fill="none">
+                                                        <rect y="11" width="30" height="2" fill="black" />
+                                                        <rect width="30" height="2" fill="black" />
+                                                    </svg>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
+
+                                <button
+                                    className={`navbar-toggler collapsed navicon justify-content-end ${state.openSidebar ? "open" : ""}`}
+                                    onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
+                                    type="button"
+                                    aria-label="Toggle navigation"
+                                >
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </button>
                             </div>
                         </div>
                     </div>

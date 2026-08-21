@@ -264,36 +264,45 @@
 			}
 		}
 		@include respond('tab-port'){
-			height: 80px;
+			height: auto;
+			padding-#{$dz-pos-left}: 0;
+			float: none;
 		}
 		@include respond('wide-desktop'){
 			padding-#{$dz-pos-left}: 0;
 		}
 		@include respond('phone-land'){
-			width: 100%;
-			background: #fff;
-			position: fixed;
-			bottom: -80px;
-			#{$dz-pos-left}: 0;
-			padding: 0 20px;
-			box-shadow: 0 0 30px 0 rgba(0,0,0,0.15);
-			height: 50px;
-			transition: all 0.5s ease 0.5s;
-			&.active {
-				bottom: 0;
-			}
-			&.bottom-end {
-				bottom: -80px;
-			}
+			width: auto;
+			background: transparent;
+			position: static;
+			bottom: auto;
+			#{$dz-pos-left}: auto;
+			padding: 0;
+			box-shadow: none;
+			height: auto;
+			transition: none;
 			
 			.extra-cell{
-				width:100%;
+				width: auto;
+				& > * {
+					margin-#{$dz-pos-left}: 0;
+					margin-#{$dz-pos-right}: 0;
+				}
 				ul{
-					width:100%;
+					width: auto;
+					display: flex;
+					align-items: center;
+					gap: 2px;
+					
+					li button,
+					li a {
+						min-width: 36px;
+						padding: 0 6px;
+					}
 					
 					.login-link{
-						margin-#{$dz-pos-right}:auto;
-						margin-#{$dz-pos-left}: -15px;
+						margin-#{$dz-pos-right}: 0;
+						margin-#{$dz-pos-left}: 0;
 					}
 				}
 			}
