@@ -235,5 +235,26 @@ export const ProductService = {
             console.error("Error fetching public news by id:", error);
             return { success: false, data: null };
         }
+    },
+
+    /**
+     * Fetch active public brands by subdomain
+     */
+    getPublicBrands: async (subdomain?: string) => {
+        try {
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            const url = activeSubdomain
+                ? `${API_BASE_URL}/public/brands?subdomain=${encodeURIComponent(activeSubdomain)}`
+                : `${API_BASE_URL}/public/brands`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching public brands:", error);
+            return { success: false, data: [] };
+        }
     }
 };

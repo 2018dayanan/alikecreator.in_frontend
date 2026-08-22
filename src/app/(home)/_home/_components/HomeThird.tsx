@@ -10,6 +10,8 @@ import OffersectionSlider from "@/elements/Home/OffersectionSlider";
 import SponsoredSlider from "@/elements/Home/SponsoredSlider";
 import LatestPostSection from "@/elements/Home3/LatestPostSection";
 
+import TrustedBrands from "@/elements/Home3/TrustedBrands";
+
 const HomeThird = () => {
     return (
         <Fragment>
@@ -34,6 +36,7 @@ const HomeThird = () => {
                     <AllProduction />
                 </div>
             </section>
+            <TrustedBrands />
             <section className="content-inner-2">
                 <div className="container">
                     <div
