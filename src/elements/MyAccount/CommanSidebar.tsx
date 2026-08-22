@@ -12,9 +12,11 @@ type MenuItem = {
   const accountMenu: MenuItem[] = [
     { title: "Dashboard", url: "/account-dashboard" },
     { title: "Orders", url: "/account-orders" },
+    { title: "Wallet", url: "/account-wallet" },
     { title: "Downloads", url: "/account-downloads" },
     { title: "Return request", url: "/account-return-request" },
   ];
+
   
   const accountSettingsMenu: MenuItem[] = [
     { title: "Profile", url: "/account-profile" },
