@@ -10,7 +10,6 @@ import OffersectionSlider from "@/elements/Home/OffersectionSlider";
 import SponsoredSlider from "@/elements/Home/SponsoredSlider";
 import LatestPostSection from "@/elements/Home3/LatestPostSection";
 
-import TrustedBrands from "@/elements/Home3/TrustedBrands";
 
 const HomeThird = () => {
     return (
@@ -36,7 +35,6 @@ const HomeThird = () => {
                     <AllProduction />
                 </div>
             </section>
-            <TrustedBrands />
             <section className="content-inner-2">
                 <div className="container">
                     <div
@@ -66,10 +64,10 @@ const HomeThird = () => {
                         data-wow-delay="0.2s"
                     >
                         <div className="left-content">
-                            <h2 className="title">Sponsored</h2>
+                            <h2 className="title">Trusted Brand</h2>
                         </div>
                         <Link
-                            href="/products"
+                            href="/brands"
                             className="text-secondary font-14 d-flex align-items-center gap-1"
                         >
                             See All
