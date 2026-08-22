@@ -439,6 +439,82 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to update news status' };
     }
+  },
+
+  // Brand Management
+  getAdminBrands: async (page = 1, limit = 10, merchantId = '', search = '') => {
+    let url = `${API_URL}/admin/brand?page=${page}&limit=${limit}`;
+    if (merchantId) {
+      url += `&merchantId=${encodeURIComponent(merchantId)}`;
+    }
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch brands' };
+    }
+  },
+
+  getAdminBrandById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch brand' };
+    }
+  },
+
+  createBrand: async (data: FormData) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+      const res = await fetch(`${API_URL}/admin/brand`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+        body: data,
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to create brand' };
+    }
+  },
+
+  updateBrand: async (id: string, data: FormData) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+        body: data,
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update brand' };
+    }
+  },
+
+  deleteBrand: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to delete brand' };
+    }
   }
 };
 
