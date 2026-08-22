@@ -485,11 +485,11 @@ const ProductSection = () => {
                                         />
                                         <div 
                                             className="shop-meta"
-                                            onClick={(e) => e.stopPropagation()}
                                         >
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
                                                 onClick={(e) => {
                                                     e.preventDefault();
+                                                    e.stopPropagation();
                                                     dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
                                                 }}
                                             >
@@ -499,6 +499,7 @@ const ProductSection = () => {
                                             <div className={`btn btn-primary meta-icon dz-wishicon ${isFavorite(item.id || (item as any)._id) ? "active" : ""}`}
                                                 onClick={(e) => {
                                                     e.preventDefault();
+                                                    e.stopPropagation();
                                                     toggleFavorite(item);
                                                 }}
                                             >
@@ -506,13 +507,19 @@ const ProductSection = () => {
                                                 <i className="icon feather icon-heart-on dz-heart-fill" />
                                             </div>
                                             {item.externalLink ? (
-                                                <Link href={item.externalLink} target="_blank" className="btn btn-primary meta-icon dz-carticon">
+                                                <Link 
+                                                    href={item.externalLink} 
+                                                    target="_blank" 
+                                                    className="btn btn-primary meta-icon dz-carticon"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
                                                     <i className="flaticon flaticon-basket" />
                                                     <i className="flaticon flaticon-basket dz-heart-fill" />
                                                 </Link>
                                             ) : (
                                                 <div className={`btn btn-primary meta-icon dz-carticon ${state.basketIcon[ind] ? "active" : ""}`}
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
                                                         toggleBasket(ind);
                                                     }}
                                                 >
