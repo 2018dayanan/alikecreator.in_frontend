@@ -79,6 +79,8 @@ const Header = ({ design }: DesignType) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [cartCount, setCartCount] = useState(0);
     const { wishlistCount } = useWishlist();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userProfilePic, setUserProfilePic] = useState<string | any>(IMAGES.ProfilePic);
 
     useEffect(() => {
         const loadCartCount = () => {
@@ -87,6 +89,24 @@ const Header = ({ design }: DesignType) => {
         };
         loadCartCount();
         window.addEventListener('cartUpdated', loadCartCount);
+
+        const checkAuth = () => {
+            const token = localStorage.getItem("token");
+            const storedUser = localStorage.getItem("user");
+            if (token && storedUser) {
+                setIsLoggedIn(true);
+                try {
+                    const user = JSON.parse(storedUser);
+                    if (user.profile_picture) {
+                        setUserProfilePic(user.profile_picture);
+                    }
+                } catch (e) {}
+            } else {
+                setIsLoggedIn(false);
+            }
+        };
+        checkAuth();
+        
         return () => window.removeEventListener('cartUpdated', loadCartCount);
     }, []);
 
@@ -165,11 +185,26 @@ const Header = ({ design }: DesignType) => {
                                 <div className={`extra-nav ${state.isBottom ? "bottom-end" : ""} ${state.isActive ? "active" : ""}`}>
                                     <div className="extra-cell">
                                         <ul className="header-right d-flex align-items-center">
-                                            <li className="nav-item login-link d-none d-lg-inline-block">
-                                                <Link className="nav-link" href="/login">
-                                                    Login / Register
-                                                </Link>
-                                            </li>
+                                            {isLoggedIn ? (
+                                                <li className="nav-item profile-link d-none d-lg-inline-block" style={{ marginRight: '15px' }}>
+                                                    <Link className="nav-link p-0" href="/account-dashboard">
+                                                        <Image 
+                                                            src={userProfilePic} 
+                                                            alt="Profile" 
+                                                            width={40} 
+                                                            height={40} 
+                                                            className="rounded-circle"
+                                                            style={{ objectFit: 'cover' }}
+                                                        />
+                                                    </Link>
+                                                </li>
+                                            ) : (
+                                                <li className="nav-item login-link d-none d-lg-inline-block">
+                                                    <Link className="nav-link" href="/login">
+                                                        Login / Register
+                                                    </Link>
+                                                </li>
+                                            )}
                                             <li className="nav-item search-link">
                                                 <Link className="nav-link" href="#"
                                                     onClick={(e) => { e.preventDefault(); dispatch({ type: 'TOGGLE_SEARCH_BAR' }); }}
