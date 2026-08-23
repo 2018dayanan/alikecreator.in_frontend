@@ -515,6 +515,36 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to delete brand' };
     }
+  },
+
+  // Wallet / Recharge Requests Management
+  getRechargeRequests: async (page = 1, limit = 10, status = '') => {
+    let url = `${API_URL}/admin/wallet/recharge-requests?page=${page}&limit=${limit}`;
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch recharge requests' };
+    }
+  },
+
+  updateRechargeStatus: async (requestId: string, status: string, adminRemarks: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/wallet/recharge-requests/${requestId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status, adminRemarks }),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update recharge request status' };
+    }
   }
 };
 

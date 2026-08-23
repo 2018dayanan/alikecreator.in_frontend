@@ -176,6 +176,11 @@ export default function AccountWalletRecharge() {
                                                                     }`}>
                                                                         {req.status}
                                                                     </span>
+                                                                    {req.status === 'rejected' && req.adminRemarks && (
+                                                                        <div className="text-danger small mt-1">
+                                                                            Reason: {req.adminRemarks}
+                                                                        </div>
+                                                                    )}
                                                                 </td>
                                                             </tr>
                                                         ))

@@ -77,16 +77,16 @@ export default function AccountWallet() {
                                     <h4 className="title mb-3">Transaction History</h4>
                                     <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                         <li className="nav-item" role="presentation">
-                                            <button 
-                                                className={`nav-link ${filter === 'balance' ? 'active' : ''}`} 
+                                            <button
+                                                className={`nav-link ${filter === 'balance' ? 'active' : ''}`}
                                                 onClick={() => setFilter('balance')}
                                                 type="button">
                                                 Main Balance
                                             </button>
                                         </li>
                                         <li className="nav-item" role="presentation">
-                                            <button 
-                                                className={`nav-link ${filter === 'coin' ? 'active' : ''}`} 
+                                            <button
+                                                className={`nav-link ${filter === 'coin' ? 'active' : ''}`}
                                                 onClick={() => setFilter('coin')}
                                                 type="button">
                                                 Reward Coins

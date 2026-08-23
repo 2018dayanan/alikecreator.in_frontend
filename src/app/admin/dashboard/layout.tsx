@@ -86,6 +86,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Nav.Link as={Link} href="/admin/dashboard/news" className={`text-dark rounded ${pathname === '/admin/dashboard/news' ? 'bg-light fw-bold text-primary' : ''}`}>
                 News / Articles
               </Nav.Link>
+              <Nav.Link as={Link} href="/admin/dashboard/wallet" className={`text-dark rounded ${pathname === '/admin/dashboard/wallet' ? 'bg-light fw-bold text-primary' : ''}`}>
+                Wallet Requests
+              </Nav.Link>
               <Nav.Link as={Link} href="/admin/dashboard/settings" className={`text-dark rounded ${pathname === '/admin/dashboard/settings' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Settings
               </Nav.Link>
