@@ -5,7 +5,8 @@ import PasswordInputBox from "@/components/PasswordInputBox";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Alert, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 export default function Registration() {
     const router = useRouter();
@@ -16,13 +17,11 @@ export default function Registration() {
     const [otp, setOtp] = useState("");
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
-        setSuccess(null);
+
         setLoading(true);
 
         try {
@@ -36,13 +35,13 @@ export default function Registration() {
             const data = await response.json();
 
             if (data.status) {
-                setSuccess(data.message || "OTP sent successfully");
+                toast.success(data.message || "OTP sent successfully");
                 setIsOtpSent(true);
             } else {
-                setError(data.message || "Registration failed");
+                toast.error(data.message || "Registration failed");
             }
         } catch (err: any) {
-            setError(err.message || "An error occurred");
+            toast.error(err.message || "An error occurred");
         } finally {
             setLoading(false);
         }
@@ -50,8 +49,7 @@ export default function Registration() {
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
-        setSuccess(null);
+
         setLoading(true);
 
         try {
@@ -65,15 +63,15 @@ export default function Registration() {
             const data = await response.json();
 
             if (data.status) {
-                setSuccess("Registration complete! Redirecting to login...");
+                toast.success("Registration complete! Redirecting to login...");
                 setTimeout(() => {
                     router.push("/login");
                 }, 2000);
             } else {
-                setError(data.message || "Invalid OTP");
+                toast.error(data.message || "Invalid OTP");
             }
         } catch (err: any) {
-            setError(err.message || "An error occurred");
+            toast.error(err.message || "An error occurred");
         } finally {
             setLoading(false);
         }
@@ -102,8 +100,7 @@ export default function Registration() {
                             <h2 className="text-secondary text-center">Registration Now</h2>
                             <p className="text-center m-b30">Welcome please registration to your account</p>
 
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            {success && <Alert variant="success">{success}</Alert>}
+
 
                             {!isOtpSent ? (
                                 <form onSubmit={handleRegister}>

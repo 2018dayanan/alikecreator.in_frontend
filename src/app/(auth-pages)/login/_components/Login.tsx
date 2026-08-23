@@ -5,18 +5,19 @@ import PasswordInputBox from "@/components/PasswordInputBox";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Alert, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
+
         setLoading(true);
 
         try {
@@ -36,13 +37,14 @@ export default function Login() {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
+                toast.success("Login successful!");
                 // Redirect to dashboard
                 router.push("/account-dashboard");
             } else {
-                setError(data.message || "Login failed");
+                toast.error(data.message || "Login failed");
             }
         } catch (err: any) {
-            setError(err.message || "An error occurred during login");
+            toast.error(err.message || "An error occurred during login");
         } finally {
             setLoading(false);
         }
@@ -71,7 +73,7 @@ export default function Login() {
                             <h2 className="text-secondary text-center">Login</h2>
                             <p className="text-center m-b25">welcome please login to your account</p>
                             <form onSubmit={handleLogin}>
-                                {error && <Alert variant="danger">{error}</Alert>}
+
                                 <div className="m-b30">
                                     <label className="label-title">Email Address</label>
                                     <input

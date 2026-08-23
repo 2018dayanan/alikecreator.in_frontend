@@ -5,6 +5,7 @@ import IMAGES from "@/constant/theme";
 import CommanSidebar from "@/elements/MyAccount/CommanSidebar";
 import Link from "next/link";
 import { submitRechargeRequest, getMyRechargeRequests } from "@/services/walletService";
+import toast from "react-hot-toast";
 
 export default function AccountWalletRecharge() {
     const [amount, setAmount] = useState("");
@@ -43,7 +44,7 @@ export default function AccountWalletRecharge() {
         e.preventDefault();
         
         if (!amount || !transactionId || !file) {
-            alert("Please fill all required fields and upload a screenshot.");
+            toast.error("Please fill all required fields and upload a screenshot.");
             return;
         }
 
@@ -57,7 +58,7 @@ export default function AccountWalletRecharge() {
             setLoading(true);
             const res = await submitRechargeRequest(formData);
             if (res.status) {
-                alert("Recharge request submitted successfully!");
+                toast.success("Recharge request submitted successfully!");
                 // Reset form
                 setAmount("");
                 setTransactionId("");
@@ -67,7 +68,7 @@ export default function AccountWalletRecharge() {
                 fetchRequests();
             }
         } catch (error: any) {
-            alert(error.message || "Failed to submit request.");
+            toast.error(error.message || "Failed to submit request.");
         } finally {
             setLoading(false);
         }

@@ -1,22 +1,23 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import { adminService } from '@/services/adminService';
+import { toast } from 'react-hot-toast';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+
 
     if (!email || !password) {
-      setError('Please enter both email and password');
+      toast.error('Please enter both email and password');
       return;
     }
 
@@ -28,12 +29,13 @@ export default function AdminLogin() {
         // Store token for future use
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.admin));
+        toast.success('Welcome back, Admin!');
         router.push('/admin/dashboard');
       } else {
-        setError(data.message || 'Login failed');
+        toast.error(data.message || 'Login failed');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,7 @@ export default function AdminLogin() {
               <h3 className="mb-0 font-weight-light text-white">Admin Login</h3>
             </Card.Header>
             <Card.Body className="p-4">
-              {error && <Alert variant="danger">{error}</Alert>}
+
               <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label className="small mb-1">Email Address</Form.Label>

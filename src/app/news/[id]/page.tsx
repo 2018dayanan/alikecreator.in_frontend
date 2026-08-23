@@ -7,6 +7,7 @@ import CommanBanner from '@/components/CommanBanner';
 import IMAGES from '@/constant/theme';
 import { ProductService } from '@/services/productService';
 import { Spinner, Alert, Card, Row, Col, Badge, Button } from 'react-bootstrap';
+import toast from 'react-hot-toast';
 
 export default function NewsDetailPage() {
     const params = useParams();
@@ -84,7 +85,7 @@ export default function NewsDetailPage() {
     const handleShare = () => {
         if (typeof window !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(window.location.href);
-            alert('Article link copied to clipboard!');
+            toast.success('Article link copied to clipboard!');
         }
     };
 

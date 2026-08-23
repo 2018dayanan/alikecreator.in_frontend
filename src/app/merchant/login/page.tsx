@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
 import { merchantService } from '@/services/merchantService';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 
 export default function MerchantLoginPage() {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export default function MerchantLoginPage() {
     setError('');
 
     if (!email || !password) {
-      setError('Please enter both email and password.');
+      toast.error('Please enter both email and password.');
       return;
     }
 
@@ -32,11 +32,11 @@ export default function MerchantLoginPage() {
         toast.success(`Welcome back, ${data.merchant?.business_name || data.merchant?.name}!`);
         router.push('/merchant/dashboard');
       } else {
-        setError(data.message || 'Login failed. Please check your credentials.');
+        toast.error(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
       console.error(err);
-      setError('An error occurred during login. Please try again.');
+      toast.error('An error occurred during login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function MerchantLoginPage() {
               <h3 className="mb-1 font-weight-bold text-white">Merchant Portal</h3>
             </Card.Header>
             <Card.Body className="p-4 bg-white">
-              {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
+
 
               <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="merchantEmail">

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
 import { merchantService } from '@/services/merchantService';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 
 export default function MerchantRegisterPage() {
   const [formData, setFormData] = useState({
@@ -18,8 +18,7 @@ export default function MerchantRegisterPage() {
     store_description: '',
     tax_id: ''
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -30,21 +29,20 @@ export default function MerchantRegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+
 
     if (!formData.name || !formData.business_name || !formData.email || !formData.mobile || !formData.password || !formData.subdomain) {
-      setError('Please fill in all required fields.');
+      toast.error('Please fill in all required fields.');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
+      toast.error('Passwords do not match.');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      toast.error('Password must be at least 6 characters.');
       return;
     }
 
@@ -54,17 +52,16 @@ export default function MerchantRegisterPage() {
       const data = await merchantService.register(payload);
 
       if (data.status) {
-        setSuccess('Registration submitted successfully! Your account is pending admin verification. You will be redirected to login.');
-        toast.success('Registration successful! Waiting for admin verification.');
+        toast.success('Registration successful! Waiting for admin verification. Redirecting...');
         setTimeout(() => {
           router.push('/merchant/login');
         }, 3500);
       } else {
-        setError(data.message || 'Registration failed. Please check your information.');
+        toast.error(data.message || 'Registration failed. Please check your information.');
       }
     } catch (err) {
       console.error(err);
-      setError('An error occurred during registration. Please try again.');
+      toast.error('An error occurred during registration. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -82,8 +79,7 @@ export default function MerchantRegisterPage() {
               <h3 className="mb-1 font-weight-bold text-white">Merchant Registration</h3>
             </Card.Header>
             <Card.Body className="p-4 bg-white">
-              {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
-              {success && <Alert variant="success" className="py-2 small">{success}</Alert>}
+
 
               <Form onSubmit={handleRegister}>
                 <Row>

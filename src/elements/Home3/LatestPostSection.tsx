@@ -81,10 +81,10 @@ export default function LatestPostSection() {
         <div className="container">
             <div className="section-head style-1 wow fadeInUp d-md-flex justify-content-between align-items-center" data-wow-delay="0.1s">
                 <div className="left-content">
-                    <h2 className="title">Latest News & Posts</h2>
+                    <h2 className="title">Latest Updates </h2>
                     <p>Stay updated with our latest announcements, trends, and stories.</p>
                 </div>
-                <Link className="btn btn-secondary" href="/news">View All News</Link>
+                <Link className="btn btn-secondary" href="/news">View all update</Link>
             </div>
             <div className="row blog-shap">
                 {/* Main Featured News Card (Left) */}
