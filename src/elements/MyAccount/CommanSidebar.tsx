@@ -28,6 +28,7 @@ type MenuItem = {
 
 export default function CommanSidebar(){
     const [user, setUser] = useState<{name?: string; email?: string; profile_picture?: string} | null>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         // Initially load from local storage if available for instant display
@@ -69,10 +70,10 @@ export default function CommanSidebar(){
         <aside className="col-xl-3">
             <div className="toggle-info">
                 <h5 className="title mb-0">Account Navbar</h5>
-                <a className="toggle-btn" href="#accountSidebar">Account Menu</a>
+                <a className="toggle-btn" href="#" onClick={(e) => { e.preventDefault(); setIsSidebarOpen(!isSidebarOpen); }}>Account Menu</a>
             </div>
             <div className="sticky-top account-sidebar-wrapper">
-                <div className="account-sidebar" id="accountSidebar">
+                <div className={`account-sidebar ${isSidebarOpen ? 'show' : ''}`} id="accountSidebar">
                     <div className="profile-head">
                         <div className="user-thumb">
                             <Image className="rounded-circle" src={user?.profile_picture || IMAGES.ProfilePic} width={100} height={100} alt="User Profile" />

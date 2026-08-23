@@ -186,7 +186,7 @@ const Header = ({ design }: DesignType) => {
                                     <div className="extra-cell">
                                         <ul className="header-right d-flex align-items-center">
                                             {isLoggedIn ? (
-                                                <li className="nav-item profile-link d-none d-lg-inline-block" style={{ marginRight: '15px' }}>
+                                                <li className="nav-item profile-link" style={{ marginRight: '15px' }}>
                                                     <Link className="nav-link p-0" href="/account-dashboard">
                                                         <Image 
                                                             src={userProfilePic} 
