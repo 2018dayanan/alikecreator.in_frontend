@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Table, Badge, Button, Spinner, Modal, Form } from 'react-bootstrap';
 import { adminService } from '@/services/adminService';
 import toast from 'react-hot-toast';
+import UserWalletDetailsModal from '../_components/UserWalletDetailsModal';
 
 export default function AdminWalletRequests() {
   const [requests, setRequests] = useState<any[]>([]);
@@ -13,6 +14,8 @@ export default function AdminWalletRequests() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [adminRemarks, setAdminRemarks] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,6 +83,15 @@ export default function AdminWalletRequests() {
   const handleViewDetails = (req: any) => {
     setSelectedRequest(req);
     setShowViewModal(true);
+  };
+
+  const handleViewWallet = (req: any) => {
+    if (req.userId?._id) {
+      setSelectedUserId(req.userId._id);
+      setShowWalletModal(true);
+    } else {
+      toast.error('User information not available for this request');
+    }
   };
 
   const submitReject = async () => {
@@ -177,6 +189,13 @@ export default function AdminWalletRequests() {
                             onClick={() => handleViewDetails(req)}
                           >
                             View
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleViewWallet(req)}
+                          >
+                            💼 Wallet
                           </Button>
                           {req.status === 'pending' ? (
                             <>
@@ -334,6 +353,13 @@ export default function AdminWalletRequests() {
           )}
         </Modal.Footer>
       </Modal>
+
+      {/* User Wallet Details Modal */}
+      <UserWalletDetailsModal
+        show={showWalletModal}
+        onHide={() => setShowWalletModal(false)}
+        userId={selectedUserId}
+      />
     </div>
   );
 }

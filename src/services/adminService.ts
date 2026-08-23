@@ -545,6 +545,45 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to update recharge request status' };
     }
+  },
+
+  // Coin Management
+  addCoinToUser: async (userId: string, amount: number, description: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/coin/add`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ userId, amount, description }),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to add coins to user' };
+    }
+  },
+
+  // Wallet Details Management
+  getUserWallet: async (userId: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/wallet/${userId}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch user wallet' };
+    }
+  },
+
+  getWalletTransactions: async (userId: string, walletType = 'balance', page = 1, limit = 10) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/wallet/${userId}/transactions?walletType=${walletType}&page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch wallet transactions' };
+    }
   }
 };
 
