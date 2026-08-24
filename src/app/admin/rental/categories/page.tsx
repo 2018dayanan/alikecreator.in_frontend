@@ -11,6 +11,8 @@ interface Category {
   isActive: boolean;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function RentalCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ export default function RentalCategoriesPage() {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/v1/admin/rental/category', {
+      const res = await fetch(`${API_URL}/admin/rental/category`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -71,7 +73,7 @@ export default function RentalCategoriesPage() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      const url = editMode ? `/api/v1/admin/rental/category/${currentId}` : '/api/v1/admin/rental/category';
+      const url = editMode ? `${API_URL}/admin/rental/category/${currentId}` : `${API_URL}/admin/rental/category`;
       const method = editMode ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -100,7 +102,7 @@ export default function RentalCategoriesPage() {
     if (!confirm('Are you sure you want to delete this category?')) return;
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`/api/v1/admin/rental/category/${id}`, {
+      const res = await fetch(`${API_URL}/admin/rental/category/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

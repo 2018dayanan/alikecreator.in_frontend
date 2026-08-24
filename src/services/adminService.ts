@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3087/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Helper to get auth headers
 const getAuthHeaders = () => {
