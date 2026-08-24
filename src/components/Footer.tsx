@@ -146,8 +146,8 @@ const Footer = (props: footertype) => {
                             <div className="widget widget_services">
                                 <h5 className="footer-title">Useful Links</h5>
                                 <ul>
-                                    {UsefulLinks.map((item, i) => (
-                                        <li key={i}><Link href="#">{item.name}</Link></li>
+                                    {UsefulLinks.map((item: any, i) => (
+                                        <li key={i}><Link href={item.link || "#"}>{item.name}</Link></li>
                                     ))}
                                 </ul>
                             </div>
