@@ -37,7 +37,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          <Nav>
+          <Nav className="align-items-center">
+            <Link href="/admin/rental" className="btn btn-outline-light btn-sm me-3 fw-bold">
+              <i className="fa-solid fa-repeat me-1"></i> Rental Portal
+            </Link>
             <Dropdown align="end">
               <Dropdown.Toggle variant="dark" id="dropdown-basic" className="border-0">
                 Admin User
