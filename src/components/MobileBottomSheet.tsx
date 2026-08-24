@@ -20,7 +20,7 @@ const MobileBottomSheet = () => {
     const handleWalletClick = (e: React.MouseEvent) => {
         e.preventDefault();
         if (isLoggedIn) {
-            router.push('/wallet');
+            router.push('/account-wallet');
         } else {
             router.push('/login');
         }
