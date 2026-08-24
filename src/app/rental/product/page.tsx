@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import CommanLayout from '@/components/CommanLayout';
 import CommanBanner from '@/components/CommanBanner';
+import IMAGES from '@/constant/theme';
 import { Spinner, Alert, Container, Row, Col, Card, Form, Button, Pagination, Badge } from 'react-bootstrap';
 
 interface RentalProduct {
@@ -244,9 +245,11 @@ function RentalProductsContent() {
                                                         <span className="fw-semibold small">₹{product.securityDeposit}</span>
                                                     </div>
 
-                                                    <Button variant="dark" className="w-100 rounded-pill fw-semibold py-2">
-                                                        <i className="fa-regular fa-calendar-check me-2"></i> Rent Now
-                                                    </Button>
+                                                    <Link href={`/rental/checkout/${product._id}`} passHref>
+                                                        <Button variant="dark" className="w-100 rounded-pill fw-semibold py-2">
+                                                            <i className="fa-regular fa-calendar-check me-2"></i> Rent Now
+                                                        </Button>
+                                                    </Link>
                                                 </div>
                                             </Card.Body>
                                         </Card>
@@ -312,8 +315,8 @@ function RentalProductsContent() {
 export default function RentalProductsPublicPage() {
     return (
         <CommanLayout>
-            <CommanBanner title="Rental Collection" />
-            
+            <CommanBanner image={IMAGES.BackBg1.src} mainText="Rental Collection" parentText="Home" currentText="Rental Collection" />
+
             {/* Suspense is required because we are using useSearchParams() */}
             <Suspense fallback={
                 <div className="text-center py-5 my-5">

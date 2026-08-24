@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CommanLayout from '@/components/CommanLayout';
 import CommanBanner from '@/components/CommanBanner';
+import IMAGES from '@/constant/theme';
 import { Spinner, Alert, Container, Row, Col, Card } from 'react-bootstrap';
 
 interface RentalCategory {
@@ -44,7 +45,7 @@ export default function RentalCategoriesPublicPage() {
 
     return (
         <CommanLayout>
-            <CommanBanner title="Rental Categories" />
+            <CommanBanner image={IMAGES.BackBg1.src} mainText="Rental Categories" parentText="Home" currentText="Rental Categories" />
             
             <div className="section-padding py-5 bg-light">
                 <Container>
