@@ -591,6 +591,48 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to fetch wallet transactions' };
     }
+  },
+
+  // Orders Management
+  getAdminOrders: async (page = 1, limit = 10, status = '') => {
+    let url = `${API_URL}/admin/orders?page=${page}&limit=${limit}`;
+    if (status) {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch orders' };
+    }
+  },
+
+  getAdminOrderById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/orders/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch order details' };
+    }
+  },
+
+  updateAdminOrderStatus: async (id: string, orderStatus: string, trackingNumber?: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/orders/${id}/status`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ orderStatus, trackingNumber }),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update order status' };
+    }
   }
 };
 
