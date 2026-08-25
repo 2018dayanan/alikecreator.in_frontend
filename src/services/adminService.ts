@@ -450,7 +450,7 @@ export const adminService = {
 
   // Brand Management
   getAdminBrands: async (page = 1, limit = 10, merchantId = '', search = '') => {
-    let url = `${API_URL}/admin/brand?page=${page}&limit=${limit}`;
+    let url = `${API_URL}/admin/brands?page=${page}&limit=${limit}`;
     if (merchantId) {
       url += `&merchantId=${encodeURIComponent(merchantId)}`;
     }
@@ -470,7 +470,7 @@ export const adminService = {
 
   getAdminBrandById: async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+      const res = await fetch(`${API_URL}/admin/brands/${id}`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
@@ -483,7 +483,7 @@ export const adminService = {
   createBrand: async (data: FormData) => {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
-      const res = await fetch(`${API_URL}/admin/brand`, {
+      const res = await fetch(`${API_URL}/admin/brands`, {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
@@ -499,7 +499,7 @@ export const adminService = {
   updateBrand: async (id: string, data: FormData) => {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
-      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+      const res = await fetch(`${API_URL}/admin/brands/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
@@ -514,7 +514,7 @@ export const adminService = {
 
   deleteBrand: async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/admin/brand/${id}`, {
+      const res = await fetch(`${API_URL}/admin/brands/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });

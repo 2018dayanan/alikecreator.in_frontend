@@ -39,6 +39,7 @@ export default function AdminNewsPage() {
     is_active: true
   });
   const [saving, setSaving] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   // Delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -102,6 +103,7 @@ export default function AdminNewsPage() {
       merchantId: selectedMerchantId || '',
       is_active: true
     });
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -117,6 +119,7 @@ export default function AdminNewsPage() {
       merchantId: item.merchantId?._id || item.merchantId || '',
       is_active: item.is_active !== undefined ? item.is_active : true
     });
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -134,17 +137,17 @@ export default function AdminNewsPage() {
 
     setSaving(true);
     try {
-      const payload: any = {
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        image: formData.image.trim() || null,
-        date: formData.date ? new Date(formData.date) : new Date(),
-        is_active: formData.is_active,
-        merchantId: formData.merchantId ? formData.merchantId : null
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title.trim());
+      uploadData.append('description', formData.description.trim());
+      if (formData.image) uploadData.append('image', formData.image.trim());
+      if (selectedImageFile) uploadData.append('image', selectedImageFile);
+      if (formData.date) uploadData.append('date', formData.date);
+      uploadData.append('is_active', formData.is_active.toString());
+      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
 
       if (modalMode === 'create') {
-        const res = await adminService.createNews(payload);
+        const res = await adminService.createNews(uploadData as any);
         if (res.status) {
           toast.success('News article created successfully');
           setShowModal(false);
@@ -153,7 +156,7 @@ export default function AdminNewsPage() {
           toast.error(res.message || 'Failed to create news');
         }
       } else {
-        const res = await adminService.updateNews(selectedNews._id, payload);
+        const res = await adminService.updateNews(selectedNews._id, uploadData as any);
         if (res.status) {
           toast.success('News article updated successfully');
           setShowModal(false);
@@ -475,15 +478,18 @@ export default function AdminNewsPage() {
 
               <Col md={8}>
                 <Form.Group>
-                  <Form.Label className="fw-bold small">Image URL</Form.Label>
+                  <Form.Label className="fw-bold small">Upload Image (File)</Form.Label>
                   <Form.Control
-                    type="url"
-                    placeholder="https://example.com/news-image.jpg"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    type="file"
+                    className="mb-2"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedImageFile(e.target.files[0]);
+                      }
+                    }}
                   />
                   <Form.Text className="text-muted small">
-                    Provide a direct image URL for the article thumbnail and banner.
+                    Upload a file or provide a direct image URL for the article thumbnail.
                   </Form.Text>
                 </Form.Group>
               </Col>
@@ -499,12 +505,12 @@ export default function AdminNewsPage() {
                 </Form.Group>
               </Col>
 
-              {formData.image && (
+              {(selectedImageFile || formData.image) && (
                 <Col xs={12}>
                   <div className="p-2 border rounded bg-light">
                     <span className="small text-muted d-block mb-1">Image Preview:</span>
                     <img
-                      src={formData.image}
+                      src={selectedImageFile ? URL.createObjectURL(selectedImageFile) : formData.image}
                       alt="Preview"
                       style={{ maxHeight: '160px', maxWidth: '100%' }}
                       className="rounded object-fit-cover"
