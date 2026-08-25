@@ -48,6 +48,7 @@ export default function MerchantCarouselsPage() {
     order: 0,
     isActive: true,
   });
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -111,6 +112,7 @@ export default function MerchantCarouselsPage() {
       isActive: true,
     });
     setFormError('');
+    setSelectedImageFile(null);
     setShowCreateModal(true);
   };
 
@@ -126,14 +128,15 @@ export default function MerchantCarouselsPage() {
       isActive: carousel.isActive ?? true,
     });
     setFormError('');
+    setSelectedImageFile(null);
     setShowEditModal(true);
   };
 
   // Create Carousel
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.image.trim()) {
-      setFormError('Banner image URL is required');
+    if (!formData.image.trim() && !selectedImageFile) {
+      setFormError('Banner image URL or File is required');
       return;
     }
 
@@ -141,16 +144,16 @@ export default function MerchantCarouselsPage() {
       setSubmitting(true);
       setFormError('');
 
-      const payload = {
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        image: formData.image.trim(),
-        url: formData.url.trim() || null,
-        order: Number(formData.order) || 0,
-        isActive: formData.isActive,
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title.trim());
+      uploadData.append('description', formData.description.trim());
+      if (formData.image) uploadData.append('image', formData.image.trim());
+      if (selectedImageFile) uploadData.append('image', selectedImageFile);
+      if (formData.url) uploadData.append('url', formData.url.trim());
+      uploadData.append('order', (Number(formData.order) || 0).toString());
+      uploadData.append('isActive', formData.isActive.toString());
 
-      const res = await merchantService.createCarousel(payload);
+      const res = await merchantService.createCarousel(uploadData as any);
 
       if (res.status !== false) {
         toast.success(res.message || 'Banner created successfully!');
@@ -171,8 +174,8 @@ export default function MerchantCarouselsPage() {
     e.preventDefault();
     if (!selectedCarousel) return;
 
-    if (!formData.image.trim()) {
-      setFormError('Banner image URL is required');
+    if (!formData.image.trim() && !selectedImageFile) {
+      setFormError('Banner image URL or File is required');
       return;
     }
 
@@ -180,16 +183,16 @@ export default function MerchantCarouselsPage() {
       setSubmitting(true);
       setFormError('');
 
-      const payload = {
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        image: formData.image.trim(),
-        url: formData.url.trim() || null,
-        order: Number(formData.order) || 0,
-        isActive: formData.isActive,
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title.trim());
+      uploadData.append('description', formData.description.trim());
+      if (formData.image) uploadData.append('image', formData.image.trim());
+      if (selectedImageFile) uploadData.append('image', selectedImageFile);
+      if (formData.url) uploadData.append('url', formData.url.trim());
+      uploadData.append('order', (Number(formData.order) || 0).toString());
+      uploadData.append('isActive', formData.isActive.toString());
 
-      const res = await merchantService.updateCarousel(selectedCarousel._id, payload);
+      const res = await merchantService.updateCarousel(selectedCarousel._id, uploadData as any);
 
       if (res.status !== false) {
         toast.success(res.message || 'Banner updated successfully!');
@@ -607,21 +610,35 @@ export default function MerchantCarouselsPage() {
 
             <Row className="g-3">
               <Col xs={12} md={8}>
-                {/* Image URL */}
+                {/* Banner Image File */}
                 <Form.Group className="mb-3">
                   <Form.Label className="fw-semibold">
-                    Banner Image URL <span className="text-danger">*</span>
+                    Upload Banner Image (File)
                   </Form.Label>
                   <Form.Control
-                    type="url"
-                    placeholder="https://example.com/images/store-banner.jpg"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    required
+                    type="file"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedImageFile(e.target.files[0]);
+                      }
+                    }}
                   />
                   <Form.Text className="text-muted">
                     Recommended resolution: 1920x600 or 1200x500 for optimal high-definition hero display.
                   </Form.Text>
+                </Form.Group>
+
+                {/* Banner Image URL */}
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold">
+                    Or Banner Image URL
+                  </Form.Label>
+                  <Form.Control
+                    type="url"
+                    placeholder="https://example.com/images/banner.jpg"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  />
                 </Form.Group>
 
                 {/* Banner Title */}
@@ -696,9 +713,9 @@ export default function MerchantCarouselsPage() {
                   className="border rounded p-2 bg-light d-flex flex-column align-items-center justify-content-center text-center"
                   style={{ minHeight: '180px' }}
                 >
-                  {formData.image.trim() ? (
+                  {(selectedImageFile || formData.image.trim()) ? (
                     <img
-                      src={formData.image.trim()}
+                      src={selectedImageFile ? URL.createObjectURL(selectedImageFile) : formData.image.trim()}
                       alt="Banner Preview"
                       className="img-fluid rounded shadow-sm"
                       style={{ maxHeight: '160px', width: '100%', objectFit: 'cover' }}
@@ -709,7 +726,7 @@ export default function MerchantCarouselsPage() {
                   ) : (
                     <div className="text-muted p-3">
                       <div style={{ fontSize: '32px' }}>🖼️</div>
-                      <small className="text-muted">Enter a valid image URL to view preview</small>
+                      <small className="text-muted">Upload a file or enter a valid image URL to view preview</small>
                     </div>
                   )}
                 </div>
@@ -747,17 +764,31 @@ export default function MerchantCarouselsPage() {
 
             <Row className="g-3">
               <Col xs={12} md={8}>
-                {/* Image URL */}
+                {/* Banner Image File */}
                 <Form.Group className="mb-3">
                   <Form.Label className="fw-semibold">
-                    Banner Image URL <span className="text-danger">*</span>
+                    Upload Banner Image (File)
+                  </Form.Label>
+                  <Form.Control
+                    type="file"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                </Form.Group>
+
+                {/* Banner Image URL */}
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold">
+                    Or Banner Image URL
                   </Form.Label>
                   <Form.Control
                     type="url"
-                    placeholder="https://example.com/images/store-banner.jpg"
+                    placeholder="https://example.com/images/banner.jpg"
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    required
                   />
                 </Form.Group>
 
@@ -830,17 +861,20 @@ export default function MerchantCarouselsPage() {
                   className="border rounded p-2 bg-light d-flex flex-column align-items-center justify-content-center text-center"
                   style={{ minHeight: '180px' }}
                 >
-                  {formData.image.trim() ? (
+                  {(selectedImageFile || formData.image.trim()) ? (
                     <img
-                      src={formData.image.trim()}
+                      src={selectedImageFile ? URL.createObjectURL(selectedImageFile) : formData.image.trim()}
                       alt="Banner Preview"
                       className="img-fluid rounded shadow-sm"
                       style={{ maxHeight: '160px', width: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
                     />
                   ) : (
                     <div className="text-muted p-3">
                       <div style={{ fontSize: '32px' }}>🖼️</div>
-                      <small className="text-muted">No image URL entered</small>
+                      <small className="text-muted">Upload a file or enter a URL to view preview</small>
                     </div>
                   )}
                 </div>

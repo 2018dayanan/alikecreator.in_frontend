@@ -224,6 +224,7 @@ export default function AdminProductsPage() {
     purchaseType: 'internal',
     externalLink: '',
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // Merchant / Category source data
   const [merchants, setMerchants] = useState<any[]>([]);
@@ -410,6 +411,7 @@ export default function AdminProductsPage() {
     });
     setIsEditing(false);
     setCurrentProductId(null);
+    setSelectedFiles([]);
     setShowModal(true);
   };
 
@@ -432,6 +434,7 @@ export default function AdminProductsPage() {
     });
     setIsEditing(true);
     setCurrentProductId(product._id);
+    setSelectedFiles([]);
     setShowModal(true);
   };
 
@@ -452,20 +455,34 @@ export default function AdminProductsPage() {
         return;
       }
 
-      const payload = {
-        ...formData,
-        price: Number(formData.price),
-        discount: formData.discount ? Number(formData.discount) : null,
-        quantity: Number(formData.quantity) || 0,
-        video: formData.video.trim() || undefined,
-        images: formData.images ? formData.images.split(',').map((s) => s.trim()).filter(Boolean) : [],
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title);
+      uploadData.append('description', formData.description);
+      uploadData.append('price', formData.price);
+      if (formData.discount) uploadData.append('discount', formData.discount);
+      uploadData.append('quantity', formData.quantity);
+      uploadData.append('categoryId', formData.categoryId);
+      uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('purchaseType', formData.purchaseType);
+      if (formData.externalLink) uploadData.append('externalLink', formData.externalLink);
+      if (formData.video) uploadData.append('video', formData.video.trim());
+
+      if (formData.images) {
+        const imageList = formData.images.split(',').map((s) => s.trim()).filter(Boolean);
+        imageList.forEach((url) => uploadData.append('images', url));
+      }
+
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          uploadData.append('images', file);
+        });
+      }
 
       let data;
       if (isEditing && currentProductId) {
-        data = await adminService.updateProduct(currentProductId, payload);
+        data = await adminService.updateProduct(currentProductId, uploadData as any);
       } else {
-        data = await adminService.createProduct(payload);
+        data = await adminService.createProduct(uploadData as any);
       }
 
       if (data.status) {
@@ -802,9 +819,16 @@ export default function AdminProductsPage() {
             </div>
 
             <Form.Group className="mb-3">
-              <Form.Label>Image URLs (comma separated)</Form.Label>
-              <Form.Control type="text" name="images" value={formData.images} onChange={handleFormChange} placeholder="https://image1.jpg, https://image2.jpg" />
-              <Form.Text className="text-muted">Comma-separated list of image URLs.</Form.Text>
+              <Form.Label>Upload Product Images</Form.Label>
+              <Form.Control
+                type="file"
+                multiple
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.files) {
+                    setSelectedFiles(Array.from(e.target.files));
+                  }
+                }}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -952,8 +976,8 @@ export default function AdminProductsPage() {
                           selectedProductDetail.video.includes('embed')
                             ? selectedProductDetail.video
                             : selectedProductDetail.video.includes('youtu.be')
-                            ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
-                            : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
+                              ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
+                              : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
                         }
                         title="Product Video"
                         allowFullScreen

@@ -9,6 +9,13 @@ const getAuthHeaders = () => {
   };
 };
 
+const getAuthHeadersForFormData = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+  return {
+    'Authorization': token ? `Bearer ${token}` : '',
+  };
+};
+
 export const adminService = {
   // Authentication
   login: async (email: string, password: string) => {
@@ -54,20 +61,20 @@ export const adminService = {
     return res.json();
   },
 
-  createProduct: async (data: any) => {
+  createProduct: async (data: FormData) => {
     const res = await fetch(`${API_URL}/admin/product`, {
       method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+      headers: getAuthHeadersForFormData(),
+      body: data,
     });
     return res.json();
   },
 
-  updateProduct: async (id: string, data: any) => {
+  updateProduct: async (id: string, data: FormData) => {
     const res = await fetch(`${API_URL}/admin/product/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+      headers: getAuthHeadersForFormData(),
+      body: data,
     });
     return res.json();
   },
@@ -93,20 +100,20 @@ export const adminService = {
     return res.json();
   },
 
-  createCategory: async (data: any) => {
+  createCategory: async (data: FormData) => {
     const res = await fetch(`${API_URL}/admin/category`, {
       method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+      headers: getAuthHeadersForFormData(),
+      body: data,
     });
     return res.json();
   },
 
-  updateCategory: async (id: string, data: any) => {
+  updateCategory: async (id: string, data: FormData) => {
     const res = await fetch(`${API_URL}/admin/category/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+      headers: getAuthHeadersForFormData(),
+      body: data,
     });
     return res.json();
   },
@@ -306,12 +313,12 @@ export const adminService = {
     }
   },
 
-  createCarousel: async (data: any) => {
+  createCarousel: async (data: FormData) => {
     try {
       const res = await fetch(`${API_URL}/admin/carousel`, {
         method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
+        headers: getAuthHeadersForFormData(),
+        body: data,
       });
       return await res.json();
     } catch (err: any) {
@@ -319,12 +326,12 @@ export const adminService = {
     }
   },
 
-  updateCarousel: async (id: string, data: any) => {
+  updateCarousel: async (id: string, data: FormData) => {
     try {
       const res = await fetch(`${API_URL}/admin/carousel/${id}`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
+        headers: getAuthHeadersForFormData(),
+        body: data,
       });
       return await res.json();
     } catch (err: any) {
@@ -391,12 +398,12 @@ export const adminService = {
     }
   },
 
-  createNews: async (data: any) => {
+  createNews: async (data: FormData) => {
     try {
       const res = await fetch(`${API_URL}/admin/news`, {
         method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
+        headers: getAuthHeadersForFormData(),
+        body: data,
       });
       return await res.json();
     } catch (err: any) {
@@ -404,12 +411,12 @@ export const adminService = {
     }
   },
 
-  updateNews: async (id: string, data: any) => {
+  updateNews: async (id: string, data: FormData) => {
     try {
       const res = await fetch(`${API_URL}/admin/news/${id}`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
+        headers: getAuthHeadersForFormData(),
+        body: data,
       });
       return await res.json();
     } catch (err: any) {

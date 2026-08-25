@@ -45,6 +45,7 @@ export default function MerchantProductsPage() {
     purchaseType: 'internal',
     externalLink: ''
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const fetchAvailableCategories = async () => {
     try {
@@ -118,6 +119,7 @@ export default function MerchantProductsPage() {
     });
     setIsEditing(false);
     setCurrentProductId(null);
+    setSelectedFiles([]);
     setShowModal(true);
   };
 
@@ -138,6 +140,7 @@ export default function MerchantProductsPage() {
     });
     setIsEditing(true);
     setCurrentProductId(product._id);
+    setSelectedFiles([]);
     setShowModal(true);
   };
 
@@ -160,19 +163,33 @@ export default function MerchantProductsPage() {
 
     try {
       setSaving(true);
-      const payload = {
-        ...formData,
-        price: Number(formData.price),
-        discount: formData.discount ? Number(formData.discount) : null,
-        quantity: Number(formData.quantity) || 0,
-        images: formData.images ? formData.images.split(',').map(s => s.trim()).filter(Boolean) : []
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title);
+      uploadData.append('description', formData.description);
+      uploadData.append('price', formData.price);
+      if (formData.discount) uploadData.append('discount', formData.discount);
+      uploadData.append('quantity', formData.quantity);
+      uploadData.append('categoryId', formData.categoryId);
+      uploadData.append('purchaseType', formData.purchaseType);
+      if (formData.externalLink) uploadData.append('externalLink', formData.externalLink);
+      if (formData.video) uploadData.append('video', formData.video.trim());
+
+      if (formData.images) {
+        const imageList = formData.images.split(',').map(s => s.trim()).filter(Boolean);
+        imageList.forEach(url => uploadData.append('images', url));
+      }
+
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          uploadData.append('images', file);
+        });
+      }
 
       let res;
       if (isEditing && currentProductId) {
-        res = await merchantService.updateProduct(currentProductId, payload);
+        res = await merchantService.updateProduct(currentProductId, uploadData as any);
       } else {
-        res = await merchantService.createProduct(payload);
+        res = await merchantService.createProduct(uploadData as any);
       }
 
       if (res.status) {
@@ -551,6 +568,19 @@ export default function MerchantProductsPage() {
                 </div>
               )}
             </div>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-semibold">Upload Product Images</Form.Label>
+              <Form.Control 
+                type="file" 
+                multiple 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.files) {
+                    setSelectedFiles(Array.from(e.target.files));
+                  }
+                }} 
+              />
+            </Form.Group>
 
             <Form.Group className="mb-3" controlId="prodImages">
               <Form.Label className="small fw-semibold">Image URLs (comma separated)</Form.Label>

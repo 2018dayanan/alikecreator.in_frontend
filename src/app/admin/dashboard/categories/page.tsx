@@ -225,6 +225,8 @@ export default function AdminCategoriesPage() {
     merchantId: '',
     status: 'active',
   });
+  const [selectedIconFile, setSelectedIconFile] = useState<File | null>(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const router = useRouter();
 
@@ -345,6 +347,8 @@ export default function AdminCategoriesPage() {
     });
     setIsEditing(false);
     setCurrentCategoryId(null);
+    setSelectedIconFile(null);
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -360,6 +364,8 @@ export default function AdminCategoriesPage() {
     });
     setIsEditing(true);
     setCurrentCategoryId(category._id);
+    setSelectedIconFile(null);
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -375,11 +381,23 @@ export default function AdminCategoriesPage() {
         return;
       }
 
+      const uploadData = new FormData();
+      uploadData.append('name', formData.name);
+      if (formData.description) uploadData.append('description', formData.description);
+      uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('status', formData.status);
+      
+      if (formData.icon) uploadData.append('icon', formData.icon);
+      if (formData.image) uploadData.append('image', formData.image);
+
+      if (selectedIconFile) uploadData.append('icon', selectedIconFile);
+      if (selectedImageFile) uploadData.append('image', selectedImageFile);
+
       let data;
       if (isEditing && currentCategoryId) {
-        data = await adminService.updateCategory(currentCategoryId, formData);
+        data = await adminService.updateCategory(currentCategoryId, uploadData as any);
       } else {
-        data = await adminService.createCategory(formData);
+        data = await adminService.createCategory(uploadData as any);
       }
 
       if (data.status) {
@@ -623,7 +641,18 @@ export default function AdminCategoriesPage() {
             <div className="row">
               <div className="col-md-6">
                 <Form.Group className="mb-3">
-                  <Form.Label>Icon URL</Form.Label>
+                  <Form.Label>Upload Icon (File)</Form.Label>
+                  <Form.Control 
+                    type="file" 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedIconFile(e.target.files[0]);
+                      }
+                    }} 
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Or Icon URL</Form.Label>
                   <Form.Control 
                     type="url" 
                     name="icon" 
@@ -635,7 +664,18 @@ export default function AdminCategoriesPage() {
               </div>
               <div className="col-md-6">
                 <Form.Group className="mb-3">
-                  <Form.Label>Banner / Image URL</Form.Label>
+                  <Form.Label>Upload Banner Image (File)</Form.Label>
+                  <Form.Control 
+                    type="file" 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedImageFile(e.target.files[0]);
+                      }
+                    }} 
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Or Banner URL</Form.Label>
                   <Form.Control 
                     type="url" 
                     name="image" 

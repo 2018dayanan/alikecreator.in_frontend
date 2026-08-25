@@ -60,6 +60,10 @@ export default function MerchantDashboardPage() {
     externalLink: '',
   });
 
+  const [categoryIconFile, setCategoryIconFile] = useState<File | null>(null);
+  const [categoryImageFile, setCategoryImageFile] = useState<File | null>(null);
+  const [productImageFiles, setProductImageFiles] = useState<File[]>([]);
+
   const fetchMerchantDetails = async () => {
     try {
       setLoading(true);
@@ -217,6 +221,8 @@ export default function MerchantDashboardPage() {
       image: '',
       status: 'active',
     });
+    setCategoryIconFile(null);
+    setCategoryImageFile(null);
     setShowAddCategoryModal(true);
   };
 
@@ -227,11 +233,19 @@ export default function MerchantDashboardPage() {
     }
 
     try {
-      const payload = {
-        ...categoryFormData,
-        merchantId,
-      };
-      const data = await adminService.createCategory(payload);
+      const uploadData = new FormData();
+      uploadData.append('merchantId', merchantId);
+      uploadData.append('name', categoryFormData.name);
+      if (categoryFormData.description) uploadData.append('description', categoryFormData.description);
+      uploadData.append('status', categoryFormData.status);
+      
+      if (categoryFormData.icon) uploadData.append('icon', categoryFormData.icon);
+      if (categoryFormData.image) uploadData.append('image', categoryFormData.image);
+
+      if (categoryIconFile) uploadData.append('icon', categoryIconFile);
+      if (categoryImageFile) uploadData.append('image', categoryImageFile);
+
+      const data = await adminService.createCategory(uploadData as any);
       if (data.status) {
         toast.success('Category created successfully');
         setShowAddCategoryModal(false);
@@ -257,6 +271,7 @@ export default function MerchantDashboardPage() {
       purchaseType: 'internal',
       externalLink: '',
     });
+    setProductImageFiles([]);
     setShowAddProductModal(true);
   };
 
@@ -272,15 +287,26 @@ export default function MerchantDashboardPage() {
     }
 
     try {
-      const payload = {
-        ...productFormData,
-        merchantId,
-        price: Number(productFormData.price),
-        quantity: Number(productFormData.quantity) || 0,
-        images: productFormData.images ? productFormData.images.split(',').map((s) => s.trim()) : [],
-      };
+      const uploadData = new FormData();
+      uploadData.append('merchantId', merchantId);
+      uploadData.append('title', productFormData.title);
+      if (productFormData.description) uploadData.append('description', productFormData.description);
+      uploadData.append('price', productFormData.price);
+      uploadData.append('quantity', productFormData.quantity || '0');
+      uploadData.append('categoryId', productFormData.categoryId);
+      uploadData.append('purchaseType', productFormData.purchaseType);
+      if (productFormData.externalLink) uploadData.append('externalLink', productFormData.externalLink);
 
-      const data = await adminService.createProduct(payload);
+      if (productFormData.images) {
+        const urls = productFormData.images.split(',').map((s) => s.trim()).filter((s) => s);
+        urls.forEach((url) => uploadData.append('images', url));
+      }
+
+      productImageFiles.forEach((file) => {
+        uploadData.append('images', file);
+      });
+
+      const data = await adminService.createProduct(uploadData as any);
       if (data.status) {
         toast.success('Product created successfully');
         setShowAddProductModal(false);
@@ -857,7 +883,18 @@ export default function MerchantDashboardPage() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Icon URL</Form.Label>
+              <Form.Label>Upload Icon (File)</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setCategoryIconFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Or Icon URL</Form.Label>
               <Form.Control
                 type="url"
                 value={categoryFormData.icon}
@@ -866,7 +903,18 @@ export default function MerchantDashboardPage() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Banner / Image URL</Form.Label>
+              <Form.Label>Upload Banner Image (File)</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setCategoryImageFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Or Banner / Image URL</Form.Label>
               <Form.Control
                 type="url"
                 value={categoryFormData.image}
@@ -902,6 +950,28 @@ export default function MerchantDashboardPage() {
                     value={productFormData.title}
                     onChange={(e) => setProductFormData({ ...productFormData, title: e.target.value })}
                     placeholder="Enter product title"
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Upload Product Images</Form.Label>
+                  <Form.Control
+                    type="file"
+                    multiple
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files) {
+                        setProductImageFiles(Array.from(e.target.files));
+                      }
+                    }}
+                  />
+                  <Form.Text className="text-muted">You can select multiple images.</Form.Text>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Or Image URLs (comma separated)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={productFormData.images}
+                    onChange={(e) => setProductFormData({ ...productFormData, images: e.target.value })}
+                    placeholder="url1.jpg, url2.png"
                   />
                 </Form.Group>
               </div>
