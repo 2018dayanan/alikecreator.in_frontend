@@ -100,13 +100,13 @@ const Header = ({ design }: DesignType) => {
                     if (user.profile_picture) {
                         setUserProfilePic(user.profile_picture);
                     }
-                } catch (e) {}
+                } catch (e) { }
             } else {
                 setIsLoggedIn(false);
             }
         };
         checkAuth();
-        
+
         return () => window.removeEventListener('cartUpdated', loadCartCount);
     }, []);
 
@@ -152,12 +152,12 @@ const Header = ({ design }: DesignType) => {
                             <div className="logo-header-wrap d-flex align-items-center">
                                 {design === "header-text-white header-transparent" ? (
                                     <div className="logo-header me-md-5">
-                                        <Link href="/" className="logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" /></Link>
-                                        <Link href="/" className="logo-dark"><Image src={IMAGES.logopng} alt="logo" /></Link>
+                                        <Link href="/" className="logo-light"><Image src={IMAGES.LogoWhite} alt="logo-white" style={{ transform: 'scale(1.2)', transformOrigin: 'left center' }} /></Link>
+                                        <Link href="/" className="logo-dark"><Image src={IMAGES.logopng} alt="logo" style={{ transform: 'scale(1.2)', transformOrigin: 'left center' }} /></Link>
                                     </div>
                                 ) : (
                                     <div className="logo-header logo-dark me-md-5">
-                                        <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
+                                        <Link href="/"><Image src={IMAGES.logo} alt="logo" style={{ transform: 'scale(1.2)', transformOrigin: 'left center' }} /></Link>
                                     </div>
                                 )}
                             </div>
@@ -167,7 +167,7 @@ const Header = ({ design }: DesignType) => {
                                 id="navbarNavDropdown"
                             >
                                 <div className="logo-header logo-dark">
-                                    <Link href="/"><Image src={IMAGES.logo} alt="logo" /></Link>
+                                    <Link href="/"><Image src={IMAGES.logo} alt="logo" style={{ transform: 'scale(1.2)', transformOrigin: 'left center' }} /></Link>
                                 </div>
                                 <Menus />
                                 <div className="dz-social-icon">
@@ -188,11 +188,11 @@ const Header = ({ design }: DesignType) => {
                                             {isLoggedIn ? (
                                                 <li className="nav-item profile-link" style={{ marginRight: '15px' }}>
                                                     <Link className="nav-link p-0" href="/account-dashboard">
-                                                        <Image 
-                                                            src={userProfilePic} 
-                                                            alt="Profile" 
-                                                            width={40} 
-                                                            height={40} 
+                                                        <Image
+                                                            src={userProfilePic}
+                                                            alt="Profile"
+                                                            width={40}
+                                                            height={40}
                                                             className="rounded-circle"
                                                             style={{ objectFit: 'cover' }}
                                                         />
