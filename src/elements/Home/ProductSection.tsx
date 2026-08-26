@@ -25,6 +25,7 @@ interface MenuItem {
     rating?: number;
     reviewCount?: number;
     sku?: string;
+    purchaseType?: string;
     externalLink?: string | null;
     video?: string | null;
 }
@@ -214,6 +215,7 @@ const ProductSection = () => {
                         rating: item.rating || 4.7,
                         reviewCount: item.reviewCount || 5,
                         sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
+                        purchaseType: item.purchaseType || 'internal',
                         externalLink: item.externalLink || null,
                         video: item.video || null,
                     }));
@@ -312,6 +314,7 @@ const ProductSection = () => {
                     rating: item.rating || 4.7,
                     reviewCount: item.reviewCount || 5,
                     sku: item.sku || `PRT${item._id.substring(0, 7).toUpperCase()}`,
+                    purchaseType: item.purchaseType || 'internal',
                     externalLink: item.externalLink || null,
                     video: item.video || null,
                 }));
@@ -469,8 +472,8 @@ const ProductSection = () => {
                         {state.data && state.data.map((item: MenuItem, ind: number) => (
                             <div className="card-container col-6 col-xl-3 col-lg-3 col-md-4 col-sm-6 Tops wow fadeInUp" data-wow-delay="0.6s" key={ind}>
                                 <div className="shop-card">
-                                    <div 
-                                        className="dz-media" 
+                                    <div
+                                        className="dz-media"
                                         style={{ position: "relative", aspectRatio: "3 / 4", cursor: "pointer" }}
                                         onClick={() => {
                                             dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
@@ -483,7 +486,7 @@ const ProductSection = () => {
                                             style={{ objectFit: "cover" }}
                                             unoptimized
                                         />
-                                        <div 
+                                        <div
                                             className="shop-meta"
                                         >
                                             <Link href={"#"} className="btn btn-secondary btn-md btn-rounded"
@@ -507,9 +510,9 @@ const ProductSection = () => {
                                                 <i className="icon feather icon-heart-on dz-heart-fill" />
                                             </div>
                                             {item.externalLink ? (
-                                                <Link 
-                                                    href={item.externalLink} 
-                                                    target="_blank" 
+                                                <Link
+                                                    href={item.externalLink}
+                                                    target="_blank"
                                                     className="btn btn-primary meta-icon dz-carticon"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
@@ -531,7 +534,7 @@ const ProductSection = () => {
                                     </div>
                                     <div className="dz-content">
                                         <h5 className="title">
-                                            <Link 
+                                            <Link
                                                 href={"#"}
                                                 onClick={(e) => {
                                                     e.preventDefault();
@@ -624,9 +627,9 @@ const ProductSection = () => {
                                         </div>
                                     </div>
                                     <div className=" cart-btn">
-                                        {state.selectedProduct?.externalLink ? (
-                                            <Link href={state.selectedProduct.externalLink} target="_blank" className="btn btn-secondary text-uppercase">
-                                                Buy Now <i className="fa-solid fa-arrow-up-right-from-square ms-2" />
+                                        {state.selectedProduct?.purchaseType === 'external' ? (
+                                            <Link href={state.selectedProduct.externalLink || '#'} target="_blank" className="btn btn-secondary text-uppercase">
+                                                View Product <i className="fa-solid fa-arrow-up-right-from-square ms-2" />
                                             </Link>
                                         ) : (
                                             <Link
@@ -643,7 +646,7 @@ const ProductSection = () => {
                                                         }
                                                     }
                                                 }}
-                                            >View Product</Link>
+                                            >Add To Cart</Link>
                                         )}
                                         <button
                                             type="button"
@@ -671,21 +674,36 @@ const ProductSection = () => {
                                         </ul>
                                         <div className="dz-social-icon">
                                             <ul>
-                                                <li><Link target="_blank" className="text-dark" href="https://www.facebook.com/Eonpulsetech">
+                                                <li><Link target="_blank" className="text-dark" href={`https://www.facebook.com/sharer/sharer.php?u=${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}`}>
                                                     <i className="fab fa-facebook-f" />
                                                 </Link></li>
-                                                <li><Link target="_blank" className="text-dark" href="https://www.behance.net/Eonpulsetech">
-                                                    <i className="fa-brands fa-behance" />
+                                                <li><Link target="_blank" className="text-dark" href={`https://api.whatsapp.com/send?text=${encodeURIComponent(state.selectedProduct?.name || 'Check out this product:')} ${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}`}>
+                                                    <i className="fa-brands fa-whatsapp" />
                                                 </Link></li>
-                                                <li><Link target="_blank" className="text-dark" href="https://www.youtube.com/@Eonpulsetech1723">
-                                                    <i className="fa-brands fa-youtube" />
+                                                <li><Link target="_blank" className="text-dark" href={`https://t.me/share/url?url=${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}&text=${encodeURIComponent(state.selectedProduct?.name || 'Check out this product:')}`}>
+                                                    <i className="fa-brands fa-telegram" />
                                                 </Link></li>
-                                                <li><Link target="_blank" className="text-dark" href="https://www.linkedin.com/showcase/3686700/admin/">
+                                                <li><Link className="text-dark" href={`mailto:?subject=${encodeURIComponent(state.selectedProduct?.name || 'Check out this product')}&body=${typeof window !== 'undefined' ? encodeURIComponent(`Check out this product: ${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}`}>
+                                                    <i className="fa-solid fa-envelope" />
+                                                </Link></li>
+                                                <li><Link target="_blank" className="text-dark" href={`https://www.linkedin.com/shareArticle?mini=true&url=${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}&title=${encodeURIComponent(state.selectedProduct?.name || 'Product')}`}>
                                                     <i className="fa-brands fa-linkedin-in" />
                                                 </Link></li>
-                                                <li><Link target="_blank" className="text-dark" href="https://www.instagram.com/Eonpulsetech/">
+                                                <li><Link target="_blank" className="text-dark" href={`https://twitter.com/intent/tweet?url=${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${state.selectedProduct?.id}`) : ''}&text=${encodeURIComponent(state.selectedProduct?.name || 'Check out this product')}`}>
+                                                    <i className="fa-brands fa-x-twitter" />
+                                                </Link></li>
+                                                <li><Link target="_blank" className="text-dark" href="https://www.instagram.com/">
                                                     <i className="fab fa-instagram" />
                                                 </Link></li>
+                                                <li><a href="#" className="text-dark" onClick={(e) => {
+                                                    e.preventDefault();
+                                                    if (typeof window !== 'undefined') {
+                                                        const url = `${window.location.origin}/product/${state.selectedProduct?.id}`;
+                                                        navigator.clipboard.writeText(url).then(() => alert('Product link copied to clipboard!'));
+                                                    }
+                                                }} title="Copy Link">
+                                                    <i className="fa-solid fa-link" />
+                                                </a></li>
                                             </ul>
                                         </div>
                                     </div>

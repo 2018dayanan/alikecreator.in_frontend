@@ -235,6 +235,8 @@ export default function AdminProductsPage() {
   // Filtering & Pagination state
   const [selectedMerchantFilter, setSelectedMerchantFilter] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -279,7 +281,8 @@ export default function AdminProductsPage() {
   const fetchProducts = async (
     page = 1,
     merchantId = selectedMerchantFilter,
-    categoryId = selectedCategoryFilter
+    categoryId = selectedCategoryFilter,
+    search = searchTerm
   ) => {
     try {
       setLoading(true);
@@ -289,7 +292,7 @@ export default function AdminProductsPage() {
         return;
       }
 
-      const data = await adminService.getProducts(page, 10, merchantId, categoryId);
+      const data = await adminService.getProducts(page, 10, merchantId, categoryId, search);
 
       if (data.status) {
         setProducts(data.products || []);
@@ -319,11 +322,11 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    fetchProducts(currentPage, selectedMerchantFilter, selectedCategoryFilter);
+    fetchProducts(currentPage, selectedMerchantFilter, selectedCategoryFilter, searchTerm);
     fetchMerchants();
     fetchCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, selectedMerchantFilter, selectedCategoryFilter]);
+  }, [currentPage, selectedMerchantFilter, selectedCategoryFilter, searchTerm]);
 
   const handleMerchantFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMerchant = e.target.value;
@@ -561,6 +564,48 @@ export default function AdminProductsPage() {
 
           {/* Top Backend Filters */}
           <div className="d-flex flex-wrap align-items-center gap-2">
+            <div className="d-flex align-items-center gap-1 me-2">
+              <Form.Control
+                type="text"
+                size="sm"
+                placeholder="Search products..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSearchTerm(searchInput);
+                    setCurrentPage(1);
+                  }
+                }}
+                style={{ minWidth: '200px' }}
+                className="border-primary-subtle"
+              />
+              <Button 
+                variant="outline-primary" 
+                size="sm" 
+                onClick={() => {
+                  setSearchTerm(searchInput);
+                  setCurrentPage(1);
+                }}
+              >
+                Search
+              </Button>
+              {searchTerm && (
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  className="text-danger text-decoration-none px-1"
+                  onClick={() => {
+                    setSearchInput('');
+                    setSearchTerm('');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+
             <div className="d-flex align-items-center gap-1">
               <span className="text-muted small fw-medium text-nowrap">Merchant:</span>
               <Form.Select

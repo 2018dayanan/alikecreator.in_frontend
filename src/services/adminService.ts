@@ -30,13 +30,16 @@ export const adminService = {
   },
 
   // Products
-  getProducts: async (page = 1, limit = 10, merchantId = '', categoryId = '') => {
+  getProducts: async (page = 1, limit = 10, merchantId = '', categoryId = '', search = '') => {
     let url = `${API_URL}/admin/product?page=${page}&limit=${limit}`;
     if (merchantId) {
       url += `&merchantId=${encodeURIComponent(merchantId)}`;
     }
     if (categoryId) {
       url += `&categoryId=${encodeURIComponent(categoryId)}`;
+    }
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
     }
     const res = await fetch(url, {
       method: 'GET',

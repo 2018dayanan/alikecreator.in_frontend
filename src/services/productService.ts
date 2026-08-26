@@ -90,6 +90,28 @@ export const ProductService = {
     },
 
     /**
+     * Fetch a single public product by ID
+     */
+    getPublicProductById: async (id: string, subdomain?: string) => {
+        try {
+            const activeSubdomain = getActiveSubdomain(subdomain);
+            let url = `${API_BASE_URL}/public/products/${id}`;
+            if (activeSubdomain) {
+                url += `?subdomain=${encodeURIComponent(activeSubdomain)}`;
+            }
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(`Error fetching product by ID ${id}:`, error);
+            throw error;
+        }
+    },
+
+    /**
      * Fetch products by category (with automatic subdomain filter)
      */
     getProductsByCategory: async (categoryId: string, subdomain?: string) => {
