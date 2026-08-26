@@ -456,6 +456,14 @@ const ProductSection = () => {
                                             style={{ objectFit: "cover" }}
                                             unoptimized
                                         />
+                                        {item.rewardCoins && (
+                                            <div
+                                                className="badge bg-warning text-white position-absolute shadow-sm"
+                                                style={{ bottom: "40px", right: "10px", zIndex: 2, fontSize: "0.9rem" }}
+                                            >
+                                                🪙 {item.rewardCoins}
+                                            </div>
+                                        )}
                                         <div
                                             className="shop-meta"
                                         >
@@ -515,11 +523,6 @@ const ProductSection = () => {
                                             </Link>
                                         </h5>
                                         <h5 className="price">₹{item.price}</h5>
-                                        {item.rewardCoins && (
-                                            <div className="text-warning small fw-bold mt-1">
-                                                🪙 Earn {item.rewardCoins} Coins
-                                            </div>
-                                        )}
                                     </div>
                                     <div className="product-tag">
                                         <span className="badge ">Get {item.discount}% Off</span>
