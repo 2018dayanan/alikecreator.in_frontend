@@ -223,6 +223,7 @@ export default function AdminProductsPage() {
     video: '',
     purchaseType: 'internal',
     externalLink: '',
+    rewardCoins: '',
   });
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -411,6 +412,7 @@ export default function AdminProductsPage() {
       video: '',
       purchaseType: 'internal',
       externalLink: '',
+      rewardCoins: '',
     });
     setIsEditing(false);
     setCurrentProductId(null);
@@ -434,6 +436,7 @@ export default function AdminProductsPage() {
       video: product.video || '',
       purchaseType: product.purchaseType || 'internal',
       externalLink: product.externalLink || '',
+      rewardCoins: product.rewardCoins?.toString() || '',
     });
     setIsEditing(true);
     setCurrentProductId(product._id);
@@ -469,6 +472,7 @@ export default function AdminProductsPage() {
       uploadData.append('purchaseType', formData.purchaseType);
       if (formData.externalLink) uploadData.append('externalLink', formData.externalLink);
       if (formData.video) uploadData.append('video', formData.video.trim());
+      if (formData.rewardCoins) uploadData.append('rewardCoins', formData.rewardCoins);
 
       if (formData.images) {
         const imageList = formData.images.split(',').map((s) => s.trim()).filter(Boolean);
@@ -770,8 +774,14 @@ export default function AdminProductsPage() {
               </div>
               <div className="col-md-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>Discount %</Form.Label>
-                  <Form.Control type="number" name="discount" value={formData.discount} onChange={handleFormChange} placeholder="10" />
+                  <Form.Label>Discount (%)</Form.Label>
+                  <Form.Control type="number" name="discount" value={formData.discount} onChange={handleFormChange} />
+                </Form.Group>
+              </div>
+              <div className="col-md-2">
+                <Form.Group className="mb-3">
+                  <Form.Label>Reward Coins</Form.Label>
+                  <Form.Control type="number" name="rewardCoins" value={formData.rewardCoins} onChange={handleFormChange} placeholder="Auto calc" />
                 </Form.Group>
               </div>
               <div className="col-md-2">
@@ -967,6 +977,10 @@ export default function AdminProductsPage() {
                     <span className={`badge ${selectedProductDetail.purchaseType === 'external' ? 'bg-warning text-dark' : 'bg-primary'}`}>
                       {selectedProductDetail.purchaseType || 'internal'}
                     </span>
+                  </div>
+                  <div className="col-md-4">
+                    <span className="text-muted d-block small">Reward Coins</span>
+                    <strong className="text-warning fs-5">🪙 {selectedProductDetail.rewardCoins ?? 'N/A'}</strong>
                   </div>
                   {selectedProductDetail.externalLink && (
                     <div className="col-12">

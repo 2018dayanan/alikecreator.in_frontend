@@ -25,9 +25,9 @@ interface ProductItem {
     rating?: number;
     reviewCount?: number;
     sku?: string;
-    externalLink?: string | null;
     video?: string | null;
     purchaseType?: string;
+    rewardCoins?: number | null;
 }
 
 const DEFAULT_PRODUCT_IMAGE = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1";
@@ -78,7 +78,8 @@ export default function ProductDetailPage() {
                         sku: p.sku || `SKU-${(p._id || '').slice(-6).toUpperCase() || 'ECOM'}`,
                         externalLink: p.externalLink || null,
                         video: p.video || null,
-                        purchaseType: p.purchaseType || 'internal'
+                        purchaseType: p.purchaseType || 'internal',
+                        rewardCoins: p.rewardCoins || null
                     });
                 } else if (isMounted) {
                     setError('Product not found');
@@ -215,6 +216,14 @@ export default function ProductDetailPage() {
                                             </span>
                                         )}
                                     </div>
+                                    
+                                    {product.rewardCoins && (
+                                        <div className="mb-4">
+                                            <span className="badge bg-warning text-dark px-3 py-2 fs-6 rounded-pill shadow-sm">
+                                                🪙 Earn {product.rewardCoins} Reward Coins
+                                            </span>
+                                        </div>
+                                    )}
                                     
                                     <p className="text-muted fs-5 mb-5" style={{ lineHeight: '1.8' }}>
                                         {product.description}

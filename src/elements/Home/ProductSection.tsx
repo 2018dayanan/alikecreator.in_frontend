@@ -545,6 +545,11 @@ const ProductSection = () => {
                                             </Link>
                                         </h5>
                                         <h5 className="price">₹{item.price}</h5>
+                                        {item.rewardCoins && (
+                                            <div className="text-warning small fw-bold mt-1">
+                                                🪙 Earn {item.rewardCoins} Coins
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="product-tag">
                                         <span className="badge ">Get {item.discount}% Off</span>
@@ -621,6 +626,12 @@ const ProductSection = () => {
                                             <span className="form-label">Price</span>
                                             <span className="price">₹{state.selectedProduct?.price} <del>₹{state.selectedProduct?.originalPrice}</del></span>
                                         </div>
+                                        {state.selectedProduct?.rewardCoins && (
+                                            <div className="me-3">
+                                                <span className="form-label text-warning">Reward Coins</span>
+                                                <span className="price text-warning" style={{fontSize: "1.2rem"}}>🪙 {state.selectedProduct.rewardCoins}</span>
+                                            </div>
+                                        )}
                                         <div className="btn-quantity light me-0">
                                             <label className="form-label">Quantity</label>
                                             <ProductInputButton />
