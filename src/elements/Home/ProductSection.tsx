@@ -219,6 +219,7 @@ const ProductSection = () => {
                         purchaseType: item.purchaseType || 'internal',
                         externalLink: item.externalLink || null,
                         video: item.video || null,
+                        rewardCoins: item.rewardCoins || null,
                     }));
 
                     const newHeartIcon: HeartIconsState = {};
@@ -318,6 +319,7 @@ const ProductSection = () => {
                     purchaseType: item.purchaseType || 'internal',
                     externalLink: item.externalLink || null,
                     video: item.video || null,
+                    rewardCoins: item.rewardCoins || null,
                 }));
 
                 const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
