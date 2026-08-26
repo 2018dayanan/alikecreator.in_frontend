@@ -73,7 +73,7 @@ export default function Menus() {
 
             <li><Link href="/products"><span>Shop</span></Link></li>
             <li><Link href="/photos"><span>Photos</span></Link></li>
-            <li><Link href="/news"><span>News</span></Link></li>
+            <li><Link href="/news"><span>Latest Update</span></Link></li>
 
             <li><Link href="/about-us"><span>About Us</span></Link></li>
             <li><Link href="/contact-us-2"><span>Contact Us</span></Link></li>

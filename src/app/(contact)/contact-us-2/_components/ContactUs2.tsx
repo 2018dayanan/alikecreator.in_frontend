@@ -43,7 +43,7 @@ const ContactUs2 = () => {
 									<Tab.Pane eventKey={'Address1'}>
 										<div className="contact-info style-1 text-start text-white">
 											<h2 className="title wow fadeInUp" data-wow-delay="0.1s">United States</h2>
-											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span> 3553 Brandywine Street Northwest, Washington AR 20008</p>
+											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span>75 C Park Street Kolkata 700016</p>
 											<div className="contact-bottom wow fadeInUp justify-content-between" data-wow-delay="0.3s">
 												<div className="contact-left">
 													<h3>Call Us</h3>
@@ -64,7 +64,7 @@ const ContactUs2 = () => {
 									<Tab.Pane eventKey={'Address2'}>
 										<div className="contact-info style-1 text-start text-white">
 											<h2 className="title wow fadeInUp" data-wow-delay="0.1s">South Africa</h2>
-											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span> 552 Church St</p>
+											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span>75 C Park Street Kolkata 700016 </p>
 											<div className="contact-bottom wow fadeInUp justify-content-between" data-wow-delay="0.3s">
 												<div className="contact-left">
 													<h3>Call Us</h3>
@@ -85,7 +85,7 @@ const ContactUs2 = () => {
 									<Tab.Pane eventKey={'Address3'}>
 										<div className="contact-info style-1 text-start text-white">
 											<h2 className="title wow fadeInUp" data-wow-delay="0.1s">Russia</h2>
-											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span> Ryabikova B-R, bld. 20/А, appt. 151</p>
+											<p className="text wow fadeInUp" data-wow-delay="0.2s"><span>Address:</span>75 C Park Street Kolkata 700016 </p>
 											<div className="contact-bottom wow fadeInUp justify-content-between" data-wow-delay="0.3s">
 												<div className="contact-left">
 													<h3>Call Us</h3>

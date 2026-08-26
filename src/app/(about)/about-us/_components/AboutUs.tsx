@@ -46,9 +46,9 @@ const AboutUs = () => {
             <section className="about-banner overflow-visible" style={{ backgroundImage: "url('/assets/images/background/bg2.jpg')" }}>
                 <div className="about-info">
                     <h3 className="dz-title">
-                        <Link href="/about-me">why E-com ?</Link>
+                        <Link href="/about-me">why Alikecreator?</Link>
                     </h3>
-                    <p className="text mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use</p>
+                    <p className="text mb-0">Alikecreator is a dynamic platform designed to empower creators, merchants, and brands by giving them the tools to easily showcase and sell their products. We bridge the gap between creative vision and e-commerce success by providing a seamless, customizable, and user-friendly shopping experience. Whether you're looking for unique, curated merchandise or trying to launch your own brand, Alikecreator is built to support your journey every step of the way.</p>
                 </div>
             </section>
             <section className="content-inner">

@@ -48,7 +48,7 @@ export default function AccountOrderDetails() {
                                     <div className="col-sm-6">
                                         <div className="shiping-tracker-detail">
                                             <span>Address</span>
-                                            <h6 className="title">Address 451 Wall Street UK, London</h6>
+                                            <h6 className="title">75 C Park Street Kolkata 700016</h6>
                                         </div>
                                     </div>
                                 </div>

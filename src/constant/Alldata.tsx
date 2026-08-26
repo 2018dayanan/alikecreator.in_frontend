@@ -444,10 +444,10 @@ export const FooterStyleCode1 = `<footer className="site-footer style-1 bg-light
                     </div>
                     <ul className="widget-address">
                         <li>
-                            <p><span>Address</span> : 451 Wall Street, UK, London</p>
+                            <p><span>Address</span> : 75 C Park Street Kolkata 700016</p>
                         </li>
                         <li>
-                            <p><span>E-mail</span> : example@info.com</p>
+                            <p><span>E-mail</span> : info@alikecreator.com</p>
                         </li>
                         <li>
                             <p><span>Phone</span> : (064) 332-1233</p>
@@ -551,10 +551,10 @@ export const FooterStyleCode2 = `<footer className="site-footer footer-dark">
                         </div>
                         <ul className="widget-address">
                             <li>
-                                <p><span>Address</span> : 451 Wall Street, UK, London</p>
+                                <p><span>Address</span> : 75 C Park Street Kolkata 700016</p>
                             </li>
                             <li>
-                                <p><span>E-mail</span> : example@info.com</p>
+                                <p><span>E-mail</span> : info@alikecreator.com</p>
                             </li>
                             <li>
                                 <p><span>Phone</span> : (064) 332-1233</p>
@@ -754,10 +754,10 @@ export const FooterStyleCode4 = `
                             </div>
                             <ul className="widget-address">
                                 <li>
-                                    <p><span>Address</span> : 451 Wall Street, UK, London</p>
+                                    <p><span>Address</span> : 75 C Park Street Kolkata 700016</p>
                                 </li>
                                 <li>
-                                    <p><span>E-mail</span> : example@info.com</p>
+                                    <p><span>E-mail</span> : info@alikecreator.com</p>
                                 </li>
                                 <li>
                                     <p><span>Phone</span> : (064) 332-1233</p>
@@ -861,7 +861,7 @@ export const FooterStyleCode5 = `<footer className="site-footer footer-dark">
                             </div>
                             <ul className="widget-address nav-inline">
                                 <li>
-                                    <p><span>E-mail</span> : example@info.com</p>
+                                    <p><span>E-mail</span> : info@alikecreator.com</p>
                                 </li>
                                 <li>
                                     <p><span>Phone</span> : (064) 332-1233</p>
@@ -926,10 +926,10 @@ export const FooterStyleCode6 = `<footer className="site-footer footer-map foote
                                 </div>
                                 <ul className="widget-address">
                                     <li>
-                                        <p><span>Address</span> : 451 Wall Street, UK, London</p>
+                                        <p><span>Address</span> : 75 C Park Street Kolkata 700016</p>
                                     </li>
                                     <li>
-                                        <p><span>E-mail</span> : example@info.com</p>
+                                        <p><span>E-mail</span> : info@alikecreator.com</p>
                                     </li>
                                     <li>
                                         <p><span>Phone</span> : (064) 332-1233</p>

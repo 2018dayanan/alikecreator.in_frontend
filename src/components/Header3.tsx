@@ -244,7 +244,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                 <div className="right-social-menu">
                     <ul>
                         <li>
-                            <Link href={"#"}>example@info.com</Link>
+                            <Link href={"#"}>info@alikecreator.com</Link>
                         </li>
                         <li>
                             <Link href={"#"}>+91 123 456 7890</Link>

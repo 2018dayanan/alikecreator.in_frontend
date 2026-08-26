@@ -397,7 +397,7 @@ export const HeaderThree = `
     <div className="right-social-menu">
         <ul>
             <li>
-                <Link to={"#"}>example@info.com</Link>
+                <Link to={"#"}>info@alikecreator.com</Link>
             </li>
             <li>
                 <Link to={"#"}>+91 123 456 7890</Link>

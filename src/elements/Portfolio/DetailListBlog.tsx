@@ -1,5 +1,5 @@
-export default function DetailListBlog(){
-    return(        
+export default function DetailListBlog() {
+    return (
         <ul>
             <li>
                 <span className="title">Client</span>
@@ -11,7 +11,7 @@ export default function DetailListBlog(){
             </li>
             <li>
                 <span className="title">Location</span>
-                <span>London, UK</span>
+                <span>Kolkata, West Bengal</span>
             </li>
             <li>
                 <span className="title">Shipping</span>
@@ -21,6 +21,6 @@ export default function DetailListBlog(){
                 <span className="title">Category</span>
                 <span>Child Trolly</span>
             </li>
-        </ul>        
+        </ul>
     )
 }
