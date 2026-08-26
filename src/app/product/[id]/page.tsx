@@ -25,6 +25,7 @@ interface ProductItem {
     rating?: number;
     reviewCount?: number;
     sku?: string;
+    externalLink?: string | null;
     video?: string | null;
     purchaseType?: string;
     rewardCoins?: number | null;

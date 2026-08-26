@@ -12,6 +12,7 @@ import VideoModal from "../../components/VideoModal";
 import { useWishlist } from "@/context/WishlistContext";
 
 interface MenuItem {
+    [x: string]: any;
     image: string;
     images?: string[];
     discount: string;
@@ -338,39 +339,6 @@ const ProductSection = () => {
         }, 200);
     };
 
-    const toggleHeart = async (index: number, productId?: number | string) => {
-        const product = state.data[index] as any;
-        const targetId = productId || product?.id;
-        if (!targetId) return;
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-            dispatch({ type: 'SET_LOGIN_MODAL', value: true });
-            return;
-        }
-
-        try {
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-            const response = await fetch(`${API_BASE_URL}/user/favorites/toggle`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ productId: product.id })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                dispatch({ type: 'TOGGLE_HEART', index });
-            } else {
-                console.error("Failed to toggle favorite:", data.message);
-            }
-        } catch (error) {
-            console.error("Error toggling favorite:", error);
-        }
-    };
-
     const toggleBasket = (index: number) => {
         dispatch({ type: 'TOGGLE_BASKET', index });
         const product = state.data[index] as any;
@@ -629,7 +597,7 @@ const ProductSection = () => {
                                         {state.selectedProduct?.rewardCoins && (
                                             <div className="me-3">
                                                 <span className="form-label text-warning">Reward Coins</span>
-                                                <span className="price text-warning" style={{fontSize: "1.2rem"}}>🪙 {state.selectedProduct.rewardCoins}</span>
+                                                <span className="price text-warning" style={{ fontSize: "1.2rem" }}>🪙 {state.selectedProduct.rewardCoins}</span>
                                             </div>
                                         )}
                                         <div className="btn-quantity light me-0">
