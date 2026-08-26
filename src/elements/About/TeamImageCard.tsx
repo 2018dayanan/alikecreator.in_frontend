@@ -13,10 +13,10 @@ const TeamImageCard = ({ image, name, post }: dataType) => {
             <div className="dz-media">
                 <Link href="#"><Image src={image} alt={post} /></Link>
                 <ul className="team-social-icon">
-                    <li><Link href="https://www.facebook.com/Eonpulsetech" target="_blank"><i className="fab fa-facebook-f" /></Link></li>
-                    <li><Link href="https://twitter.com/Eonpulsetech" target="_blank"><i className="fab fa-twitter" /></Link></li>
-                    <li><Link href="https://www.instagram.com/Eonpulsetech/" target="_blank"><i className="fab fa-instagram" /></Link></li>
-                    <li><Link href="https://www.linkedin.com/in/Eonpulsetech/" target="_blank"><i className="fa-brands fa-linkedin-in" /></Link></li>
+                    <li><Link href="https://www.facebook.com/alikecreator" target="_blank"><i className="fab fa-facebook-f" /></Link></li>
+                    <li><Link href="https://twitter.com/alikecreator" target="_blank"><i className="fab fa-twitter" /></Link></li>
+                    <li><Link href="https://www.instagram.com/alikecreator/" target="_blank"><i className="fab fa-instagram" /></Link></li>
+                    <li><Link href="https://www.linkedin.com/in/alikecreator/" target="_blank"><i className="fa-brands fa-linkedin-in" /></Link></li>
                 </ul>
             </div>
             <div className="dz-content">

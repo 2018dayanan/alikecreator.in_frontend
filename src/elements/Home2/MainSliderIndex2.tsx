@@ -74,13 +74,13 @@ export default function MainSliderIndex2() {
 				<div className="banner-social-media style-2 left">
 					<ul>
 						<li>
-							<Link href="https://www.instagram.com/Eonpulsetech/" target="_blank">Instagram</Link>
+							<Link href="https://www.instagram.com/alikecreator/" target="_blank">Instagram</Link>
 						</li>
 						<li>
-							<Link href="https://www.facebook.com/Eonpulsetech" target="_blank">Facebook</Link>
+							<Link href="https://www.facebook.com/alikecreator" target="_blank">Facebook</Link>
 						</li>
 						<li>
-							<Link href="https://twitter.com/Eonpulsetechs" target="_blank">twitter</Link>
+							<Link href="https://twitter.com/alikecreators" target="_blank">twitter</Link>
 						</li>
 					</ul>
 				</div>

@@ -62,8 +62,8 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
                 </div>
                 <div className="btn-group cart-btn">
                     <Link href="/shop-cart" className="btn btn-secondary text-uppercase">Add To Cart</Link>
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         className={`btn ${isFav ? 'btn-primary' : 'btn-outline-secondary'} btn-icon`}
                         onClick={() => toggleFavorite({ id: props.title, title: props.title, price: 125.75 })}
                     >
@@ -94,7 +94,7 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
                     <ul className="social-icon">
                         <li><strong>Share:</strong></li>
                         <li>
-                            <Link href="/https://www.facebook.com/Eonpulsetech" target="_blank">
+                            <Link href="/https://www.facebook.com/alikecreator" target="_blank">
                                 <i className="fa-brands fa-facebook-f" />
                             </Link>
                         </li>
@@ -104,12 +104,12 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/https://www.instagram.com/Eonpulsetech/" target="_blank">
+                            <Link href="/https://www.instagram.com/alikecreator/" target="_blank">
                                 <i className="fa-brands fa-instagram" />
                             </Link>
                         </li>
                         <li>
-                            <Link href="https://www.behance.net/Eonpulsetech" target="_blank">
+                            <Link href="https://www.behance.net/alikecreator" target="_blank">
                                 <i className="fa-brands fa-behance" />
                             </Link>
                         </li>
@@ -138,13 +138,13 @@ export default function ThumbnailRightProductDetail(props: thumbnailCardtype) {
             <div className="banner-social-media">
                 <ul>
                     <li>
-                        <Link href="https://www.instagram.com/Eonpulsetech/">Instagram</Link>
+                        <Link href="https://www.instagram.com/alikecreator/">Instagram</Link>
                     </li>
                     <li>
-                        <Link href="https://www.facebook.com/Eonpulsetech">Facebook</Link>
+                        <Link href="https://www.facebook.com/alikecreator">Facebook</Link>
                     </li>
                     <li>
-                        <Link href="https://twitter.com/Eonpulsetechs">twitter</Link>
+                        <Link href="https://twitter.com/alikecreators">twitter</Link>
                     </li>
                 </ul>
             </div>

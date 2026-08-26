@@ -12,7 +12,7 @@ const AboutUs = () => {
                         <div className="row align-items-center">
                             <div className="col-lg-7 col-md-7">
                                 <div className="text-start mb-xl-0 mb-4">
-                                    <h1>Your Fashion Journey Starts Here Discover Style at E-com</h1>
+                                    <h1>Your Fashion Journey Starts Here Discover Style at Alikecreator</h1>
                                     <nav aria-label="breadcrumb" className="breadcrumb-row">
                                         <ul className="breadcrumb">
                                             <li className="breadcrumb-item"><Link href={"/"}> Home</Link></li>

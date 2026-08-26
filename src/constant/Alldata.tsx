@@ -527,7 +527,7 @@ export const FooterStyleCode1 = `<footer className="site-footer style-1 bg-light
     <div className="container">
         <div className="row fb-inner">
             <div className="col-lg-6 col-md-12 text-start"> 
-                <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.Eonpulsetech.com/">Eonpulsetech</a> Theme. All Rights Reserved.</p>
+                <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.alikecreator.com/">alikecreator</a> Theme. All Rights Reserved.</p>
             </div>
             <div className="col-lg-6 col-md-12 text-end"> 
                 <div className="d-flex align-items-center justify-content-center justify-content-md-center justify-content-xl-end">
@@ -634,7 +634,7 @@ export const FooterStyleCode2 = `<footer className="site-footer footer-dark">
         <div className="container">
             <div className="row fb-inner">
                 <div className="col-lg-6 col-md-12 text-start"> 
-                    <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.Eonpulsetech.com/">Eonpulsetech</a> Theme. All Rights Reserved.</p>
+                    <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.alikecreator.com/">alikecreator</a> Theme. All Rights Reserved.</p>
                 </div>
                 <div className="col-lg-6 col-md-12 text-end"> 
                     <div className="d-flex align-items-center justify-content-center justify-content-md-center justify-content-xl-end">
@@ -665,8 +665,8 @@ export const FooterStyleCode3 = `
                                 <Image src={IMAGES.InstaFollow} alt="follow" />
                             </div>
                             <div className="follow-link-content">
-                                <h4>Share with #E-com</h4>
-                                <p>Follow @E-com for inspiration.</p>
+                                <h4>Share with #Alikecreator</h4>
+                                <p>Follow @Alikecreator for inspiration.</p>
                             </div>
                         </div>
                     </Link>
@@ -728,7 +728,7 @@ export const FooterStyleCode3 = `
                     <div className="fb-inner">
                         <div className="text-center"> 
                             <p className="copyright-text">© <span className="current-year">{det.getFullYear()}</span> 
-                                <Link to="https://www.Eonpulsetech.com/"> Eonpulsetech</Link> Theme. All Rights Reserved.
+                                <Link to="https://www.alikecreator.com/"> alikecreator</Link> Theme. All Rights Reserved.
                             </p>
                         </div>
                     </div>
@@ -837,7 +837,7 @@ export const FooterStyleCode4 = `
             <div className="container">
                 <div className="row fb-inner">
                     <div className="col-lg-6 col-md-12 text-start"> 
-                        <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.Eonpulsetech.com/">Eonpulsetech</a> Theme. All Rights Reserved.</p>
+                        <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.alikecreator.com/">alikecreator</a> Theme. All Rights Reserved.</p>
                     </div>
                     <div className="col-lg-6 col-md-12 text-end"> 
                         <div className="d-flex align-items-center justify-content-center justify-content-md-center justify-content-xl-end">
@@ -890,7 +890,7 @@ export const FooterStyleCode5 = `<footer className="site-footer footer-dark">
                 <div className="row fb-inner">
                     <div className="col-lg-6 col-md-12 text-start"> 
                         <p className="copyright-text">© <span className="current-year">{year}</span> 
-                            <Link to="https://www.Eonpulsetech.com/"> Eonpulsetech</Link> Theme. All Rights Reserved.
+                            <Link to="https://www.alikecreator.com/"> alikecreator</Link> Theme. All Rights Reserved.
                         </p>
                     </div>
                     <div className="col-lg-6 col-md-12 text-end"> 
@@ -979,7 +979,7 @@ export const FooterStyleCode6 = `<footer className="site-footer footer-map foote
                     <div className="fb-inner">
                         <div className="text-start"> 
                             <p className="copyright-text">© <span>{year}</span> 
-                                <Link to="https://www.Eonpulsetech.com/"> Eonpulsetech</Link> Theme. All Rights Reserved.
+                                <Link to="https://www.alikecreator.com/"> alikecreator</Link> Theme. All Rights Reserved.
                             </p>
                         </div>
                     </div>
@@ -1028,7 +1028,7 @@ export const FooterStyleCode7 = `
         <div className="container">
             <div className="row fb-inner">
                 <div className="col-lg-6 col-md-12 text-start"> 
-                    <p className="copyright-text">© <span>{year}</span> <Link to="https://www.Eonpulsetech.com/"> Eonpulsetech</Link> Theme. All Rights Reserved.</p>
+                    <p className="copyright-text">© <span>{year}</span> <Link to="https://www.alikecreator.com/"> alikecreator</Link> Theme. All Rights Reserved.</p>
                 </div>
                 <div className="col-lg-6 col-md-12 text-end"> 
                     <div className="d-flex align-items-center justify-content-center justify-content-md-center justify-content-lg-end">

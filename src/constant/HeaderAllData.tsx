@@ -39,10 +39,10 @@ export const HeaderOne = `
                 {/* All menus item end*/}
                 <div className="dz-social-icon">
                     <ul>
-                        <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/Eonpulsetech"></Link></li>
-                        <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/Eonpulsetechs"></Link></li>
+                        <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/alikecreator"></Link></li>
+                        <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/alikecreators"></Link></li>
                         <li><Link className="fab fa-linkedin-in" target="_blank" to="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                        <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                        <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/alikecreator/"></Link></li>
                     </ul>
                 </div>
             </div>
@@ -228,10 +228,10 @@ export const HeaderTwo = `
                     </ul>
                     <div className="dz-social-icon">
                         <ul>
-                            <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/Eonpulsetech"></Link></li>
-                            <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/Eonpulsetechs"></Link></li>
+                            <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/alikecreator"></Link></li>
+                            <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/alikecreators"></Link></li>
                             <li><Link className="fab fa-linkedin-in" target="_blank" to="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                            <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                            <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/alikecreator/"></Link></li>
                         </ul>
                     </div>
                 </div>
@@ -416,7 +416,7 @@ export const HeaderThree = `
         </ul>
     </div>
     <div className="footer-menu">
-        <p className="mb-0">© <span className="current-year">{year}</span> Eonpulsetech Theme. All Rights Reserved.</p>
+        <p className="mb-0">© <span className="current-year">{year}</span> Alikecreator Theme. All Rights Reserved.</p>
     </div>	
 </div>
 <Offcanvas className="dz-search-area dz-offcanvas offcanvas-top"
@@ -486,10 +486,10 @@ export const HeaderSix = `
                     <div className="dz-topbar-right">
                         <ul>
                             <li><span>Share:</span></li>
-                            <li><Link to="https://www.facebook.com/Eonpulsetech" target="_blank"><i className="fa-brands fa-facebook-f"/></Link></li>
+                            <li><Link to="https://www.facebook.com/alikecreator" target="_blank"><i className="fa-brands fa-facebook-f"/></Link></li>
                             <li><Link to="https://www.linkedin.com/showcase/3686700/admin/" target="_blank"><i className="fa-brands fa-linkedin-in"/></Link></li>
-                            <li><Link to="https://www.instagram.com/Eonpulsetech/" target="_blank"><i className="fa-brands fa-instagram"/></Link></li>
-                            <li><Link to="https://twitter.com/Eonpulsetechs" target="_blank"><i className="fa-brands fa-twitter"/></Link></li>
+                            <li><Link to="https://www.instagram.com/alikecreator/" target="_blank"><i className="fa-brands fa-instagram"/></Link></li>
+                            <li><Link to="https://twitter.com/alikecreators" target="_blank"><i className="fa-brands fa-twitter"/></Link></li>
                         </ul>					
                     </div>
                 </div>
@@ -520,10 +520,10 @@ export const HeaderSix = `
                     
                     <div className="dz-social-icon">
                         <ul>
-                            <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/Eonpulsetech"></Link></li>
-                            <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/Eonpulsetechs"></Link></li>
+                            <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/alikecreator"></Link></li>
+                            <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/alikecreators"></Link></li>
                             <li><Link className="fab fa-linkedin-in" target="_blank" to="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                            <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                            <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/alikecreator/"></Link></li>
                         </ul>
                     </div>
                 </div>
@@ -641,10 +641,10 @@ export const HeaderSeven = `
                 <div className="dz-topbar-right">
                     <ul>
                         <li><span>Share:</span></li>
-                        <li><Link to="https://www.facebook.com/Eonpulsetech" target="_blank"><i className="fa-brands fa-facebook-f"/></Link></li>
+                        <li><Link to="https://www.facebook.com/alikecreator" target="_blank"><i className="fa-brands fa-facebook-f"/></Link></li>
                         <li><Link to="https://www.linkedin.com/showcase/3686700/admin/" target="_blank"><i className="fa-brands fa-linkedin-in"/></Link></li>
-                        <li><Link to="https://www.instagram.com/Eonpulsetech/" target="_blank"><i className="fa-brands fa-instagram"/></Link></li>
-                        <li><Link to="https://twitter.com/Eonpulsetechs" target="_blank"><i className="fa-brands fa-twitter"/></Link></li>
+                        <li><Link to="https://www.instagram.com/alikecreator/" target="_blank"><i className="fa-brands fa-instagram"/></Link></li>
+                        <li><Link to="https://twitter.com/alikecreators" target="_blank"><i className="fa-brands fa-twitter"/></Link></li>
                     </ul>					
                 </div>
             </div>
@@ -677,10 +677,10 @@ export const HeaderSeven = `
                 {/* All menus item end*/}
                 <div className="dz-social-icon">
                     <ul>
-                        <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/Eonpulsetech"></Link></li>
-                        <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/Eonpulsetechs"></Link></li>
+                        <li><Link className="fab fa-facebook-f" target="_blank" to="https://www.facebook.com/alikecreator"></Link></li>
+                        <li><Link className="fab fa-twitter" target="_blank" to="https://twitter.com/alikecreators"></Link></li>
                         <li><Link className="fab fa-linkedin-in" target="_blank" to="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                        <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                        <li><Link className="fab fa-instagram" target="_blank" to="https://www.instagram.com/alikecreator/"></Link></li>
                     </ul>
                 </div>
             </div>

@@ -19,7 +19,7 @@ const FeaturedBlog = () => {
             <div className="col-lg-4 right-box">
                 <div>
                     <h3 className="title wow fadeInUp" data-wow-delay="1.2s">Featured Categories</h3>
-                    <p className="text wow fadeInUp" data-wow-delay="1.4s">Discover the most trending products in E-com.</p>
+                    <p className="text wow fadeInUp" data-wow-delay="1.4s">Discover the most trending products in Alikecreator.</p>
                     <div className="pagination-align wow fadeInUp" data-wow-delay="1.6s">
                         <div className="shop-button-prev" style={{ cursor: "pointer" }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">

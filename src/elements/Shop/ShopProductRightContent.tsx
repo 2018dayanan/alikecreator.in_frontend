@@ -75,7 +75,7 @@ export default function ShopProductRightContent() {
                     <ul className="social-icon">
                         <li><strong>Share:</strong></li>
                         <li>
-                            <Link href="https://www.facebook.com/Eonpulsetech" target="_blank">
+                            <Link href="https://www.facebook.com/alikecreator" target="_blank">
                                 <i className="fa-brands fa-facebook-f" />
                             </Link>
                         </li>
@@ -85,12 +85,12 @@ export default function ShopProductRightContent() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="https://www.instagram.com/Eonpulsetech/" target="_blank">
+                            <Link href="https://www.instagram.com/alikecreator/" target="_blank">
                                 <i className="fa-brands fa-instagram" />
                             </Link>
                         </li>
                         <li>
-                            <Link href="https://www.behance.net/Eonpulsetech" target="_blank">
+                            <Link href="https://www.behance.net/alikecreator" target="_blank">
                                 <i className="fa-brands fa-behance" />
                             </Link>
                         </li>
@@ -100,13 +100,13 @@ export default function ShopProductRightContent() {
             <div className="banner-social-media">
                 <ul>
                     <li>
-                        <Link href="https://www.instagram.com/Eonpulsetech/">Instagram</Link>
+                        <Link href="https://www.instagram.com/alikecreator/">Instagram</Link>
                     </li>
                     <li>
-                        <Link href="https://www.facebook.com/Eonpulsetech">Facebook</Link>
+                        <Link href="https://www.facebook.com/alikecreator">Facebook</Link>
                     </li>
                     <li>
-                        <Link href="https://twitter.com/Eonpulsetechs">twitter</Link>
+                        <Link href="https://twitter.com/alikecreators">twitter</Link>
                     </li>
                 </ul>
             </div>

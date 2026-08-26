@@ -172,10 +172,10 @@ const Header = ({ design }: DesignType) => {
                                 <Menus />
                                 <div className="dz-social-icon">
                                     <ul>
-                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/Eonpulsetech"></Link></li>
-                                        <li><Link className="fa-brands fa-behance" target="_blank" href="https://www.behance.net/Eonpulsetech"></Link></li>
+                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/alikecreator"></Link></li>
+                                        <li><Link className="fa-brands fa-behance" target="_blank" href="https://www.behance.net/alikecreator"></Link></li>
                                         <li><Link className="fab fa-linkedin-in" target="_blank" href="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/alikecreator/"></Link></li>
                                     </ul>
                                 </div>
                             </div>

@@ -133,10 +133,10 @@ const Header7 = () => {
                             <div className="dz-topbar-right">
                                 <ul>
                                     <li><span>Share:</span></li>
-                                    <li><Link href="https://www.facebook.com/Eonpulsetech" target="_blank"><i className="fa-brands fa-facebook-f" /></Link></li>
+                                    <li><Link href="https://www.facebook.com/alikecreator" target="_blank"><i className="fa-brands fa-facebook-f" /></Link></li>
                                     <li><Link href="https://www.linkedin.com/showcase/3686700/admin/" target="_blank"><i className="fa-brands fa-linkedin-in" /></Link></li>
-                                    <li><Link href="https://www.instagram.com/Eonpulsetech/" target="_blank"><i className="fa-brands fa-instagram" /></Link></li>
-                                    <li><Link href="https://twitter.com/Eonpulsetechs" target="_blank"><i className="fa-brands fa-twitter" /></Link></li>
+                                    <li><Link href="https://www.instagram.com/alikecreator/" target="_blank"><i className="fa-brands fa-instagram" /></Link></li>
+                                    <li><Link href="https://twitter.com/alikecreators" target="_blank"><i className="fa-brands fa-twitter" /></Link></li>
                                 </ul>
                             </div>
                         </div>
@@ -169,10 +169,10 @@ const Header7 = () => {
                                 {/* All menus item end*/}
                                 <div className="dz-social-icon">
                                     <ul>
-                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/Eonpulsetech"></Link></li>
-                                        <li><Link className="fa-brands fa-behance" target="_blank" href="https://www.behance.net/Eonpulsetech"></Link></li>
+                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/alikecreator"></Link></li>
+                                        <li><Link className="fa-brands fa-behance" target="_blank" href="https://www.behance.net/alikecreator"></Link></li>
                                         <li><Link className="fab fa-linkedin-in" target="_blank" href="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/alikecreator/"></Link></li>
                                     </ul>
                                 </div>
                             </div>

@@ -163,7 +163,7 @@ const Footer = (props: footertype) => {
                 <div className="container">
                     <div className="row fb-inner">
                         <div className="col-lg-6 col-md-12 text-start">
-                            <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://www.Eonpulsetech.com/"> Eonpulsetech</a> Theme. All Rights Reserved.</p>
+                            <p className="copyright-text">© <span className="current-year">{year}</span> <a href="https://alikecreator.com">Alikecreator</a> All Rights Reserved.</p>
                         </div>
                         <div className="col-lg-6 col-md-12 text-end">
                             <div className="d-flex align-items-center justify-content-center justify-content-md-center justify-content-xl-end">

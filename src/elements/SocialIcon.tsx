@@ -4,7 +4,7 @@ export default function SocialIcon() {
     return (
         <ul>
             <li>
-                <Link href="https://www.facebook.com/Eonpulsetech" target="_blank">
+                <Link href="https://www.facebook.com/alikecreator" target="_blank">
                     <i className="fa-brands fa-facebook-f" />
                 </Link>
             </li>
@@ -14,12 +14,12 @@ export default function SocialIcon() {
                 </Link>
             </li>
             <li>
-                <Link href="https://www.behance.net/Eonpulsetech" target="_blank">
+                <Link href="https://www.behance.net/alikecreator" target="_blank">
                     <i className="fa-brands fa-behance" />
                 </Link>
             </li>
             <li>
-                <Link href="https://www.instagram.com/Eonpulsetech/" target="_blank">
+                <Link href="https://www.instagram.com/alikecreator/" target="_blank">
                     <i className="fa-brands fa-instagram" />
                 </Link>
             </li>

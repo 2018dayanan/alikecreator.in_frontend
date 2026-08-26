@@ -263,7 +263,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                     </ul>
                 </div>
                 <div className="footer-menu">
-                    <p className="mb-0">© <span className="current-year">{year}</span> Eonpulsetech Theme. All Rights Reserved.</p>
+                    <p className="mb-0">© <span className="current-year">{year}</span> Alikecreator Theme. All Rights Reserved.</p>
                 </div>
             </div>
 

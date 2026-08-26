@@ -58,7 +58,7 @@ const TradingSliderBlog = () => {
                                     <Link href={'#'} className="share-btn" dangerouslySetInnerHTML={{ __html: SVGICON.ArrowUp15Degree }}></Link>
                                     <ul className="sub-team-social">
                                         <li><Link href="https://www.facebook.com/" target="_blank"><i className="fab fa-facebook-f" /></Link></li>
-                                        <li><Link href="https://www.behance.net/Eonpulsetech" target="_blank"><i className="fa-brands fa-behance" /></Link></li>
+                                        <li><Link href="https://www.behance.net/alikecreator" target="_blank"><i className="fa-brands fa-behance" /></Link></li>
                                         <li><Link href="https://www.instagram.com/" target="_blank"><i className="fab fa-instagram" /></Link></li>
                                         <li><Link href="https://www.linkedin.com/" target="_blank"><i className="fa-brands fa-linkedin-in" /></Link></li>
                                     </ul>

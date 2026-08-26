@@ -15,13 +15,13 @@ export default function FeatureBoxSection() {
                     </div>
                 </div>
             ))}
-            <Link href="https://www.instagram.com/Eonpulsetech/" className="instagram-link">
+            <Link href="https://www.instagram.com/alikecreator/" className="instagram-link">
                 <div className="follow-link  wow bounceIn" data-wow-delay="0.1s">
                     <div className="follow-link-icon">
                         <Image src={IMAGES.InstaFollow} alt="follow" />
                     </div>
                     <div className="follow-link-content">
-                        <p className="m-0">Follow @E-com</p>
+                        <p className="m-0">Follow @Alikecreator</p>
                     </div>
                 </div>
             </Link>

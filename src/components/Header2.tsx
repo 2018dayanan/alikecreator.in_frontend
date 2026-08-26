@@ -217,10 +217,10 @@ export default function Header2() {
                                 </ul>
                                 <div className="dz-social-icon">
                                     <ul>
-                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/Eonpulsetech"></Link></li>
-                                        <li><Link className="fab fa-twitter" target="_blank" href="https://twitter.com/Eonpulsetechs"></Link></li>
+                                        <li><Link className="fab fa-facebook-f" target="_blank" href="https://www.facebook.com/alikecreator"></Link></li>
+                                        <li><Link className="fab fa-twitter" target="_blank" href="https://twitter.com/alikecreators"></Link></li>
                                         <li><Link className="fab fa-linkedin-in" target="_blank" href="https://www.linkedin.com/showcase/3686700/admin/"></Link></li>
-                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/Eonpulsetech/"></Link></li>
+                                        <li><Link className="fab fa-instagram" target="_blank" href="https://www.instagram.com/alikecreator/"></Link></li>
                                     </ul>
                                 </div>
                             </div>
