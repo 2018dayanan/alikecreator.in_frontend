@@ -195,7 +195,7 @@ type CountryItem = {
 export const countries: CountryItem[] = [
     {
         imgSrc: IMAGES.CountryPic1,
-        country: "United States",
+        country: "India",
         amount: "₹130.00",
     },
     {
@@ -1397,7 +1397,7 @@ export const menuData4 = [
                 link: "#",
                 subMenu: [
                     { name: "Contact Us 1", path: "/contact-us-1" },
-                    { name: "Contact Us 2", path: "/contact-us-2" },
+                    { name: "Contact Us 2", path: "/contact-us" },
                     { name: "Contact Us 3", path: "/contact-us-3" },
                 ]
             },

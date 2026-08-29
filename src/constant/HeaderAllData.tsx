@@ -378,7 +378,7 @@ export const HeaderThree = `
 
                 <li><Link to="/blog"><span>Blog</span></Link></li>
                 <li><Link to="/about-us"><span>About Us</span></Link></li>
-                <li><Link to="/contact-us-2"><span>Contact Us</span></Link></li>
+                <li><Link to="/contact-us"><span>Contact Us</span></Link></li>
                 <li className={\`sub-menu-down \${state.openMenu === 6 ? "open active" : ""}\`}
                     onClick={() => dispatch({ type: 'toggleMenu', index: 6 })}
                     onMouseEnter={() => dispatch({ type: 'toggleMenu', index: 6 })}

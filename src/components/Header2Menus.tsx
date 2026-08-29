@@ -49,7 +49,7 @@ export default function Header2Menus() {
 
 
             <li><Link href="/about-us"><span>About Us</span></Link></li>
-            <li><Link href="/contact-us-2"><span>Contact Us</span></Link></li>
+            <li><Link href="/contact-us"><span>Contact Us</span></Link></li>
         </ul>
     )
 }

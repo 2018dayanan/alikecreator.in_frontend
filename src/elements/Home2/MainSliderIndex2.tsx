@@ -84,7 +84,7 @@ export default function MainSliderIndex2() {
 						</li>
 					</ul>
 				</div>
-				<Link href="/contact-us-2" className="service-btn btn-dark">Let’s talk</Link>
+				<Link href="/contact-us" className="service-btn btn-dark">Let’s talk</Link>
 			</div>
 		</div>
 	)

@@ -76,7 +76,7 @@ export default function Menus() {
             <li><Link href="/news"><span>Latest Update</span></Link></li>
 
             <li><Link href="/about-us"><span>About Us</span></Link></li>
-            <li><Link href="/contact-us-2"><span>Contact Us</span></Link></li>
+            <li><Link href="/contact-us"><span>Contact Us</span></Link></li>
             <li className={`sub-menu-down ${state.openMenu === 6 ? "open" : ""}`}
                 onClick={() => dispatch({ type: 'toggleMenu', index: 6 })}
             >

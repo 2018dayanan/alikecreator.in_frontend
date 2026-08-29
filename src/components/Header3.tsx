@@ -225,7 +225,7 @@ export default function Header3({ setOpenSidebar, openSidebar }: any) {
                                 </li>
                                 <li><Link href="/photos"><span>Photos</span></Link></li>
                                 <li><Link href="/about-us"><span>About Us</span></Link></li>
-                                <li><Link href="/contact-us-2"><span>Contact Us</span></Link></li>
+                                <li><Link href="/contact-us"><span>Contact Us</span></Link></li>
                                 <li className={`sub-menu-down ${state.openMenu === 6 ? "open active" : ""}`}
                                     onClick={() => dispatch({ type: 'toggleMenu', index: 6 })}
                                     onMouseEnter={() => dispatch({ type: 'toggleMenu', index: 6 })}
