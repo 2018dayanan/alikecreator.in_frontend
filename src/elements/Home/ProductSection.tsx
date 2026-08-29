@@ -461,7 +461,7 @@ const ProductSection = () => {
                                                 className="badge bg-warning text-white position-absolute shadow-sm"
                                                 style={{ bottom: "40px", right: "10px", zIndex: 2, fontSize: "0.9rem" }}
                                             >
-                                                🪙 {item.rewardCoins}
+                                                You Will Earn {item.rewardCoins} Coins
                                             </div>
                                         )}
                                         <div
