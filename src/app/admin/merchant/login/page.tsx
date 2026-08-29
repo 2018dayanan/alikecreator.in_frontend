@@ -30,7 +30,7 @@ export default function MerchantLoginPage() {
         localStorage.setItem('merchantToken', data.token);
         localStorage.setItem('merchantUser', JSON.stringify(data.merchant));
         toast.success(`Welcome back, ${data.merchant?.business_name || data.merchant?.name}!`);
-        router.push('/merchant/dashboard');
+        router.push('/admin/merchant/dashboard');
       } else {
         toast.error(data.message || 'Login failed. Please check your credentials.');
       }
@@ -97,7 +97,7 @@ export default function MerchantLoginPage() {
               <div className="text-center mt-4 pt-2 border-top">
                 <p className="small text-muted mb-2">
                   Want to sell with us?{' '}
-                  <Link href="/merchant/register" className="text-primary fw-semibold text-decoration-none">
+                  <Link href="/admin/merchant/register" className="text-primary fw-semibold text-decoration-none">
                     Register as Merchant
                   </Link>
                 </p>

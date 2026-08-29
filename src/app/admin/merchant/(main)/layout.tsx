@@ -14,7 +14,7 @@ export default function MerchantDashboardLayout({ children }: { children: React.
     const token = localStorage.getItem('merchantToken');
     const userStr = localStorage.getItem('merchantUser');
     if (!token) {
-      router.replace('/merchant/login');
+      router.replace('/admin/merchant/login');
     } else {
       if (userStr) {
         try {
@@ -30,7 +30,7 @@ export default function MerchantDashboardLayout({ children }: { children: React.
   const handleLogout = () => {
     localStorage.removeItem('merchantToken');
     localStorage.removeItem('merchantUser');
-    router.replace('/merchant/login');
+    router.replace('/admin/merchant/login');
   };
 
   if (!isAuthenticated) {
@@ -42,21 +42,21 @@ export default function MerchantDashboardLayout({ children }: { children: React.
   }
 
   const navLinks = [
-    { href: '/merchant/dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/merchant/dashboard/products', label: 'Products', icon: '📦' },
-    { href: '/merchant/dashboard/categories', label: 'Categories', icon: '🏷️' },
-    { href: '/merchant/dashboard/carousels', label: 'Carousels / Banners', icon: '🖼️' },
-    { href: '/merchant/dashboard/discover', label: 'Discover Collection', icon: '✨' },
-    { href: '/merchant/dashboard/news', label: 'News / Articles', icon: '📰' },
-    { href: '/merchant/dashboard/orders', label: 'Orders', icon: '🛒' },
-    { href: '/merchant/dashboard/profile', label: 'Store Profile', icon: '⚙️' },
+    { href: '/admin/merchant/dashboard', label: 'Dashboard', icon: '📊' },
+    { href: '/admin/merchant/products', label: 'Products', icon: '📦' },
+    { href: '/admin/merchant/categories', label: 'Categories', icon: '🏷️' },
+    { href: '/admin/merchant/carousels', label: 'Carousels / Banners', icon: '🖼️' },
+    { href: '/admin/merchant/discover', label: 'Discover Collection', icon: '✨' },
+    { href: '/admin/merchant/news', label: 'News / Articles', icon: '📰' },
+    { href: '/admin/merchant/orders', label: 'Orders', icon: '🛒' },
+    { href: '/admin/merchant/profile', label: 'Store Profile', icon: '⚙️' },
   ];
 
   return (
     <div style={{ backgroundColor: '#f4f6f9', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navbar */}
       <Navbar bg="dark" variant="dark" expand="lg" className="px-4 shadow-sm" style={{ zIndex: 1000 }}>
-        <Navbar.Brand as={Link} href="/merchant/dashboard" className="fw-bold d-flex align-items-center gap-2">
+        <Navbar.Brand as={Link} href="/admin/merchant/dashboard" className="fw-bold d-flex align-items-center gap-2">
           <span style={{ fontSize: '20px' }}>🏪</span>
           <span>Merchant Panel</span>
           <span className="badge bg-primary text-uppercase px-2 py-1 ms-1" style={{ fontSize: '10px' }}>Store</span>
@@ -79,6 +79,12 @@ export default function MerchantDashboardLayout({ children }: { children: React.
           </Nav>
 
           <Nav className="align-items-center gap-3">
+            <Link href="/admin/dashboard" className="btn btn-outline-light btn-sm fw-bold">
+              Main Dashboard
+            </Link>
+            <Link href="/admin/rental" className="btn btn-outline-light btn-sm fw-bold">
+              Rental Portal
+            </Link>
             <span className="text-light small d-none d-md-inline">
               Store: <strong className="text-warning">{merchantUser?.business_name || merchantUser?.name || 'Merchant'}</strong>
             </span>
@@ -99,9 +105,9 @@ export default function MerchantDashboardLayout({ children }: { children: React.
                   <p className="mb-0 fw-bold small text-dark">{merchantUser?.business_name || merchantUser?.name}</p>
                   <p className="mb-0 text-muted small" style={{ fontSize: '11px' }}>{merchantUser?.email}</p>
                 </div>
-                <Dropdown.Item as={Link} href="/merchant/dashboard/profile">Store Profile</Dropdown.Item>
-                <Dropdown.Item as={Link} href="/merchant/dashboard/products">Manage Products</Dropdown.Item>
-                <Dropdown.Item as={Link} href="/merchant/dashboard/orders">View Orders</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/admin/merchant/profile">Store Profile</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/admin/merchant/products">Manage Products</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/admin/merchant/orders">View Orders</Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item as={Link} href="/" target="_blank">View Main Store ↗</Dropdown.Item>
                 <Dropdown.Divider />

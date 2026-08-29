@@ -38,6 +38,9 @@ export default function RentalDashboardLayout({ children }: { children: React.Re
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="align-items-center">
+            <Link href="/admin/merchant/dashboard" className="btn btn-outline-light btn-sm me-3 fw-bold">
+              Merchant Portal
+            </Link>
             <Link href="/admin/dashboard" className="btn btn-outline-light btn-sm me-3 fw-bold">
               Main Dashboard
             </Link>
