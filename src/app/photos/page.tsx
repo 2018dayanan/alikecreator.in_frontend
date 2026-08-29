@@ -12,6 +12,9 @@ interface PhotoItem {
     url: string;
     alt: string;
     category?: string;
+    purchaseType?: string;
+    externalLink?: string;
+    product?: any;
 }
 
 export default function PhotosPage() {
@@ -42,7 +45,10 @@ export default function PhotosPage() {
                                 id: `${prod._id || pIdx}-main`,
                                 url: prod.image,
                                 alt: prod.title || "Product photo",
-                                category: catName
+                                category: catName,
+                                purchaseType: prod.purchaseType,
+                                externalLink: prod.externalLink,
+                                product: prod
                             });
                         }
 
@@ -54,7 +60,10 @@ export default function PhotosPage() {
                                         id: `${prod._id || pIdx}-extra-${imgIdx}`,
                                         url: imgUrl,
                                         alt: `${prod.title || "Product"} view ${imgIdx + 1}`,
-                                        category: catName
+                                        category: catName,
+                                        purchaseType: prod.purchaseType,
+                                        externalLink: prod.externalLink,
+                                        product: prod
                                     });
                                 }
                             });
@@ -117,6 +126,33 @@ export default function PhotosPage() {
 
         fetchProductPhotos();
     }, []);
+
+    const handleAddToCart = (product: any) => {
+        if (!product) return;
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const existingIdx = currentCart.findIndex((item: any) => String(item.id || item._id) === String(product._id || product.id));
+
+        if (existingIdx !== -1) {
+            currentCart[existingIdx].quantity = (currentCart[existingIdx].quantity || 1) + 1;
+        } else {
+            currentCart.push({
+                id: product._id || product.id,
+                _id: product._id || product.id,
+                title: product.title || product.name,
+                name: product.name || product.title,
+                price: product.price,
+                image: product.image,
+                quantity: 1
+            });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(currentCart));
+        window.dispatchEvent(new Event('cartUpdated'));
+        
+        import('react-hot-toast').then(({ toast }) => {
+            toast.success('Added to cart!');
+        });
+    };
 
     const filteredPhotos = activeCategory === "All"
         ? photos
@@ -219,7 +255,15 @@ export default function PhotosPage() {
                                                 cursor: 'pointer',
                                                 transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                                             }}
-                                            onClick={() => setSelectedPhotoIndex(index)}
+                                            onClick={() => {
+                                                if (photo.purchaseType === 'external' && photo.externalLink) {
+                                                    window.open(photo.externalLink, '_blank');
+                                                } else if (photo.purchaseType === 'internal') {
+                                                    handleAddToCart(photo.product);
+                                                } else {
+                                                    setSelectedPhotoIndex(index);
+                                                }
+                                            }}
                                             onMouseEnter={(e) => {
                                                 e.currentTarget.style.transform = 'translateY(-6px)';
                                                 e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.12)';
@@ -239,7 +283,7 @@ export default function PhotosPage() {
                                                         (e.target as HTMLImageElement).src = IMAGES.ShopPorductPng1.src || '';
                                                     }}
                                                 />
-                                                {/* Hover Overlay with Zoom Icon */}
+                                                {/* Hover Overlay with Icon based on purchaseType */}
                                                 <div
                                                     className="photo-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
                                                     style={{
@@ -252,9 +296,12 @@ export default function PhotosPage() {
                                                 >
                                                     <span
                                                         className="btn btn-light rounded-circle shadow d-flex align-items-center justify-content-center"
-                                                        style={{ width: '48px', height: '48px', color: 'var(--primary)' }}
+                                                        style={{ width: '48px', height: '48px', padding: 0, color: 'var(--primary)' }}
                                                     >
-                                                        <i className="fa-solid fa-magnifying-glass-plus" style={{ fontSize: '18px' }} />
+                                                        <i 
+                                                            className={photo.purchaseType === 'external' ? "fa-solid fa-arrow-up-right-from-square" : (photo.purchaseType === 'internal' ? "fa-solid fa-cart-shopping" : "fa-solid fa-magnifying-glass-plus")} 
+                                                            style={{ fontSize: '18px' }} 
+                                                        />
                                                     </span>
                                                 </div>
                                             </div>
