@@ -245,6 +245,7 @@ interface CarouselItem {
   order: number;
   createdAt: string;
   updatedAt: string;
+  is_admin?: boolean;
 }
 
 export default function AdminCarouselsPage() {
@@ -280,6 +281,7 @@ export default function AdminCarouselsPage() {
   // Form State for Create/Edit
   const [formData, setFormData] = useState({
     merchantId: '',
+    is_admin: false,
     title: '',
     description: '',
     image: '',
@@ -369,7 +371,8 @@ export default function AdminCarouselsPage() {
   // Open Create Modal (pre-select filtered merchant if active)
   const handleOpenCreateModal = () => {
     setFormData({
-      merchantId: selectedMerchantFilter || '',
+      merchantId: '',
+      is_admin: false,
       title: '',
       description: '',
       image: '',
@@ -377,8 +380,8 @@ export default function AdminCarouselsPage() {
       order: 0,
       isActive: true,
     });
-    setFormError('');
     setSelectedImageFile(null);
+    setFormError('');
     setShowCreateModal(true);
   };
 
@@ -386,16 +389,17 @@ export default function AdminCarouselsPage() {
   const handleOpenEditModal = (carousel: CarouselItem) => {
     setSelectedCarousel(carousel);
     setFormData({
-      merchantId: carousel.merchantId?._id || '',
+      merchantId: carousel.merchantId?._id || (typeof carousel.merchantId === 'string' ? carousel.merchantId : ''),
+      is_admin: carousel.is_admin || false,
       title: carousel.title || '',
       description: carousel.description || '',
       image: carousel.image || '',
       url: carousel.url || '',
       order: carousel.order || 0,
-      isActive: carousel.isActive ?? true,
+      isActive: carousel.isActive,
     });
-    setFormError('');
     setSelectedImageFile(null);
+    setFormError('');
     setShowEditModal(true);
   };
 
@@ -404,6 +408,10 @@ export default function AdminCarouselsPage() {
     e.preventDefault();
     if (!formData.image.trim() && !selectedImageFile) {
       setFormError('Banner image URL or File is required');
+      return;
+    }
+    if (!formData.is_admin && !formData.merchantId) {
+      setFormError('Merchant is required for merchant carousels.');
       return;
     }
 
@@ -418,6 +426,7 @@ export default function AdminCarouselsPage() {
       if (selectedImageFile) uploadData.append('image', selectedImageFile);
       if (formData.url) uploadData.append('url', formData.url.trim());
       if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('is_admin', String(formData.is_admin));
       uploadData.append('order', (Number(formData.order) || 0).toString());
       uploadData.append('isActive', formData.isActive.toString());
 
@@ -446,6 +455,10 @@ export default function AdminCarouselsPage() {
       setFormError('Banner image URL or File is required');
       return;
     }
+    if (!formData.is_admin && !formData.merchantId) {
+      setFormError('Merchant is required for merchant carousels.');
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -458,6 +471,7 @@ export default function AdminCarouselsPage() {
       if (selectedImageFile) uploadData.append('image', selectedImageFile);
       if (formData.url) uploadData.append('url', formData.url.trim());
       if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('is_admin', String(formData.is_admin));
       uploadData.append('order', (Number(formData.order) || 0).toString());
       uploadData.append('isActive', formData.isActive.toString());
 
@@ -772,22 +786,22 @@ export default function AdminCarouselsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {carousels.map((carousel) => (
-                    <tr key={carousel._id}>
+                  {carousels.map((item) => (
+                    <tr key={item._id}>
                       {/* Image Thumbnail */}
                       <td className="ps-4">
                         <div
                           className="rounded overflow-hidden border bg-light d-flex align-items-center justify-content-center shadow-sm"
                           style={{ width: '90px', height: '50px', cursor: 'pointer' }}
                           onClick={() => {
-                            setSelectedCarousel(carousel);
+                            setSelectedCarousel(item);
                             setShowDetailModal(true);
                           }}
                         >
-                          {carousel.image ? (
+                          {item.image ? (
                             <img
-                              src={carousel.image}
-                              alt={carousel.title || 'Banner'}
+                              src={item.image}
+                              alt={item.title || 'Banner'}
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               onError={(e) => {
                                 (e.target as HTMLElement).style.display = 'none';
@@ -802,54 +816,54 @@ export default function AdminCarouselsPage() {
                       {/* Title & Description */}
                       <td>
                         <div className="fw-bold text-dark">
-                          {carousel.title || <span className="text-muted fst-italic">Untitled Banner</span>}
+                          {item.title || <span className="text-muted fst-italic">Untitled Banner</span>}
                         </div>
-                        {carousel.description && (
+                        {item.description && (
                           <div
                             className="text-muted small text-truncate"
                             style={{ maxWidth: '280px' }}
-                            title={carousel.description}
+                            title={item.description}
                           >
-                            {carousel.description}
+                            {item.description}
                           </div>
                         )}
                         <div className="text-muted small" style={{ fontSize: '11px' }}>
-                          Created: {new Date(carousel.createdAt).toLocaleDateString()}
+                          Created: {new Date(item.createdAt).toLocaleDateString()}
                         </div>
                       </td>
 
                       {/* Associated Merchant */}
-                      <td>
-                        {carousel.merchantId ? (
-                          <div>
-                            <Badge bg="info" className="text-dark bg-opacity-25 border border-info px-2 py-1">
-                              🏪 {carousel.merchantId.business_name || carousel.merchantId.name || 'Merchant'}
-                            </Badge>
-                            <div className="text-muted small mt-1" style={{ fontSize: '11px' }}>
-                              {carousel.merchantId.email}
-                              {carousel.merchantId.subdomain && ` • @${carousel.merchantId.subdomain}`}
-                            </div>
+                      <td className="align-middle text-center">
+                        {item.is_admin ? (
+                          <Badge bg="info" className="text-uppercase fw-semibold px-2 py-1">
+                            Admin / Global
+                          </Badge>
+                        ) : item.merchantId ? (
+                          <div className="d-flex flex-column align-items-center">
+                            <span className="fw-semibold text-primary">
+                              {item.merchantId.business_name || item.merchantId.name || 'Merchant'}
+                            </span>
                           </div>
                         ) : (
-                          <Badge bg="secondary" className="px-2 py-1">
-                            🌐 Platform Wide
+                          <Badge bg="secondary" className="text-uppercase fw-semibold px-2 py-1">
+                            System
                           </Badge>
                         )}
                       </td>
 
                       {/* Target Link */}
                       <td>
-                        {carousel.url ? (
+                        {item.url ? (
                           <a
-                            href={carousel.url}
+                            href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-decoration-none text-primary small d-inline-flex align-items-center gap-1 text-truncate"
                             style={{ maxWidth: '160px' }}
-                            title={carousel.url}
+                            title={item.url}
                           >
                             <span>🔗</span>
-                            <span>{carousel.url}</span>
+                            <span>{item.url}</span>
                           </a>
                         ) : (
                           <span className="text-muted small">—</span>
@@ -859,21 +873,21 @@ export default function AdminCarouselsPage() {
                       {/* Order */}
                       <td className="text-center">
                         <Badge bg="light" text="dark" className="border px-2 py-1 fw-bold">
-                          #{carousel.order ?? 0}
+                          #{item.order ?? 0}
                         </Badge>
                       </td>
 
                       {/* Status & Quick Toggle */}
                       <td className="text-center">
                         <div className="d-flex flex-column align-items-center gap-1">
-                          <Badge bg={carousel.isActive ? 'success' : 'secondary'}>
-                            {carousel.isActive ? 'Active' : 'Inactive'}
+                          <Badge bg={item.isActive ? 'success' : 'secondary'}>
+                            {item.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                           <Form.Check
                             type="switch"
-                            id={`switch-${carousel._id}`}
-                            checked={carousel.isActive}
-                            onChange={() => handleToggleStatus(carousel)}
+                            id={`switch-${item._id}`}
+                            checked={item.isActive}
+                            onChange={() => handleToggleStatus(item)}
                             title="Toggle active status"
                             className="mt-1"
                           />
@@ -888,7 +902,7 @@ export default function AdminCarouselsPage() {
                             size="sm"
                             title="View Details"
                             onClick={() => {
-                              setSelectedCarousel(carousel);
+                              setSelectedCarousel(item);
                               setShowDetailModal(true);
                             }}
                           >
@@ -898,7 +912,7 @@ export default function AdminCarouselsPage() {
                             variant="outline-primary"
                             size="sm"
                             title="Edit Banner"
-                            onClick={() => handleOpenEditModal(carousel)}
+                            onClick={() => handleOpenEditModal(item)}
                           >
                             ✏️
                           </Button>
@@ -907,7 +921,7 @@ export default function AdminCarouselsPage() {
                             size="sm"
                             title="Delete Banner"
                             onClick={() => {
-                              setSelectedCarousel(carousel);
+                              setSelectedCarousel(item);
                               setShowDeleteModal(true);
                             }}
                           >
@@ -967,17 +981,45 @@ export default function AdminCarouselsPage() {
           <Modal.Body>
             {formError && <Alert variant="danger">{formError}</Alert>}
 
+            {/* Banner Ownership Toggle */}
+            <div className="mb-4 p-3 bg-light rounded border border-primary-subtle">
+              <Form.Label className="fw-bold d-block text-primary mb-3">Banner Ownership</Form.Label>
+              <div className="d-flex w-100 gap-2">
+                <Button
+                  variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                >
+                  🌐 Platform-wide (Admin)
+                </Button>
+                <Button
+                  variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                >
+                  🏪 Merchant Specific
+                </Button>
+              </div>
+              <Form.Text className="text-muted mt-2 d-block">
+                {formData.is_admin
+                  ? "This carousel banner will be globally managed by the Admin. No merchant is required."
+                  : "This carousel banner will belong exclusively to the selected merchant."}
+              </Form.Text>
+            </div>
+
             {/* Merchant Account Selector */}
-            <SearchableSelect
-              label="Select Target Merchant Account"
-              placeholder="Search and select a merchant..."
-              options={merchants}
-              loading={loadingMerchants}
-              value={formData.merchantId}
-              onChange={(id) => setFormData({ ...formData, merchantId: id })}
-              allowAll={true}
-              allLabel="Platform-wide Banner (No specific merchant)"
-            />
+            {!formData.is_admin && (
+              <div className="mb-4">
+                <SearchableSelect
+                  label="Select Target Merchant Account"
+                  placeholder="Search and select a merchant..."
+                  options={merchants}
+                  loading={loadingMerchants}
+                  value={formData.merchantId}
+                  onChange={(id) => setFormData({ ...formData, merchantId: id })}
+                />
+              </div>
+            )}
 
             <Row className="g-3">
               <Col xs={12} md={8}>
@@ -1125,17 +1167,45 @@ export default function AdminCarouselsPage() {
           <Modal.Body>
             {formError && <Alert variant="danger">{formError}</Alert>}
 
+            {/* Banner Ownership Toggle */}
+            <div className="mb-4 p-3 bg-light rounded border border-primary-subtle">
+              <Form.Label className="fw-bold d-block text-primary mb-3">Banner Ownership</Form.Label>
+              <div className="d-flex w-100 gap-2">
+                <Button
+                  variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                >
+                  🌐 Platform-wide (Admin)
+                </Button>
+                <Button
+                  variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                >
+                  🏪 Merchant Specific
+                </Button>
+              </div>
+              <Form.Text className="text-muted mt-2 d-block">
+                {formData.is_admin
+                  ? "This carousel banner will be globally managed by the Admin. No merchant is required."
+                  : "This carousel banner will belong exclusively to the selected merchant."}
+              </Form.Text>
+            </div>
+
             {/* Merchant Account Selector */}
-            <SearchableSelect
-              label="Assigned Merchant Account"
-              placeholder="Search and select a merchant..."
-              options={merchants}
-              loading={loadingMerchants}
-              value={formData.merchantId}
-              onChange={(id) => setFormData({ ...formData, merchantId: id })}
-              allowAll={true}
-              allLabel="Platform-wide Banner (No specific merchant)"
-            />
+            {!formData.is_admin && (
+              <div className="mb-4">
+                <SearchableSelect
+                  label="Assigned Merchant Account"
+                  placeholder="Search and select a merchant..."
+                  options={merchants}
+                  loading={loadingMerchants}
+                  value={formData.merchantId}
+                  onChange={(id) => setFormData({ ...formData, merchantId: id })}
+                />
+              </div>
+            )}
 
             <Row className="g-3">
               <Col xs={12} md={8}>

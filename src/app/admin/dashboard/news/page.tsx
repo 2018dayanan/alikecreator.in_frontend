@@ -33,10 +33,10 @@ export default function AdminNewsPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    image: '',
-    date: new Date().toISOString().split('T')[0],
     merchantId: '',
-    is_active: true
+    is_admin: false,
+    image: '',
+    is_active: 'true',
   });
   const [saving, setSaving] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
@@ -91,6 +91,16 @@ export default function AdminNewsPage() {
     loadNews();
   };
 
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData(prev => ({ ...prev, [name]: checked, merchantId: checked ? '' : prev.merchantId }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
   // Open Create Modal
   const handleOpenCreate = () => {
     setModalMode('create');
@@ -98,10 +108,10 @@ export default function AdminNewsPage() {
     setFormData({
       title: '',
       description: '',
+      merchantId: '',
+      is_admin: false,
       image: '',
-      date: new Date().toISOString().split('T')[0],
-      merchantId: selectedMerchantId || '',
-      is_active: true
+      is_active: 'true'
     });
     setSelectedImageFile(null);
     setShowModal(true);
@@ -114,10 +124,10 @@ export default function AdminNewsPage() {
     setFormData({
       title: item.title || '',
       description: item.description || '',
-      image: item.image || '',
-      date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       merchantId: item.merchantId?._id || item.merchantId || '',
-      is_active: item.is_active !== undefined ? item.is_active : true
+      is_admin: item.is_admin || false,
+      image: item.image || '',
+      is_active: item.is_active ? 'true' : 'false'
     });
     setSelectedImageFile(null);
     setShowModal(true);
@@ -126,12 +136,12 @@ export default function AdminNewsPage() {
   // Save News (Create / Edit)
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim()) {
-      toast.error('Title is required');
+    if (!formData.title || !formData.description) {
+      toast.warning('Title and description are required.');
       return;
     }
-    if (!formData.description.trim()) {
-      toast.error('Description is required');
+    if (!formData.is_admin && !formData.merchantId) {
+      toast.warning('Merchant is required for merchant news.');
       return;
     }
 
@@ -140,11 +150,11 @@ export default function AdminNewsPage() {
       const uploadData = new FormData();
       uploadData.append('title', formData.title.trim());
       uploadData.append('description', formData.description.trim());
+      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('is_admin', String(formData.is_admin));
+      uploadData.append('is_active', formData.is_active);
       if (formData.image) uploadData.append('image', formData.image.trim());
       if (selectedImageFile) uploadData.append('image', selectedImageFile);
-      if (formData.date) uploadData.append('date', formData.date);
-      uploadData.append('is_active', formData.is_active.toString());
-      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
 
       if (modalMode === 'create') {
         const res = await adminService.createNews(uploadData as any);
@@ -323,7 +333,6 @@ export default function AdminNewsPage() {
                     <th style={{ width: '80px' }}>Image</th>
                     <th>Title & Content</th>
                     <th>Merchant / Source</th>
-                    <th>Published Date</th>
                     <th>Status</th>
                     <th className="text-end" style={{ width: '140px' }}>Actions</th>
                   </tr>
@@ -356,7 +365,9 @@ export default function AdminNewsPage() {
                         </div>
                       </td>
                       <td>
-                        {item.merchantId ? (
+                        {item.is_admin ? (
+                          <Badge bg="info" className="text-uppercase px-2 py-1">Admin / Global</Badge>
+                        ) : item.merchantId ? (
                           <div>
                             <span className="fw-semibold text-primary">
                               {item.merchantId.business_name || item.merchantId.name}
@@ -368,19 +379,8 @@ export default function AdminNewsPage() {
                             )}
                           </div>
                         ) : (
-                          <Badge bg="secondary" className="text-uppercase px-2 py-1">
-                            System / Global
-                          </Badge>
+                          <Badge bg="secondary" className="text-uppercase px-2 py-1">System</Badge>
                         )}
-                      </td>
-                      <td>
-                        <div className="small text-dark">
-                          {item.date ? new Date(item.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          }) : '—'}
-                        </div>
                       </td>
                       <td>
                         <Badge
@@ -449,14 +449,43 @@ export default function AdminNewsPage() {
           </Modal.Header>
           <Modal.Body>
             <Row className="g-3">
+              {/* News Ownership Toggle */}
+              <Col xs={12}>
+                <div className="mb-2 p-3 bg-light rounded border border-primary-subtle">
+                  <Form.Label className="fw-bold d-block text-primary mb-3">News Article Ownership</Form.Label>
+                  <div className="d-flex w-100 gap-2">
+                    <Button
+                      variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                      className="w-50 fw-semibold shadow-sm"
+                      onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                    >
+                      🏪 Merchant Specific
+                    </Button>
+                    <Button
+                      variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                      className="w-50 fw-semibold shadow-sm"
+                      onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                    >
+                      🌐 Platform-wide (Admin)
+                    </Button>
+                  </div>
+                  <Form.Text className="text-muted mt-2 d-block">
+                    {formData.is_admin
+                      ? "This news article will be globally published by the Admin. No merchant is required."
+                      : "This news article will belong exclusively to the selected merchant."}
+                  </Form.Text>
+                </div>
+              </Col>
+
               <Col xs={12}>
                 <Form.Group>
                   <Form.Label className="fw-bold small">Title <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     type="text"
+                    name="title"
                     placeholder="Enter news title..."
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={handleFormChange}
                     required
                   />
                 </Form.Group>
@@ -467,10 +496,11 @@ export default function AdminNewsPage() {
                   <Form.Label className="fw-bold small">Description / Content <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     as="textarea"
+                    name="description"
                     rows={5}
                     placeholder="Enter detailed news content / description..."
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={handleFormChange}
                     required
                   />
                 </Form.Group>
@@ -494,17 +524,6 @@ export default function AdminNewsPage() {
                 </Form.Group>
               </Col>
 
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label className="fw-bold small">Publish Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-
               {(selectedImageFile || formData.image) && (
                 <Col xs={12}>
                   <div className="p-2 border rounded bg-light">
@@ -520,21 +539,25 @@ export default function AdminNewsPage() {
                 </Col>
               )}
 
-              <Col md={8}>
-                <Form.Group>
-                  <Form.Label className="fw-bold small">Assign to Merchant</Form.Label>
-                  <Form.Select
-                    value={formData.merchantId}
-                    onChange={(e) => setFormData({ ...formData, merchantId: e.target.value })}
-                  >
-                    <option value="">System / Global (Platform News)</option>
-                    {merchants.map((m) => (
-                      <option key={m._id} value={m._id}>
-                        {m.business_name || m.name} {m.subdomain ? `(@${m.subdomain})` : ''}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+              <Col md={12}>
+                {!formData.is_admin && (
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold small">Assign to Merchant <span className="text-danger">*</span></Form.Label>
+                    <Form.Select
+                      name="merchantId"
+                      value={formData.merchantId}
+                      onChange={handleFormChange}
+                      required={!formData.is_admin}
+                    >
+                      <option value="">-- Select Merchant --</option>
+                      {merchants.map((m) => (
+                        <option key={m._id} value={m._id}>
+                          {m.business_name || m.name} {m.subdomain ? `(@${m.subdomain})` : ''}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
               </Col>
 
               <Col md={4} className="d-flex align-items-end">
@@ -543,8 +566,8 @@ export default function AdminNewsPage() {
                     type="switch"
                     id="news-active-switch"
                     label="Is Active / Published"
-                    checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    checked={formData.is_active === 'true'}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked ? 'true' : 'false' })}
                   />
                 </Form.Group>
               </Col>

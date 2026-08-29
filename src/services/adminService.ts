@@ -30,7 +30,7 @@ export const adminService = {
   },
 
   // Products
-  getProducts: async (page = 1, limit = 10, merchantId = '', categoryId = '', search = '') => {
+  getProducts: async (page = 1, limit = 10, merchantId = '', categoryId = '', search = '', isAdmin = '') => {
     let url = `${API_URL}/admin/product?page=${page}&limit=${limit}`;
     if (merchantId) {
       url += `&merchantId=${encodeURIComponent(merchantId)}`;
@@ -40,6 +40,9 @@ export const adminService = {
     }
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (isAdmin) {
+      url += `&isAdmin=${isAdmin}`;
     }
     const res = await fetch(url, {
       method: 'GET',
@@ -83,10 +86,13 @@ export const adminService = {
   },
 
   // Admin Categories
-  getAdminCategories: async (page = 1, limit = 10, merchantId = '') => {
+  getAdminCategories: async (page = 1, limit = 10, merchantId = '', isAdmin = '') => {
     let url = `${API_URL}/admin/category?page=${page}&limit=${limit}`;
     if (merchantId) {
       url += `&merchantId=${encodeURIComponent(merchantId)}`;
+    }
+    if (isAdmin) {
+      url += `&isAdmin=${isAdmin}`;
     }
     const res = await fetch(url, {
       method: 'GET',

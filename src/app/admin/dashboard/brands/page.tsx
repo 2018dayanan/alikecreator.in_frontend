@@ -116,6 +116,7 @@ interface BrandItem {
   bgImage: string;
   merchantId?: any;
   isActive: boolean;
+  is_admin?: boolean;
 }
 
 export default function AdminBrandsPage() {
@@ -136,6 +137,7 @@ export default function AdminBrandsPage() {
 
   const [formData, setFormData] = useState({
     merchantId: '',
+    is_admin: false,
     title: '',
     description: '',
     isActive: true,
@@ -188,7 +190,7 @@ export default function AdminBrandsPage() {
   };
 
   const handleOpenCreateModal = () => {
-    setFormData({ merchantId: selectedMerchantFilter || '', title: '', description: '', isActive: true });
+    setFormData({ merchantId: '', is_admin: false, title: '', description: '', isActive: true });
     setLogoFile(null);
     setBgImageFile(null);
     setFormError('');
@@ -199,6 +201,7 @@ export default function AdminBrandsPage() {
     setSelectedBrand(brand);
     setFormData({
       merchantId: brand.merchantId?._id || brand.merchantId || '',
+      is_admin: brand.is_admin || false,
       title: brand.title || '',
       description: brand.description || '',
       isActive: brand.isActive ?? true,
@@ -211,7 +214,7 @@ export default function AdminBrandsPage() {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.merchantId) return setFormError('Merchant is required');
+    if (!formData.is_admin && !formData.merchantId) return setFormError('Merchant is required for merchant brands');
     if (!formData.title) return setFormError('Title is required');
     if (!logoFile) return setFormError('Logo file is required for new brands');
     if (!bgImageFile) return setFormError('Background image file is required for new brands');
@@ -219,7 +222,8 @@ export default function AdminBrandsPage() {
     try {
       setSubmitting(true);
       const fd = new FormData();
-      fd.append('merchantId', formData.merchantId);
+      if (formData.merchantId) fd.append('merchantId', formData.merchantId);
+      fd.append('is_admin', String(formData.is_admin));
       fd.append('title', formData.title);
       fd.append('description', formData.description);
       fd.append('isActive', String(formData.isActive));
@@ -249,6 +253,7 @@ export default function AdminBrandsPage() {
       setSubmitting(true);
       const fd = new FormData();
       if (formData.merchantId) fd.append('merchantId', formData.merchantId);
+      fd.append('is_admin', String(formData.is_admin));
       if (formData.title) fd.append('title', formData.title);
       if (formData.description) fd.append('description', formData.description);
       fd.append('isActive', String(formData.isActive));
@@ -358,7 +363,17 @@ export default function AdminBrandsPage() {
                       </div>
                     </td>
                     <td><div className="fw-bold">{brand.title}</div><div className="small text-muted text-truncate" style={{ maxWidth: '200px' }}>{brand.description}</div></td>
-                    <td>{brand.merchantId?.business_name || brand.merchantId?.name || 'Unknown'}</td>
+                    <td className="align-middle text-center">
+                      {brand.is_admin ? (
+                        <Badge bg="info" className="text-uppercase fw-semibold px-2 py-1">Admin / Global</Badge>
+                      ) : brand.merchantId ? (
+                        <div className="d-flex flex-column align-items-center">
+                          <span className="fw-semibold text-primary">{brand.merchantId.business_name || brand.merchantId.name || 'Merchant'}</span>
+                        </div>
+                      ) : (
+                        <Badge bg="secondary" className="text-uppercase fw-semibold px-2 py-1">System</Badge>
+                      )}
+                    </td>
                     <td><Badge bg={brand.isActive ? 'success' : 'secondary'}>{brand.isActive ? 'Active' : 'Inactive'}</Badge></td>
                     <td className="text-end pe-4">
                       <Button variant="light" size="sm" className="me-2 text-primary" onClick={() => handleOpenEditModal(brand)}>✏️ Edit</Button>
@@ -382,11 +397,48 @@ export default function AdminBrandsPage() {
             {formError && <Alert variant="danger">{formError}</Alert>}
             <Row className="g-3">
               <Col xs={12}>
-                <SearchableSelect label="Assign to Merchant" required placeholder="Select a merchant..." options={merchants} loading={loadingMerchants} value={formData.merchantId} onChange={(id: string) => setFormData({ ...formData, merchantId: id })} />
+                <div className="mb-3 p-3 bg-light rounded border border-primary-subtle">
+                  <Form.Label className="fw-bold d-block text-primary mb-3">Brand Ownership</Form.Label>
+                  <div className="d-flex w-100 gap-2">
+                    <Button
+                      variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                      className="w-50 fw-semibold shadow-sm"
+                      onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                    >
+                      🏪 Merchant Specific
+                    </Button>
+                    <Button
+                      variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                      className="w-50 fw-semibold shadow-sm"
+                      onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                    >
+                      🌐 Platform-wide (Admin)
+                    </Button>
+                  </div>
+                  <Form.Text className="text-muted mt-2 d-block">
+                    {formData.is_admin
+                      ? "This brand will be globally managed by the Admin. No merchant is required."
+                      : "This brand will belong exclusively to the selected merchant."}
+                  </Form.Text>
+                </div>
+
+                {!formData.is_admin && (
+                  <div className="mb-3">
+                    <SearchableSelect
+                      label="Assign to Merchant"
+                      required
+                      placeholder="Search merchant name or email"
+                      options={merchants}
+                      loading={loadingMerchants}
+                      value={formData.merchantId}
+                      onChange={(val: any) => setFormData({ ...formData, merchantId: val })}
+                    />
+                  </div>
+                )}
               </Col>
               <Col xs={12}>
                 <Form.Group>
-                  <Form.Label>Brand Title <span className="text-danger">*</span></Form.Label>
+                  <Form.Label className="fw-semibold">Brand Title <span className="text-danger">*</span></Form.Label>
                   <Form.Control type="text" placeholder="e.g. Nike" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
                 </Form.Group>
               </Col>

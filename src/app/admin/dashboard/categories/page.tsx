@@ -197,6 +197,7 @@ export default function AdminCategoriesPage() {
 
   // Filtering & Pagination State
   const [selectedMerchantFilter, setSelectedMerchantFilter] = useState('');
+  const [selectedAdminFilter, setSelectedAdminFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -223,6 +224,7 @@ export default function AdminCategoriesPage() {
     icon: '',
     image: '',
     merchantId: '',
+    is_admin: false,
     status: 'active',
   });
   const [selectedIconFile, setSelectedIconFile] = useState<File | null>(null);
@@ -251,7 +253,7 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const fetchCategories = async (page = 1, merchantId = selectedMerchantFilter) => {
+  const fetchCategories = async (page = 1, merchantId = selectedMerchantFilter, isAdmin = selectedAdminFilter) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -260,7 +262,7 @@ export default function AdminCategoriesPage() {
         return;
       }
 
-      const data = await adminService.getAdminCategories(page, 10, merchantId);
+      const data = await adminService.getAdminCategories(page, 10, merchantId, isAdmin);
 
       if (data.status) {
         setCategories(data.categories || []);
@@ -343,6 +345,7 @@ export default function AdminCategoriesPage() {
       icon: '',
       image: '',
       merchantId: selectedMerchantFilter || '',
+      is_admin: false,
       status: 'active',
     });
     setIsEditing(false);
@@ -360,6 +363,7 @@ export default function AdminCategoriesPage() {
       icon: category.icon || '',
       image: category.image || '',
       merchantId: category.merchantId?._id || category.merchantId || '',
+      is_admin: category.is_admin || false,
       status: category.status || 'active',
     });
     setIsEditing(true);
@@ -370,23 +374,33 @@ export default function AdminCategoriesPage() {
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({ ...prev, [name]: checked, merchantId: checked ? '' : prev.merchantId }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async () => {
     try {
-      if (!formData.name || !formData.merchantId) {
-        toast.warning('Category Name and Merchant are required.');
+      if (!formData.name) {
+        toast.warning('Category Name is required.');
+        return;
+      }
+      if (!formData.is_admin && !formData.merchantId) {
+        toast.warning('Merchant is required for non-admin categories.');
         return;
       }
 
       const uploadData = new FormData();
       uploadData.append('name', formData.name);
       if (formData.description) uploadData.append('description', formData.description);
-      uploadData.append('merchantId', formData.merchantId);
+      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('is_admin', String(formData.is_admin));
       uploadData.append('status', formData.status);
-      
+
       if (formData.icon) uploadData.append('icon', formData.icon);
       if (formData.image) uploadData.append('image', formData.image);
 
@@ -438,22 +452,55 @@ export default function AdminCategoriesPage() {
         <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <h5 className="mb-0 fw-bold text-dark">All Categories</h5>
 
-          {/* Top Filter By Merchant */}
-          <div className="d-flex align-items-center gap-2" style={{ minWidth: '280px' }}>
-            <span className="text-muted small fw-medium text-nowrap">Filter by Merchant:</span>
-            <Form.Select 
-              size="sm" 
-              value={selectedMerchantFilter} 
-              onChange={handleMerchantFilterChange}
-              className="border-primary-subtle"
-            >
-              <option value="">All Merchants ({merchants.length})</option>
-              {merchants.map((m) => (
-                <option key={m._id} value={m._id}>
-                  {m.business_name || m.name} ({m.email})
-                </option>
-              ))}
-            </Form.Select>
+          {/* Top Filters */}
+          <div className="d-flex flex-wrap align-items-center gap-3">
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted small fw-medium text-nowrap">Ownership:</span>
+              <Form.Select
+                size="sm"
+                value={selectedAdminFilter}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedAdminFilter(val);
+                  if (val === 'true') {
+                    setSelectedMerchantFilter(''); // Clear merchant if admin
+                  }
+                  setCurrentPage(1);
+                  fetchCategories(1, val === 'true' ? '' : selectedMerchantFilter, val);
+                }}
+                className="border-primary-subtle"
+                style={{ minWidth: '150px' }}
+              >
+                <option value="">All Categories</option>
+                <option value="true">Admin Categories</option>
+                <option value="false">Merchant Categories</option>
+              </Form.Select>
+            </div>
+
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted small fw-medium text-nowrap">Merchant:</span>
+              <Form.Select
+                size="sm"
+                value={selectedMerchantFilter}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedMerchantFilter(val);
+                  if (val) setSelectedAdminFilter(''); // Clear admin filter if specific merchant selected
+                  setCurrentPage(1);
+                  fetchCategories(1, val, val ? '' : selectedAdminFilter);
+                }}
+                className="border-primary-subtle"
+                style={{ minWidth: '200px' }}
+                disabled={selectedAdminFilter === 'true'}
+              >
+                <option value="">All Merchants ({merchants.length})</option>
+                {merchants.map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.business_name || m.name} ({m.email})
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
           </div>
         </Card.Header>
 
@@ -496,7 +543,7 @@ export default function AdminCategoriesPage() {
                                 style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #dee2e6' }}
                               />
                             ) : (
-                              <div 
+                              <div
                                 style={{ width: '42px', height: '42px', backgroundColor: '#e9ecef', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               >
                                 📁
@@ -524,25 +571,25 @@ export default function AdminCategoriesPage() {
                             </span>
                           </td>
                           <td>
-                            <Button 
-                              variant="outline-info" 
-                              size="sm" 
-                              className="me-2" 
+                            <Button
+                              variant="outline-info"
+                              size="sm"
+                              className="me-2"
                               onClick={() => handleViewDetails(category._id)}
                             >
                               View
                             </Button>
-                            <Button 
-                              variant="outline-primary" 
-                              size="sm" 
-                              className="me-2" 
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2"
                               onClick={() => handleOpenEditModal(category)}
                             >
                               Edit
                             </Button>
-                            <Button 
-                              variant="outline-danger" 
-                              size="sm" 
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
                               onClick={() => handlePromptDelete(category)}
                             >
                               Delete
@@ -591,16 +638,42 @@ export default function AdminCategoriesPage() {
         </Modal.Header>
         <Modal.Body>
           <Form>
+            {/* Category Ownership Toggle */}
+            <div className="mb-4 p-3 bg-light rounded border border-primary-subtle">
+              <Form.Label className="fw-bold d-block text-primary mb-3">Category Ownership</Form.Label>
+              <div className="d-flex w-100 gap-2">
+                <Button
+                  variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                >
+                  🌐 Platform-wide (Admin)
+                </Button>
+                <Button
+                  variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                >
+                  🏪 Merchant Specific
+                </Button>
+              </div>
+              <Form.Text className="text-muted mt-2 d-block">
+                {formData.is_admin
+                  ? "This category will be globally managed by the Admin. No merchant is required."
+                  : "This category will belong exclusively to the selected merchant."}
+              </Form.Text>
+            </div>
+
             <div className="row">
               <div className="col-md-8">
                 <Form.Group className="mb-3">
                   <Form.Label>Category Name *</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    name="name" 
-                    value={formData.name} 
-                    onChange={handleFormChange} 
-                    placeholder="e.g. Electronics, Fashion" 
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    placeholder="e.g. Electronics, Fashion"
                   />
                 </Form.Group>
               </div>
@@ -617,71 +690,75 @@ export default function AdminCategoriesPage() {
 
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
-              <Form.Control 
-                as="textarea" 
-                rows={3} 
-                name="description" 
-                value={formData.description} 
-                onChange={handleFormChange} 
-                placeholder="Category summary and description" 
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                value={formData.description}
+                onChange={handleFormChange}
+                placeholder="Category summary and description"
               />
             </Form.Group>
 
+
+
             {/* Searchable Merchant Dropdown */}
-            <SearchableSelect
-              label="Merchant"
-              required
-              placeholder="Search by merchant name or email"
-              options={merchantOptions}
-              loading={merchantsLoading}
-              value={formData.merchantId}
-              onChange={(id) => setFormData((prev) => ({ ...prev, merchantId: id }))}
-            />
+            {!formData.is_admin && (
+              <SearchableSelect
+                label="Merchant"
+                required
+                placeholder="Search by merchant name or email"
+                options={merchantOptions}
+                loading={merchantsLoading}
+                value={formData.merchantId}
+                onChange={(id) => setFormData((prev) => ({ ...prev, merchantId: id }))}
+              />
+            )}
 
             <div className="row">
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Upload Icon (File)</Form.Label>
-                  <Form.Control 
-                    type="file" 
+                  <Form.Control
+                    type="file"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.files && e.target.files[0]) {
                         setSelectedIconFile(e.target.files[0]);
                       }
-                    }} 
+                    }}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Or Icon URL</Form.Label>
-                  <Form.Control 
-                    type="url" 
-                    name="icon" 
-                    value={formData.icon} 
-                    onChange={handleFormChange} 
-                    placeholder="https://example.com/icon.png" 
+                  <Form.Control
+                    type="url"
+                    name="icon"
+                    value={formData.icon}
+                    onChange={handleFormChange}
+                    placeholder="https://example.com/icon.png"
                   />
                 </Form.Group>
               </div>
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Upload Banner Image (File)</Form.Label>
-                  <Form.Control 
-                    type="file" 
+                  <Form.Control
+                    type="file"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.files && e.target.files[0]) {
                         setSelectedImageFile(e.target.files[0]);
                       }
-                    }} 
+                    }}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Or Banner URL</Form.Label>
-                  <Form.Control 
-                    type="url" 
-                    name="image" 
-                    value={formData.image} 
-                    onChange={handleFormChange} 
-                    placeholder="https://example.com/category-banner.jpg" 
+                  <Form.Control
+                    type="url"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleFormChange}
+                    placeholder="https://example.com/category-banner.jpg"
                   />
                 </Form.Group>
               </div>
@@ -735,20 +812,20 @@ export default function AdminCategoriesPage() {
                   {selectedCategoryDetail.icon && (
                     <div>
                       <span className="text-muted d-block small mb-1">Icon</span>
-                      <img 
-                        src={selectedCategoryDetail.icon} 
-                        alt="Icon" 
-                        style={{ width: '60px', height: '60px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #dee2e6', padding: '4px' }} 
+                      <img
+                        src={selectedCategoryDetail.icon}
+                        alt="Icon"
+                        style={{ width: '60px', height: '60px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #dee2e6', padding: '4px' }}
                       />
                     </div>
                   )}
                   {selectedCategoryDetail.image && (
                     <div>
                       <span className="text-muted d-block small mb-1">Banner Image</span>
-                      <img 
-                        src={selectedCategoryDetail.image} 
-                        alt="Banner" 
-                        style={{ width: '140px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }} 
+                      <img
+                        src={selectedCategoryDetail.image}
+                        alt="Banner"
+                        style={{ width: '140px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #dee2e6' }}
                       />
                     </div>
                   )}
@@ -826,8 +903,8 @@ export default function AdminCategoriesPage() {
         </Modal.Body>
         <Modal.Footer>
           {selectedCategoryDetail && (
-            <Button 
-              variant="outline-primary" 
+            <Button
+              variant="outline-primary"
               onClick={() => {
                 setShowDetailModal(false);
                 handleOpenEditModal(selectedCategoryDetail);

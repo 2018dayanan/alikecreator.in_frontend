@@ -205,6 +205,7 @@ export default function AdminProductsPage() {
   // Modal & Form State
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isAdminProductForm, setIsAdminProductForm] = useState(false);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<{ id: string; title: string } | null>(null);
@@ -219,6 +220,7 @@ export default function AdminProductsPage() {
     quantity: '',
     categoryId: '',
     merchantId: '',
+    is_admin: false,
     images: '',
     video: '',
     purchaseType: 'internal',
@@ -236,6 +238,7 @@ export default function AdminProductsPage() {
   // Filtering & Pagination state
   const [selectedMerchantFilter, setSelectedMerchantFilter] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('');
+  const [selectedAdminFilter, setSelectedAdminFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -283,7 +286,8 @@ export default function AdminProductsPage() {
     page = 1,
     merchantId = selectedMerchantFilter,
     categoryId = selectedCategoryFilter,
-    search = searchTerm
+    search = searchTerm,
+    isAdmin = selectedAdminFilter
   ) => {
     try {
       setLoading(true);
@@ -293,7 +297,7 @@ export default function AdminProductsPage() {
         return;
       }
 
-      const data = await adminService.getProducts(page, 10, merchantId, categoryId, search);
+      const data = await adminService.getProducts(page, 10, merchantId, categoryId, search, isAdmin);
 
       if (data.status) {
         setProducts(data.products || []);
@@ -398,7 +402,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleOpenAddModal = () => {
+  const handleOpenAddModal = (isAdminProduct: boolean = false) => {
     loadModalDependencies();
     setFormData({
       title: '',
@@ -407,13 +411,15 @@ export default function AdminProductsPage() {
       discount: '',
       quantity: '',
       categoryId: '',
-      merchantId: '',
+      merchantId: isAdminProduct ? '' : (selectedMerchantFilter || ''),
+      is_admin: isAdminProduct,
       images: '',
       video: '',
       purchaseType: 'internal',
       externalLink: '',
       rewardCoins: '',
     });
+    setIsAdminProductForm(isAdminProduct);
     setIsEditing(false);
     setCurrentProductId(null);
     setSelectedFiles([]);
@@ -430,6 +436,7 @@ export default function AdminProductsPage() {
       quantity: product.quantity?.toString() || '',
       categoryId: product.categoryId?._id || product.categoryId || '',
       merchantId: product.merchantId?._id || product.merchantId || '',
+      is_admin: product.is_admin || false,
       images: Array.isArray(product.images) && product.images.length > 0
         ? product.images.join(', ')
         : (product.image || (typeof product.images === 'string' ? product.images : '')),
@@ -438,6 +445,7 @@ export default function AdminProductsPage() {
       externalLink: product.externalLink || '',
       rewardCoins: product.rewardCoins?.toString() || '',
     });
+    setIsAdminProductForm(product.is_admin || false);
     setIsEditing(true);
     setCurrentProductId(product._id);
     setSelectedFiles([]);
@@ -445,14 +453,23 @@ export default function AdminProductsPage() {
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({ ...prev, [name]: checked, merchantId: checked ? '' : prev.merchantId }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async () => {
     try {
-      if (!formData.title || !formData.price || !formData.categoryId || !formData.merchantId) {
-        toast.warning('Title, Price, Category, and Merchant are required.');
+      if (!formData.title || !formData.price || !formData.categoryId) {
+        toast.warning('Title, Price, and Category are required.');
+        return;
+      }
+      if (!formData.is_admin && !formData.merchantId) {
+        toast.warning('Merchant is required for merchant products.');
         return;
       }
 
@@ -468,7 +485,8 @@ export default function AdminProductsPage() {
       if (formData.discount) uploadData.append('discount', formData.discount);
       uploadData.append('quantity', formData.quantity);
       uploadData.append('categoryId', formData.categoryId);
-      uploadData.append('merchantId', formData.merchantId);
+      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
+      uploadData.append('is_admin', String(formData.is_admin));
       uploadData.append('purchaseType', formData.purchaseType);
       if (formData.externalLink) uploadData.append('externalLink', formData.externalLink);
       if (formData.video) uploadData.append('video', formData.video.trim());
@@ -523,8 +541,18 @@ export default function AdminProductsPage() {
     sublabel: `${m.email || ''} ${m.subdomain ? `• ${m.subdomain}.store` : ''}`,
   }));
 
-  // Categories belonging exclusively to the merchant selected in the Add/Edit modal
+  // Categories belonging exclusively to the merchant selected in the Add/Edit modal, or platform-wide if Admin product
   const modalCategoryOptions: SearchableOption[] = useMemo(() => {
+    if (formData.is_admin) {
+      return categories
+        .filter((c) => c.is_admin)
+        .map((c) => ({
+          _id: c._id,
+          label: c.name || 'Unnamed admin category',
+          sublabel: c.slug ? `Slug: ${c.slug}` : undefined,
+        }));
+    }
+
     if (!formData.merchantId) {
       return [];
     }
@@ -538,7 +566,7 @@ export default function AdminProductsPage() {
         label: c.name || 'Unnamed category',
         sublabel: c.slug ? `Slug: ${c.slug}` : undefined,
       }));
-  }, [categories, formData.merchantId]);
+  }, [categories, formData.merchantId, formData.is_admin]);
 
   // Categories filtered for the top toolbar dropdown based on selectedMerchantFilter
   const toolbarFilteredCategories = useMemo(() => {
@@ -557,7 +585,11 @@ export default function AdminProductsPage() {
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="text-dark fw-bold mb-0">Products</h2>
-        <Button variant="primary" onClick={handleOpenAddModal}>Add Product</Button>
+        <div className="d-flex gap-2">
+          <Button variant="primary" onClick={() => handleOpenAddModal(false)} className="fw-semibold shadow-sm">
+            + Add New Product
+          </Button>
+        </div>
       </div>
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -584,9 +616,9 @@ export default function AdminProductsPage() {
                 style={{ minWidth: '200px' }}
                 className="border-primary-subtle"
               />
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
+              <Button
+                variant="outline-primary"
+                size="sm"
                 onClick={() => {
                   setSearchTerm(searchInput);
                   setCurrentPage(1);
@@ -595,9 +627,9 @@ export default function AdminProductsPage() {
                 Search
               </Button>
               {searchTerm && (
-                <Button 
-                  variant="link" 
-                  size="sm" 
+                <Button
+                  variant="link"
+                  size="sm"
                   className="text-danger text-decoration-none px-1"
                   onClick={() => {
                     setSearchInput('');
@@ -611,13 +643,43 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="d-flex align-items-center gap-1">
+              <span className="text-muted small fw-medium text-nowrap">Ownership:</span>
+              <Form.Select
+                size="sm"
+                value={selectedAdminFilter}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedAdminFilter(val);
+                  if (val === 'true') {
+                    setSelectedMerchantFilter(''); // Clear merchant if admin
+                  }
+                  setCurrentPage(1);
+                  fetchProducts(1, val === 'true' ? '' : selectedMerchantFilter, selectedCategoryFilter, searchTerm, val);
+                }}
+                style={{ minWidth: '150px' }}
+                className="border-primary-subtle"
+              >
+                <option value="">All Products</option>
+                <option value="true">Admin Products</option>
+                <option value="false">Merchant Products</option>
+              </Form.Select>
+            </div>
+
+            <div className="d-flex align-items-center gap-1">
               <span className="text-muted small fw-medium text-nowrap">Merchant:</span>
               <Form.Select
                 size="sm"
                 value={selectedMerchantFilter}
-                onChange={handleMerchantFilterChange}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedMerchantFilter(val);
+                  if (val) setSelectedAdminFilter(''); // Clear admin filter if specific merchant selected
+                  setCurrentPage(1);
+                  fetchProducts(1, val, selectedCategoryFilter, searchTerm, val ? '' : selectedAdminFilter);
+                }}
                 style={{ minWidth: '180px' }}
                 className="border-primary-subtle"
+                disabled={selectedAdminFilter === 'true'}
               >
                 <option value="">All Merchants ({merchants.length})</option>
                 {merchants.map((m) => (
@@ -648,11 +710,19 @@ export default function AdminProductsPage() {
               </Form.Select>
             </div>
 
-            {(selectedMerchantFilter || selectedCategoryFilter) && (
+            {(selectedMerchantFilter || selectedCategoryFilter || selectedAdminFilter) && (
               <Button
                 variant="outline-secondary"
                 size="sm"
-                onClick={handleClearFilters}
+                onClick={() => {
+                  setSelectedMerchantFilter('');
+                  setSelectedCategoryFilter('');
+                  setSelectedAdminFilter('');
+                  setSearchInput('');
+                  setSearchTerm('');
+                  setCurrentPage(1);
+                  fetchProducts(1, '', '', '', '');
+                }}
                 className="text-nowrap"
               >
                 ✕ Reset
@@ -759,6 +829,32 @@ export default function AdminProductsPage() {
         </Modal.Header>
         <Modal.Body>
           <Form>
+            {/* Product Ownership Toggle */}
+            <div className="mb-4 p-3 bg-light rounded border border-primary-subtle">
+              <Form.Label className="fw-bold d-block text-primary mb-3">Product Ownership</Form.Label>
+              <div className="d-flex w-100 gap-2">
+                <Button
+                  variant={!formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: false }))}
+                >
+                  🏪 Merchant Specific
+                </Button>
+                <Button
+                  variant={formData.is_admin ? 'primary' : 'outline-secondary'}
+                  className="w-50 fw-semibold shadow-sm"
+                  onClick={() => setFormData(prev => ({ ...prev, is_admin: true, merchantId: '' }))}
+                >
+                  🌐 Platform-wide (Admin)
+                </Button>
+              </div>
+              <Form.Text className="text-muted mt-2 d-block">
+                {formData.is_admin
+                  ? "This product will be globally managed by the Admin. No merchant is required."
+                  : "This product will belong exclusively to the selected merchant."}
+              </Form.Text>
+            </div>
+
             <div className="row">
               <div className="col-md-6">
                 <Form.Group className="mb-3">
@@ -818,56 +914,64 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="row">
-              {/* 1. Merchant selection FIRST */}
-              <div className="col-md-6">
-                <SearchableSelect
-                  label="Merchant"
-                  required
-                  placeholder="Select Merchant first"
-                  options={merchantOptions}
-                  loading={merchantsLoading}
-                  value={formData.merchantId}
-                  onChange={(id) => {
-                    setFormData((prev) => {
-                      // Validate if existing category belongs to new merchant
-                      const isCatValid = categories.some((c) => {
-                        const cMerchantId = getCategoryMerchantId(c);
-                        return String(cMerchantId) === String(id) && String(c._id) === String(prev.categoryId);
-                      });
-                      return {
-                        ...prev,
-                        merchantId: id,
-                        categoryId: isCatValid ? prev.categoryId : '',
-                      };
-                    });
-                  }}
-                />
-              </div>
 
-              {/* 2. Merchant-specific Category selection */}
+
+              {/* 1. Merchant selection FIRST */}
+              {!formData.is_admin && (
+                <div className="col-md-6">
+                  <SearchableSelect
+                    label="Merchant"
+                    required
+                    placeholder="Select Merchant first"
+                    options={merchantOptions}
+                    loading={merchantsLoading}
+                    value={formData.merchantId}
+                    onChange={(id) => {
+                      setFormData((prev) => {
+                        // Validate if existing category belongs to new merchant
+                        const isCatValid = categories.some((c) => {
+                          const cMerchantId = getCategoryMerchantId(c);
+                          return String(cMerchantId) === String(id) && String(c._id) === String(prev.categoryId);
+                        });
+                        return {
+                          ...prev,
+                          merchantId: id,
+                          categoryId: isCatValid ? prev.categoryId : '',
+                        };
+                      });
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* 2. Category selection */}
               <div className="col-md-6">
                 <SearchableSelect
                   label="Category"
                   required
                   placeholder={
-                    !formData.merchantId
-                      ? "⚠️ Please select a Merchant first"
-                      : modalCategoryOptions.length > 0
-                        ? "Search merchant's categories"
-                        : "No categories for this merchant"
+                    formData.is_admin
+                      ? (modalCategoryOptions.length > 0 ? "Select an Admin category" : "No Admin categories exist")
+                      : (!formData.merchantId
+                        ? "⚠️ Please select a Merchant first"
+                        : modalCategoryOptions.length > 0
+                          ? "Search merchant's categories"
+                          : "No categories for this merchant")
                   }
                   options={modalCategoryOptions}
                   loading={categoriesLoading}
                   value={formData.categoryId}
                   onChange={(id) => setFormData((prev) => ({ ...prev, categoryId: id }))}
                 />
-                {!formData.merchantId ? (
+                {!formData.is_admin && !formData.merchantId ? (
                   <small className="text-warning d-block" style={{ marginTop: '-10px', marginBottom: '10px' }}>
                     💡 Please select a merchant first to see their categories.
                   </small>
                 ) : modalCategoryOptions.length === 0 && !categoriesLoading ? (
                   <small className="text-danger d-block" style={{ marginTop: '-10px', marginBottom: '10px' }}>
-                    ⚠️ This merchant has no categories yet. Please add a category for them first.
+                    {formData.is_admin
+                      ? "⚠️ There are no Admin categories yet. Please create one first."
+                      : "⚠️ This merchant has no categories yet. Please add a category for them first."}
                   </small>
                 ) : null}
               </div>
