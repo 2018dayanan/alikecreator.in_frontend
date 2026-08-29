@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Card, Table, Button, Spinner, Alert, Modal, Form, Pagination, Badge } from 'react-bootstrap';
-import { merchantService } from '@/services/merchantService';
+import { adminService } from '@/services/adminService';
 import { toast } from 'react-toastify';
 
-export default function MerchantOrdersPage() {
+export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ export default function MerchantOrdersPage() {
   const fetchOrders = async (page = 1, status = selectedStatus) => {
     try {
       setLoading(true);
-      const data = await merchantService.getOrders(page, 10, status);
+      const data = await adminService.getAdminOrders(page, 10, status);
       if (data.status) {
         setOrders(data.orders || []);
         if (data.pagination) {
@@ -60,7 +60,7 @@ export default function MerchantOrdersPage() {
       setDetailLoading(true);
       setShowDetailModal(true);
       setSelectedOrder(null);
-      const data = await merchantService.getOrderById(orderId);
+      const data = await adminService.getAdminOrderById(orderId);
       if (data.status) {
         setSelectedOrder(data.order);
         setNewStatus(data.order.orderStatus || 'pending');
@@ -79,7 +79,7 @@ export default function MerchantOrdersPage() {
     if (!selectedOrder) return;
     try {
       setUpdatingStatus(true);
-      const data = await merchantService.updateOrderStatus(selectedOrder._id, newStatus, trackingNumber);
+      const data = await adminService.updateAdminOrderStatus(selectedOrder._id, newStatus, trackingNumber);
       if (data.status) {
         toast.success('Order status updated successfully');
         setShowDetailModal(false);
@@ -156,7 +156,7 @@ export default function MerchantOrdersPage() {
                     <th>Order ID</th>
                     <th>Customer</th>
                     <th>Date</th>
-                    <th>My Items Subtotal</th>
+                    <th>Total Amount</th>
                     <th>Payment</th>
                     <th>Order Status</th>
                     <th>Actions</th>
@@ -182,7 +182,7 @@ export default function MerchantOrdersPage() {
                           </div>
                         </td>
                         <td className="small text-muted">{new Date(order.createdAt).toLocaleDateString()}</td>
-                        <td className="fw-bold text-success">₹{order.merchantSubtotal}</td>
+                        <td className="fw-bold text-success">₹{order.totalAmount}</td>
                         <td>
                           <Badge bg={order.paymentStatus === 'paid' ? 'success' : 'warning'} text={order.paymentStatus === 'paid' ? 'white' : 'dark'}>
                             {order.paymentStatus || 'pending'} ({order.paymentMethod || 'COD'})
@@ -274,20 +274,21 @@ export default function MerchantOrdersPage() {
               </div>
 
               {/* Items Table */}
-              <h6 className="fw-bold text-dark mb-2">Items From Your Store</h6>
+              <h6 className="fw-bold text-dark mb-2">Order Items</h6>
               <div className="border rounded-3 overflow-hidden mb-4">
                 <Table responsive hover className="mb-0 align-middle">
                   <thead className="table-light">
                     <tr>
                       <th>Product</th>
+                      <th>Merchant</th>
                       <th>Price</th>
                       <th>Quantity</th>
                       <th>Total</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedOrder.merchantItems && selectedOrder.merchantItems.length > 0 ? (
-                      selectedOrder.merchantItems.map((item: any, idx: number) => (
+                    {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                      selectedOrder.items.map((item: any, idx: number) => (
                         <tr key={idx}>
                           <td>
                             <div className="d-flex align-items-center gap-2">
@@ -301,6 +302,11 @@ export default function MerchantOrdersPage() {
                               <span className="fw-medium text-dark">{item.title}</span>
                             </div>
                           </td>
+                          <td>
+                            <div className="text-muted small">
+                              {item.merchantId?.business_name || item.merchantId?.name || 'Platform'}
+                            </div>
+                          </td>
                           <td>₹{item.price}</td>
                           <td>x {item.quantity}</td>
                           <td className="fw-bold text-dark">₹{item.price * item.quantity}</td>
@@ -308,14 +314,14 @@ export default function MerchantOrdersPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={4} className="text-muted text-center py-3">No store items found</td>
+                        <td colSpan={5} className="text-muted text-center py-3">No items found</td>
                       </tr>
                     )}
                   </tbody>
                   <tfoot className="table-light">
                     <tr>
-                      <td colSpan={3} className="text-end fw-bold">Your Items Subtotal:</td>
-                      <td className="fw-bold text-success fs-6">₹{selectedOrder.merchantSubtotal}</td>
+                      <td colSpan={4} className="text-end fw-bold">Total Amount:</td>
+                      <td className="fw-bold text-success fs-6">₹{selectedOrder.totalAmount}</td>
                     </tr>
                   </tfoot>
                 </Table>

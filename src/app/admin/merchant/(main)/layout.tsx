@@ -79,12 +79,6 @@ export default function MerchantDashboardLayout({ children }: { children: React.
           </Nav>
 
           <Nav className="align-items-center gap-3">
-            <Link href="/admin/dashboard" className="btn btn-outline-light btn-sm fw-bold">
-              Main Dashboard
-            </Link>
-            <Link href="/admin/rental" className="btn btn-outline-light btn-sm fw-bold">
-              Rental Portal
-            </Link>
             <span className="text-light small d-none d-md-inline">
               Store: <strong className="text-warning">{merchantUser?.business_name || merchantUser?.name || 'Merchant'}</strong>
             </span>
@@ -105,9 +99,9 @@ export default function MerchantDashboardLayout({ children }: { children: React.
                   <p className="mb-0 fw-bold small text-dark">{merchantUser?.business_name || merchantUser?.name}</p>
                   <p className="mb-0 text-muted small" style={{ fontSize: '11px' }}>{merchantUser?.email}</p>
                 </div>
-                <Dropdown.Item as={Link} href="/admin/merchant/profile">Store Profile</Dropdown.Item>
-                <Dropdown.Item as={Link} href="/admin/merchant/products">Manage Products</Dropdown.Item>
-                <Dropdown.Item as={Link} href="/admin/merchant/orders">View Orders</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/merchant/dashboard/profile">Store Profile</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/merchant/dashboard/products">Manage Products</Dropdown.Item>
+                <Dropdown.Item as={Link} href="/merchant/dashboard/orders">View Orders</Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item as={Link} href="/" target="_blank">View Main Store ↗</Dropdown.Item>
                 <Dropdown.Divider />

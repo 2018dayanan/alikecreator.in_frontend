@@ -571,14 +571,14 @@ export default function MerchantProductsPage() {
 
             <Form.Group className="mb-3">
               <Form.Label className="small fw-semibold">Upload Product Images</Form.Label>
-              <Form.Control 
-                type="file" 
-                multiple 
+              <Form.Control
+                type="file"
+                multiple
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (e.target.files) {
                     setSelectedFiles(Array.from(e.target.files));
                   }
-                }} 
+                }}
               />
             </Form.Group>
 
@@ -696,8 +696,8 @@ export default function MerchantProductsPage() {
                           selectedProductDetail.video.includes('embed')
                             ? selectedProductDetail.video
                             : selectedProductDetail.video.includes('youtu.be')
-                            ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
-                            : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
+                              ? `https://www.youtube.com/embed/${selectedProductDetail.video.split('/').pop()?.split('?')[0]}`
+                              : `https://www.youtube.com/embed/${new URLSearchParams(selectedProductDetail.video.split('?')[1] || '').get('v') || ''}`
                         }
                         title="Product Video"
                         allowFullScreen

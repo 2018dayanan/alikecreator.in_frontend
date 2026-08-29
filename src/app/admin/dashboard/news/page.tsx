@@ -1,11 +1,19 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, Table, Button, Spinner, Alert, Modal, Form, Pagination, Badge, Row, Col } from 'react-bootstrap';
-import { merchantService } from '@/services/merchantService';
+import { adminService } from '@/services/adminService';
 import { toast } from 'react-toastify';
 
-export default function MerchantNewsPage() {
+interface MerchantOption {
+  _id: string;
+  name: string;
+  business_name?: string;
+  subdomain?: string;
+}
+
+export default function AdminNewsPage() {
   const [newsList, setNewsList] = useState<any[]>([]);
+  const [merchants, setMerchants] = useState<MerchantOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -14,6 +22,7 @@ export default function MerchantNewsPage() {
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalNews, setTotalNews] = useState(0);
+  const [selectedMerchantId, setSelectedMerchantId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
 
@@ -26,27 +35,44 @@ export default function MerchantNewsPage() {
     description: '',
     image: '',
     date: new Date().toISOString().split('T')[0],
+    merchantId: '',
     is_active: true
   });
   const [saving, setSaving] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   // Delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newsToDelete, setNewsToDelete] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Load merchants for filter & form dropdown
+  useEffect(() => {
+    const fetchMerchants = async () => {
+      try {
+        const res = await adminService.getAdminMerchants(1, 100);
+        if (res.status && res.merchants) {
+          setMerchants(res.merchants);
+        }
+      } catch (err) {
+        console.error('Failed to load merchants', err);
+      }
+    };
+    fetchMerchants();
+  }, []);
+
   // Load news list
   const loadNews = async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await merchantService.getMyNews(page, limit, searchTerm, activeFilter);
+      const res = await adminService.getNews(page, limit, selectedMerchantId, searchTerm, activeFilter);
       if (res.status && res.news) {
         setNewsList(res.news);
         setTotalPages(res.pagination?.totalPages || 1);
         setTotalNews(res.pagination?.totalNews || 0);
       } else {
-        setError(res.message || 'Failed to load news articles');
+        setError(res.message || 'Failed to load news');
       }
     } catch (err: any) {
       setError(err.message || 'Server error loading news');
@@ -57,7 +83,7 @@ export default function MerchantNewsPage() {
 
   useEffect(() => {
     loadNews();
-  }, [page, activeFilter]);
+  }, [page, selectedMerchantId, activeFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,8 +100,10 @@ export default function MerchantNewsPage() {
       description: '',
       image: '',
       date: new Date().toISOString().split('T')[0],
+      merchantId: selectedMerchantId || '',
       is_active: true
     });
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -88,8 +116,10 @@ export default function MerchantNewsPage() {
       description: item.description || '',
       image: item.image || '',
       date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      merchantId: item.merchantId?._id || item.merchantId || '',
       is_active: item.is_active !== undefined ? item.is_active : true
     });
+    setSelectedImageFile(null);
     setShowModal(true);
   };
 
@@ -107,25 +137,26 @@ export default function MerchantNewsPage() {
 
     setSaving(true);
     try {
-      const payload: any = {
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        image: formData.image.trim() || null,
-        date: formData.date ? new Date(formData.date) : new Date(),
-        is_active: formData.is_active
-      };
+      const uploadData = new FormData();
+      uploadData.append('title', formData.title.trim());
+      uploadData.append('description', formData.description.trim());
+      if (formData.image) uploadData.append('image', formData.image.trim());
+      if (selectedImageFile) uploadData.append('image', selectedImageFile);
+      if (formData.date) uploadData.append('date', formData.date);
+      uploadData.append('is_active', formData.is_active.toString());
+      if (formData.merchantId) uploadData.append('merchantId', formData.merchantId);
 
       if (modalMode === 'create') {
-        const res = await merchantService.createNews(payload);
+        const res = await adminService.createNews(uploadData as any);
         if (res.status) {
-          toast.success('News article published successfully');
+          toast.success('News article created successfully');
           setShowModal(false);
           loadNews();
         } else {
-          toast.error(res.message || 'Failed to publish news');
+          toast.error(res.message || 'Failed to create news');
         }
       } else {
-        const res = await merchantService.updateNews(selectedNews._id, payload);
+        const res = await adminService.updateNews(selectedNews._id, uploadData as any);
         if (res.status) {
           toast.success('News article updated successfully');
           setShowModal(false);
@@ -144,7 +175,7 @@ export default function MerchantNewsPage() {
   // Toggle status
   const handleToggleStatus = async (item: any) => {
     try {
-      const res = await merchantService.toggleNewsStatus(item._id);
+      const res = await adminService.toggleNewsStatus(item._id);
       if (res.status) {
         toast.success(res.message || 'Status updated');
         setNewsList(newsList.map(n => n._id === item._id ? { ...n, is_active: !n.is_active } : n));
@@ -166,7 +197,7 @@ export default function MerchantNewsPage() {
     if (!newsToDelete) return;
     setDeleting(true);
     try {
-      const res = await merchantService.deleteNews(newsToDelete._id);
+      const res = await adminService.deleteNews(newsToDelete._id);
       if (res.status) {
         toast.success('News article deleted successfully');
         setShowDeleteModal(false);
@@ -184,10 +215,10 @@ export default function MerchantNewsPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold mb-1">Store News & Announcements</h2>
-          <p className="text-muted mb-0">Publish updates, promotions, and articles for your store customers.</p>
+          <h2 className="fw-bold mb-1">News & Articles Management</h2>
+          <p className="text-muted mb-0">Publish platform news and manage articles for merchants.</p>
         </div>
         <Button variant="primary" onClick={handleOpenCreate} className="d-flex align-items-center gap-2">
           <span>+</span>
@@ -199,16 +230,35 @@ export default function MerchantNewsPage() {
       <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
           <Row className="g-3 align-items-end">
-            <Col md={6}>
+            <Col md={4}>
               <Form.Label className="small fw-bold text-muted">Search News</Form.Label>
               <Form onSubmit={handleSearchSubmit}>
                 <Form.Control
                   type="text"
-                  placeholder="Search articles by title or keywords..."
+                  placeholder="Search by title or content..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </Form>
+            </Col>
+
+            <Col md={3}>
+              <Form.Label className="small fw-bold text-muted">Filter by Merchant</Form.Label>
+              <Form.Select
+                value={selectedMerchantId}
+                onChange={(e) => {
+                  setSelectedMerchantId(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="">All News (System & Merchants)</option>
+                <option value="none">Global News Only (No Merchant)</option>
+                {merchants.map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.business_name || m.name} {m.subdomain ? `(@${m.subdomain})` : ''}
+                  </option>
+                ))}
+              </Form.Select>
             </Col>
 
             <Col md={3}>
@@ -226,14 +276,15 @@ export default function MerchantNewsPage() {
               </Form.Select>
             </Col>
 
-            <Col md={3} className="d-flex gap-2">
-              <Button variant="primary" className="w-100" onClick={() => { setPage(1); loadNews(); }}>
+            <Col md={2} className="d-flex gap-2">
+              <Button variant="secondary" className="w-100" onClick={() => { setPage(1); loadNews(); }}>
                 Filter
               </Button>
               <Button
                 variant="outline-secondary"
                 onClick={() => {
                   setSearchTerm('');
+                  setSelectedMerchantId('');
                   setActiveFilter('');
                   setPage(1);
                 }}
@@ -258,10 +309,10 @@ export default function MerchantNewsPage() {
           ) : newsList.length === 0 ? (
             <div className="text-center py-5 text-muted">
               <div style={{ fontSize: '48px' }}>📰</div>
-              <p className="fw-semibold mt-2 mb-1">No news articles yet</p>
-              <p className="small text-muted mb-3">Share your store updates, product launches, and news with customers.</p>
+              <p className="fw-semibold mt-2 mb-1">No news articles found</p>
+              <p className="small text-muted mb-3">Get started by creating the first news article.</p>
               <Button variant="primary" size="sm" onClick={handleOpenCreate}>
-                + Add Your First News Article
+                + Add News Article
               </Button>
             </div>
           ) : (
@@ -271,7 +322,8 @@ export default function MerchantNewsPage() {
                   <tr>
                     <th style={{ width: '80px' }}>Image</th>
                     <th>Title & Content</th>
-                    <th>Publish Date</th>
+                    <th>Merchant / Source</th>
+                    <th>Published Date</th>
                     <th>Status</th>
                     <th className="text-end" style={{ width: '140px' }}>Actions</th>
                   </tr>
@@ -299,9 +351,27 @@ export default function MerchantNewsPage() {
                       </td>
                       <td>
                         <div className="fw-bold text-dark mb-1">{item.title}</div>
-                        <div className="text-muted small text-truncate" style={{ maxWidth: '400px' }}>
+                        <div className="text-muted small text-truncate" style={{ maxWidth: '350px' }}>
                           {item.description}
                         </div>
+                      </td>
+                      <td>
+                        {item.merchantId ? (
+                          <div>
+                            <span className="fw-semibold text-primary">
+                              {item.merchantId.business_name || item.merchantId.name}
+                            </span>
+                            {item.merchantId.subdomain && (
+                              <span className="badge bg-light text-dark border ms-1">
+                                @{item.merchantId.subdomain}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <Badge bg="secondary" className="text-uppercase px-2 py-1">
+                            System / Global
+                          </Badge>
+                        )}
                       </td>
                       <td>
                         <div className="small text-dark">
@@ -384,7 +454,7 @@ export default function MerchantNewsPage() {
                   <Form.Label className="fw-bold small">Title <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter headline / title..."
+                    placeholder="Enter news title..."
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     required
@@ -398,7 +468,7 @@ export default function MerchantNewsPage() {
                   <Form.Control
                     as="textarea"
                     rows={5}
-                    placeholder="Enter full article content..."
+                    placeholder="Enter detailed news content / description..."
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     required
@@ -408,15 +478,18 @@ export default function MerchantNewsPage() {
 
               <Col md={8}>
                 <Form.Group>
-                  <Form.Label className="fw-bold small">Image URL</Form.Label>
+                  <Form.Label className="fw-bold small">Upload Image (File)</Form.Label>
                   <Form.Control
-                    type="url"
-                    placeholder="https://example.com/news-banner.jpg"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    type="file"
+                    className="mb-2"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedImageFile(e.target.files[0]);
+                      }
+                    }}
                   />
                   <Form.Text className="text-muted small">
-                    Provide a direct link to an image banner for this article.
+                    Upload a file or provide a direct image URL for the article thumbnail.
                   </Form.Text>
                 </Form.Group>
               </Col>
@@ -432,12 +505,12 @@ export default function MerchantNewsPage() {
                 </Form.Group>
               </Col>
 
-              {formData.image && (
+              {(selectedImageFile || formData.image) && (
                 <Col xs={12}>
                   <div className="p-2 border rounded bg-light">
                     <span className="small text-muted d-block mb-1">Image Preview:</span>
                     <img
-                      src={formData.image}
+                      src={selectedImageFile ? URL.createObjectURL(selectedImageFile) : formData.image}
                       alt="Preview"
                       style={{ maxHeight: '160px', maxWidth: '100%' }}
                       className="rounded object-fit-cover"
@@ -447,12 +520,29 @@ export default function MerchantNewsPage() {
                 </Col>
               )}
 
-              <Col xs={12}>
+              <Col md={8}>
+                <Form.Group>
+                  <Form.Label className="fw-bold small">Assign to Merchant</Form.Label>
+                  <Form.Select
+                    value={formData.merchantId}
+                    onChange={(e) => setFormData({ ...formData, merchantId: e.target.value })}
+                  >
+                    <option value="">System / Global (Platform News)</option>
+                    {merchants.map((m) => (
+                      <option key={m._id} value={m._id}>
+                        {m.business_name || m.name} {m.subdomain ? `(@${m.subdomain})` : ''}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col md={4} className="d-flex align-items-end">
                 <Form.Group className="mb-2">
                   <Form.Check
                     type="switch"
-                    id="merchant-news-active-switch"
-                    label="Is Active / Published on Store"
+                    id="news-active-switch"
+                    label="Is Active / Published"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                   />
@@ -465,7 +555,7 @@ export default function MerchantNewsPage() {
               Cancel
             </Button>
             <Button variant="primary" type="submit" disabled={saving}>
-              {saving ? <Spinner size="sm" animation="border" /> : (modalMode === 'create' ? 'Publish News' : 'Save Changes')}
+              {saving ? <Spinner size="sm" animation="border" /> : (modalMode === 'create' ? 'Create News' : 'Save Changes')}
             </Button>
           </Modal.Footer>
         </Form>

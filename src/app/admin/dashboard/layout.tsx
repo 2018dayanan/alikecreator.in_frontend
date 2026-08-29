@@ -38,9 +38,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav className="align-items-center">
-            <Link href="/admin/merchant/dashboard" className="btn btn-outline-light btn-sm me-3 fw-bold">
-              <i className="fa-solid fa-store me-1"></i> Merchant Portal
-            </Link>
             <Link href="/admin/rental" className="btn btn-outline-light btn-sm me-3 fw-bold">
               <i className="fa-solid fa-repeat me-1"></i> Rental Portal
             </Link>
