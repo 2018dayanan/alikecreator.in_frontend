@@ -645,13 +645,14 @@ export const adminService = {
   },
 
   // Discover Collection Management
-  getDiscoverItems: async (page = 1, limit = 50, isActive?: boolean) => {
-    let url = `${API_URL}/admin/discover?page=${page}&limit=${limit}`;
-    if (typeof isActive === 'boolean') {
-      url += `&isActive=${isActive}`;
-    }
+  getDiscoverItems: async (page = 1, limit = 50, merchantId = '') => {
     try {
-      const res = await fetch(url, {
+      const url = new URL(`${API_URL}/admin/discover`);
+      url.searchParams.append('page', page.toString());
+      url.searchParams.append('limit', limit.toString());
+      if (merchantId) url.searchParams.append('merchantId', merchantId);
+      
+      const res = await fetch(url.toString(), {
         method: 'GET',
         headers: getAuthHeaders(),
       });
@@ -686,12 +687,12 @@ export const adminService = {
     }
   },
 
-  syncDiscoverProducts: async (productIds: string[]) => {
+  syncDiscoverProducts: async (productIds: string[], merchantId = '') => {
     try {
       const res = await fetch(`${API_URL}/admin/discover/sync`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ productIds }),
+        body: JSON.stringify({ productIds, merchantId }),
       });
       return await res.json();
     } catch (err: any) {

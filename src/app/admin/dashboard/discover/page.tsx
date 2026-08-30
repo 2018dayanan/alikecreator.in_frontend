@@ -44,6 +44,7 @@ export default function AdminDiscoverPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [merchants, setMerchants] = useState<any[]>([]);
   const [merchantFilter, setMerchantFilter] = useState('');
+  const [discoverMerchantFilter, setDiscoverMerchantFilter] = useState('');
 
   // Edit Modal State
   const [showEditModal, setShowEditModal] = useState(false);
@@ -64,8 +65,8 @@ export default function AdminDiscoverPage() {
       // Parallel fetch: Products, Discover Items, Categories, Merchants
       const [prodRes, discRes, catRes, merchRes] = await Promise.all([
         adminService.getProducts(1, 100, merchantFilter, '', '', merchantFilter ? '' : 'true'),
-        adminService.getDiscoverItems(1, 100),
-        adminService.getAdminCategories(1, 100, '', 'true'),
+        adminService.getDiscoverItems(1, 100, discoverMerchantFilter),
+        adminService.getAdminCategories(1, 100, merchantFilter, merchantFilter ? '' : 'true'),
         adminService.getMerchants(),
       ]);
 
@@ -106,9 +107,14 @@ export default function AdminDiscoverPage() {
         ]);
         setAllProducts(prodRes.products || prodRes.data || []);
         setCategories(catRes.categories || catRes.data || []);
+
         setCategoryFilter(''); // reset selected category
+        if (merchantFilter) {
+          toast.success('Merchant products and categories loaded successfully!');
+        }
       } catch (err: any) {
         console.error('Error fetching filtered data:', err);
+        toast.error(err.message || 'Error fetching merchant data');
       } finally {
         setLoading(false);
       }
@@ -117,6 +123,30 @@ export default function AdminDiscoverPage() {
       fetchFilteredProductsAndCategories();
     }
   }, [merchantFilter]);
+
+  // Refetch Discover Items when Manage Filter Changes
+  useEffect(() => {
+    const fetchFilteredDiscover = async () => {
+      try {
+        const discRes = await adminService.getDiscoverItems(1, 100, discoverMerchantFilter);
+        const newDiscoverList = discRes.discoverItems || discRes.data || [];
+        setDiscoverItems(newDiscoverList);
+
+        // We only update selectedProductIds if the manage filter matches the product picker filter
+        if (merchantFilter === discoverMerchantFilter) {
+          const selectedIds = newDiscoverList.map((item: any) =>
+            typeof item.productId === 'object' ? item.productId._id : (item.productId as string)
+          );
+          setSelectedProductIds(selectedIds);
+        }
+      } catch (err: any) {
+        console.error('Error fetching discover data:', err);
+      }
+    };
+    if (merchants.length > 0) {
+      fetchFilteredDiscover();
+    }
+  }, [discoverMerchantFilter]);
 
   // Toggle single product checkbox selection
   const handleToggleProductSelection = (productId: string) => {
@@ -144,7 +174,7 @@ export default function AdminDiscoverPage() {
   const handleSaveSelection = async () => {
     try {
       setSaving(true);
-      const res = await adminService.syncDiscoverProducts(selectedProductIds);
+      const res = await adminService.syncDiscoverProducts(selectedProductIds, merchantFilter);
 
       if (res.status !== false) {
         toast.success(res.message || 'Discover Collection saved successfully!');
@@ -533,6 +563,25 @@ export default function AdminDiscoverPage() {
               }
             >
               <div className="mt-4">
+                <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                  <h6 className="mb-0 fw-bold">Manage Showcase Items</h6>
+                  <div style={{ width: '250px' }}>
+                    <Form.Select
+                      value={discoverMerchantFilter}
+                      onChange={(e) => setDiscoverMerchantFilter(e.target.value)}
+                      size="sm"
+                    >
+                      <option value="">Admin Collection</option>
+                      <option value="all">View All (Admin + Merchants)</option>
+                      {merchants.map((m) => (
+                        <option key={m._id} value={m._id}>
+                          {m.businessName || m.name || m.email} Collection
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                </div>
+
                 {discoverItems.length === 0 ? (
                   <div className="text-center py-5">
                     <div style={{ fontSize: '42px' }}>✨</div>
