@@ -83,6 +83,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Nav.Link as={Link} href="/admin/dashboard/carousels" className={`text-dark rounded ${pathname === '/admin/dashboard/carousels' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Carousels / Banners
               </Nav.Link>
+              <Nav.Link as={Link} href="/admin/dashboard/discover" className={`text-dark rounded ${pathname === '/admin/dashboard/discover' ? 'bg-light fw-bold text-primary' : ''}`}>
+                Discover Collection
+              </Nav.Link>
               <Nav.Link as={Link} href="/admin/dashboard/brands" className={`text-dark rounded ${pathname === '/admin/dashboard/brands' ? 'bg-light fw-bold text-primary' : ''}`}>
                 Trusted Brands
               </Nav.Link>

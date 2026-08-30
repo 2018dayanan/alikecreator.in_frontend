@@ -642,6 +642,98 @@ export const adminService = {
     } catch (err: any) {
       return { status: false, message: err.message || 'Failed to update order status' };
     }
+  },
+
+  // Discover Collection Management
+  getDiscoverItems: async (page = 1, limit = 50, isActive?: boolean) => {
+    let url = `${API_URL}/admin/discover?page=${page}&limit=${limit}`;
+    if (typeof isActive === 'boolean') {
+      url += `&isActive=${isActive}`;
+    }
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch discover items' };
+    }
+  },
+
+  getDiscoverById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to fetch discover item' };
+    }
+  },
+
+  addDiscoverItem: async (data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to add product to discover' };
+    }
+  },
+
+  syncDiscoverProducts: async (productIds: string[]) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover/sync`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ productIds }),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to sync discover collection' };
+    }
+  },
+
+  updateDiscoverItem: async (id: string, data: any) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to update discover item' };
+    }
+  },
+
+  deleteDiscoverItem: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to delete discover item' };
+    }
+  },
+
+  toggleDiscoverStatus: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/discover/${id}/status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (err: any) {
+      return { status: false, message: err.message || 'Failed to toggle discover status' };
+    }
   }
 };
 
