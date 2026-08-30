@@ -14,7 +14,7 @@ interface SearchableOption {
 }
 
 function SearchableSelect({
-  label, required, placeholder, options, loading, value, onChange, allowAll = false, allLabel = 'All Merchants'
+  label, required, placeholder, options, loading, value, onChange, allowAll = false, allLabel = 'All Merchants', allowAdmin = false, adminLabel = 'Admin Collection'
 }: any) {
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
@@ -89,6 +89,11 @@ function SearchableSelect({
             {allowAll && (
               <div className="p-2 border-bottom text-primary fw-semibold" style={{ cursor: 'pointer', backgroundColor: value === '' ? '#eef2ff' : 'transparent' }} onClick={() => handleSelect(null)}>
                 🌐 {allLabel}
+              </div>
+            )}
+            {allowAdmin && (
+              <div className="p-2 border-bottom text-success fw-semibold" style={{ cursor: 'pointer', backgroundColor: value === 'admin' ? '#e6f8ea' : 'transparent' }} onClick={() => handleSelect({ _id: 'admin', label: adminLabel })}>
+                ⭐ {adminLabel}
               </div>
             )}
             {loading ? <div className="p-3 text-center text-muted"><Spinner size="sm" /> Loading...</div> :
@@ -316,6 +321,7 @@ export default function AdminBrandsPage() {
                 value={selectedMerchantFilter}
                 onChange={(id: string) => setSelectedMerchantFilter(id)}
                 allowAll={true}
+                allowAdmin={true}
               />
             </Col>
             <Col xs={12} md={4}>
