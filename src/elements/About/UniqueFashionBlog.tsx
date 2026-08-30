@@ -17,15 +17,6 @@ const UniqueFashionBlog = () => {
                             <p>At Untouch, we're dedicated to creating an exclusive fashion destination that transcends the ordinary. Our passion for style, quality, and individuality drives our mission. Our collection is a carefully curated blend of timeless classics and the latest trends,</p>
                             <p>In addition to our extensive collection, we're equally devoted to ensuring your shopping experience is seamless and enjoyable. Our website is designed with your convenience in mind, offering secure transactions and a responsive customer support team to assist you every step of the way.</p>
                         </div>
-                        <div className="about-bx-detail">
-                            <div className="about-bx-pic radius">
-                                <Image src={IMAGES.testimonial4} alt="testimonial" />
-                            </div>
-                            <div>
-                                <h6 className="name">Adi</h6>
-                                <span className="position">Ceo and founder</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

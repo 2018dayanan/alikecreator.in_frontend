@@ -459,9 +459,9 @@ const ProductSection = () => {
                                         {item.rewardCoins && (
                                             <div
                                                 className="badge bg-warning text-white position-absolute shadow-sm"
-                                                style={{ bottom: "40px", right: "10px", zIndex: 2, fontSize: "0.9rem" }}
+                                                style={{ bottom: "60px", right: "10px", zIndex: 2, fontSize: "0.9rem" }}
                                             >
-                                                You Will Earn {item.rewardCoins} Coins
+                                                You Will <br />Earn {item.rewardCoins}<br />  Coins
                                             </div>
                                         )}
                                         <div

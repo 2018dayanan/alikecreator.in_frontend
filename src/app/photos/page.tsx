@@ -6,6 +6,11 @@ import CommanLayout from "@/components/CommanLayout";
 import CommanBanner from "@/components/CommanBanner";
 import IMAGES from "@/constant/theme";
 import { ProductService } from "@/services/productService";
+import { Modal } from "react-bootstrap";
+import ModalSlider from "@/components/ModalSlider";
+import ProductInputButton from "@/elements/Shop/ProductInputButton";
+import Link from "next/link";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface PhotoItem {
     id: string;
@@ -23,6 +28,11 @@ export default function PhotosPage() {
     const [activeCategory, setActiveCategory] = useState<string>("All");
     const [loading, setLoading] = useState(true);
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+
+    // Quick View Modal State
+    const [showQuickView, setShowQuickView] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+    const { isFavorite, toggleFavorite } = useWishlist();
 
     useEffect(() => {
         const fetchProductPhotos = async () => {
@@ -256,10 +266,9 @@ export default function PhotosPage() {
                                                 transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                                             }}
                                             onClick={() => {
-                                                if (photo.purchaseType === 'external' && photo.externalLink) {
-                                                    window.open(photo.externalLink, '_blank');
-                                                } else if (photo.purchaseType === 'internal') {
-                                                    handleAddToCart(photo.product);
+                                                if (photo.purchaseType === 'external' || photo.purchaseType === 'internal') {
+                                                    setSelectedProduct(photo.product);
+                                                    setShowQuickView(true);
                                                 } else {
                                                     setSelectedPhotoIndex(index);
                                                 }
@@ -382,6 +391,142 @@ export default function PhotosPage() {
                     </div>
                 )}
             </div>
+
+            {/* Quick View Modal */}
+            <Modal className="quick-view-modal" show={showQuickView} onHide={() => setShowQuickView(false)} centered>
+                <button type="button" className="btn-close" onClick={() => setShowQuickView(false)}>
+                    <i className="icon feather icon-x" />
+                </button>
+                <div className="modal-body">
+                    <div className="row g-xl-4 g-3">
+                        <div className="col-xl-6 col-md-6">
+                            <div className="dz-product-detail mb-0">
+                                <ModalSlider images={selectedProduct?.images} />
+                            </div>
+                        </div>
+                        <div className="col-xl-6 col-md-6">
+                            <div className="dz-product-detail style-2 ps-xl-3 ps-0 pt-2 mb-0">
+                                <div className="dz-content">
+                                    <div className="dz-content-footer">
+                                        <div className="dz-content-start">
+                                            {selectedProduct?.discount && selectedProduct.discount !== "0" && selectedProduct.discount !== 0 && (
+                                                <span className="badge bg-secondary mb-2">SALE {selectedProduct.discount}% Off</span>
+                                            )}
+                                            <h4 className="title mb-1"><Link href={`/product/${selectedProduct?._id || selectedProduct?.id || ''}`}>{selectedProduct?.title || selectedProduct?.name}</Link></h4>
+                                            <div className="review-num">
+                                                <ul className="dz-rating me-2">
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                    <li className="star-fill"><i className="flaticon-star-1" /></li>
+                                                </ul>
+                                                <span className="text-secondary me-2">{selectedProduct?.rating || 4.5} Rating</span>
+                                                <Link href={"#"}>({selectedProduct?.reviewCount || 0} customer reviews)</Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="para-text">
+                                        {selectedProduct?.description}
+                                    </p>
+
+                                    {selectedProduct?.video && (
+                                        <div className="mb-3">
+                                            <Link href={selectedProduct.video} target="_blank" className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold rounded-3 shadow-sm">
+                                                <i className="fa-brands fa-youtube text-danger fs-5" />
+                                                <span>Watch Video Showcase</span>
+                                            </Link>
+                                        </div>
+                                    )}
+
+                                    <div className="meta-content m-b20 d-flex align-items-end">
+                                        <div className="me-3">
+                                            <span className="form-label">Price</span>
+                                            <span className="price">₹{selectedProduct?.price} {selectedProduct?.originalPrice && <del>₹{selectedProduct?.originalPrice}</del>}</span>
+                                        </div>
+                                        {selectedProduct?.rewardCoins && (
+                                            <div className="me-3">
+                                                <span className="form-label text-warning">Reward Coins</span>
+                                                <span className="price text-warning" style={{ fontSize: "1.2rem" }}>🪙 {selectedProduct.rewardCoins}</span>
+                                            </div>
+                                        )}
+                                        <div className="btn-quantity light me-0">
+                                            <label className="form-label">Quantity</label>
+                                            <ProductInputButton />
+                                        </div>
+                                    </div>
+                                    <div className=" cart-btn">
+                                        {selectedProduct?.purchaseType === 'external' ? (
+                                            <Link href={selectedProduct.externalLink || '#'} target="_blank" className="btn btn-secondary text-uppercase">
+                                                View Product <i className="fa-solid fa-arrow-up-right-from-square ms-2" />
+                                            </Link>
+                                        ) : (
+                                            <Link
+                                                href="/shop-cart"
+                                                className="btn btn-secondary text-uppercase"
+                                                onClick={() => {
+                                                    if (selectedProduct) {
+                                                        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                                                        const existingItemIndex = currentCart.findIndex((item: any) => String(item.id || item._id) === String(selectedProduct?._id || selectedProduct?.id));
+                                                        if (existingItemIndex === -1) {
+                                                            currentCart.push({ ...selectedProduct, id: selectedProduct._id || selectedProduct.id, quantity: 1 });
+                                                            localStorage.setItem('cart', JSON.stringify(currentCart));
+                                                            window.dispatchEvent(new Event('cartUpdated'));
+                                                        }
+                                                    }
+                                                }}
+                                            >Add To Cart</Link>
+                                        )}
+                                        <button
+                                            type="button"
+                                            className={`btn btn-md ${isFavorite(selectedProduct?._id || selectedProduct?.id) ? 'btn-primary' : 'btn-outline-secondary'} btn-icon`}
+                                            onClick={() => {
+                                                if (selectedProduct) {
+                                                    toggleFavorite({ ...selectedProduct, id: selectedProduct._id || selectedProduct.id });
+                                                }
+                                            }}
+                                        >
+                                            <svg width="19" height="17" viewBox="0 0 19 17" fill={isFavorite(selectedProduct?._id || selectedProduct?.id) ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9.24805 16.9986C8.99179 16.9986 8.74474 16.9058 8.5522 16.7371C7.82504 16.1013 7.12398 15.5038 6.50545 14.9767L6.50229 14.974C4.68886 13.4286 3.12289 12.094 2.03333 10.7794C0.815353 9.30968 0.248047 7.9162 0.248047 6.39391C0.248047 4.91487 0.755203 3.55037 1.67599 2.55157C2.60777 1.54097 3.88631 0.984375 5.27649 0.984375C6.31552 0.984375 7.26707 1.31287 8.10464 1.96065C8.52734 2.28763 8.91049 2.68781 9.24805 3.15459C9.58574 2.68781 9.96875 2.28763 10.3916 1.96065C11.2292 1.31287 12.1807 0.984375 13.2197 0.984375C14.6098 0.984375 15.8885 1.54097 16.8202 2.55157C17.741 3.55037 18.248 4.91487 18.248 6.39391C18.248 7.9162 17.6809 9.30968 16.4629 10.7792C15.3733 12.094 13.8075 13.4285 11.9944 14.9737C11.3747 15.5016 10.6726 16.1001 9.94376 16.7374C9.75136 16.9058 9.50417 16.9986 9.24805 16.9986ZM5.27649 2.03879C4.18431 2.03879 3.18098 2.47467 2.45108 3.26624C1.71033 4.06975 1.30232 5.18047 1.30232 6.39391C1.30232 7.67422 1.77817 8.81927 2.84508 10.1066C3.87628 11.3509 5.41011 12.658 7.18605 14.1715L7.18935 14.1743C7.81021 14.7034 8.51402 15.3033 9.24654 15.9438C9.98344 15.302 10.6884 14.7012 11.3105 14.1713C13.0863 12.6578 14.6199 11.3509 15.6512 10.1066C16.7179 8.81927 17.1938 7.67422 17.1938 6.39391C17.1938 5.18047 16.7858 4.06975 16.045 3.26624C15.3152 2.47467 14.3118 2.03879 13.2197 2.03879C12.4197 2.03879 11.6851 2.29312 11.0365 2.79465C10.4585 3.24179 10.0558 3.80704 9.81975 4.20255C9.69835 4.40593 9.48466 4.52733 9.24805 4.52733C9.01143 4.52733 8.79774 4.40593 8.67635 4.20255C8.44041 3.80704 8.03777 3.24179 7.45961 2.79465C6.811 2.29312 6.07643 2.03879 5.27649 2.03879Z" fill={isFavorite(selectedProduct?._id || selectedProduct?.id) ? "currentColor" : "black"} />
+                                            </svg>
+                                            {isFavorite(selectedProduct?._id || selectedProduct?.id) ? "In Wishlist" : "Add To Wishlist"}
+                                        </button>
+                                    </div>
+                                    <div className="dz-info mb-0">
+                                        <ul>
+                                            <li><strong>SKU:</strong></li>
+                                            <li>{selectedProduct?.sku || selectedProduct?._id?.substring(0, 8)}</li>
+                                        </ul>
+                                        <ul>
+                                            <li><strong>Category:</strong></li>
+                                            <li><Link href="/shop-standard">{typeof selectedProduct?.categoryId === 'object' ? selectedProduct?.categoryId?.name : selectedProduct?.category || "Unknown"}</Link></li>
+                                        </ul>
+                                        <div className="dz-social-icon">
+                                            <ul>
+                                                <li><Link target="_blank" className="text-dark" href={`https://www.facebook.com/sharer/sharer.php?u=${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${selectedProduct?._id || selectedProduct?.id}`) : ''}`}>
+                                                    <i className="fab fa-facebook-f" />
+                                                </Link></li>
+                                                <li><Link target="_blank" className="text-dark" href={`https://api.whatsapp.com/send?text=${encodeURIComponent(selectedProduct?.title || selectedProduct?.name || 'Check out this product:')} ${typeof window !== 'undefined' ? encodeURIComponent(`${window.location.origin}/product/${selectedProduct?._id || selectedProduct?.id}`) : ''}`}>
+                                                    <i className="fa-brands fa-whatsapp" />
+                                                </Link></li>
+                                                <li><a href="#" className="text-dark" onClick={(e) => {
+                                                    e.preventDefault();
+                                                    if (typeof window !== 'undefined') {
+                                                        const url = `${window.location.origin}/product/${selectedProduct?._id || selectedProduct?.id}`;
+                                                        navigator.clipboard.writeText(url).then(() => alert('Product link copied to clipboard!'));
+                                                    }
+                                                }} title="Copy Link">
+                                                    <i className="fa-solid fa-link" />
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </CommanLayout>
     );
 }
