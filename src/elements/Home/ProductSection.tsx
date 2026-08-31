@@ -518,6 +518,13 @@ const ProductSection = () => {
                                                     e.preventDefault();
                                                     dispatch({ type: 'SET_DETAIL_MODAL', value: true, product: item });
                                                 }}
+                                                style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}
                                             >
                                                 {item.name}
                                             </Link>
