@@ -353,7 +353,7 @@ export default function RentalCheckoutPage() {
                                             {product && product.rewardCoins > 0 && (
                                                 <Alert variant="warning" className="border-0 mb-4 py-2 d-flex align-items-center justify-content-center">
                                                     <i className="fa-solid fa-coins me-2 text-dark"></i>
-                                                    <span className="small text-dark fw-semibold">You will earn {product.rewardCoins} reward coins!</span>
+                                                    {/* <span className="small text-dark fw-semibold">You will ear000n {product.rewardCoins} reward coins!</span> */}
                                                 </Alert>
                                             )}
 
