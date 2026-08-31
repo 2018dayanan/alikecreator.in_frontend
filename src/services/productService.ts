@@ -32,6 +32,11 @@ export const getActiveSubdomain = (explicitSubdomain?: string): string | undefin
                 firstPart !== '127' && 
                 !/^\d+$/.test(firstPart)
             ) {
+                // If the domain is exactly 2 parts (e.g. alikecreator.com) and not localhost, 
+                // it is the main domain, not a merchant subdomain.
+                if (parts.length === 2 && parts[1].toLowerCase() !== 'localhost') {
+                    return undefined;
+                }
                 return firstPart;
             }
         }
