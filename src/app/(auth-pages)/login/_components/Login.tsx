@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 export default function Login() {
     const router = useRouter();
-    const [email, setEmail] = useState("");
+    const [mobile, setMobile] = useState("");
     const [password, setPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function Login() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ mobile, password }),
             });
 
             const data = await response.json();
@@ -75,16 +75,20 @@ export default function Login() {
                             <form onSubmit={handleLogin}>
 
                                 <div className="m-b30">
-                                    <label className="label-title">Email Address</label>
-                                    <input
-                                        name="email"
-                                        required
-                                        className="form-control"
-                                        placeholder="Email Address"
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
+                                    <label className="label-title">Mobile Number</label>
+                                    <div className="input-group">
+                                        <span className="input-group-text">+91</span>
+                                        <input
+                                            name="mobile"
+                                            required
+                                            className="form-control"
+                                            placeholder="10-digit mobile number"
+                                            type="text"
+                                            maxLength={10}
+                                            value={mobile}
+                                            onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="m-b15">
                                     <label className="label-title">Password</label>

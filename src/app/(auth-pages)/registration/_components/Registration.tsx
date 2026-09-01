@@ -11,11 +11,8 @@ import toast from "react-hot-toast";
 export default function Registration() {
     const router = useRouter();
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
     const [mobile, setMobile] = useState("");
     const [password, setPassword] = useState("");
-    const [otp, setOtp] = useState("");
-    const [isOtpSent, setIsOtpSent] = useState(false);
     const [loading, setLoading] = useState(false);
 
 
@@ -29,14 +26,16 @@ export default function Registration() {
             const response = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, mobile, password }),
+                body: JSON.stringify({ name, mobile, password }),
             });
 
             const data = await response.json();
 
             if (data.status) {
-                toast.success(data.message || "OTP sent successfully");
-                setIsOtpSent(true);
+                toast.success(data.message || "Registration successful! Redirecting to login...");
+                setTimeout(() => {
+                    router.push("/login");
+                }, 2000);
             } else {
                 toast.error(data.message || "Registration failed");
             }
@@ -47,35 +46,7 @@ export default function Registration() {
         }
     };
 
-    const handleVerifyOtp = async (e: React.FormEvent) => {
-        e.preventDefault();
 
-        setLoading(true);
-
-        try {
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-            const response = await fetch(`${API_BASE_URL}/auth/verifyOtp`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, otp }),
-            });
-
-            const data = await response.json();
-
-            if (data.status) {
-                toast.success("Registration complete! Redirecting to login...");
-                setTimeout(() => {
-                    router.push("/login");
-                }, 2000);
-            } else {
-                toast.error(data.message || "Invalid OTP");
-            }
-        } catch (err: any) {
-            toast.error(err.message || "An error occurred");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="page-content bg-light">
@@ -102,19 +73,17 @@ export default function Registration() {
 
 
 
-                            {!isOtpSent ? (
                                 <form onSubmit={handleRegister}>
                                     <div className="m-b25">
                                         <label className="label-title">Full Name</label>
                                         <input required className="form-control" placeholder="Full Name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
                                     </div>
                                     <div className="m-b25">
-                                        <label className="label-title">Email Address</label>
-                                        <input required className="form-control" placeholder="Email Address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    </div>
-                                    <div className="m-b25">
                                         <label className="label-title">Mobile Number</label>
-                                        <input required className="form-control" placeholder="Mobile Number" type="text" value={mobile} onChange={(e) => setMobile(e.target.value)} />
+                                        <div className="input-group">
+                                            <span className="input-group-text">+91</span>
+                                            <input required className="form-control" placeholder="10-digit mobile number" type="text" maxLength={10} value={mobile} onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))} />
+                                        </div>
                                     </div>
                                     <div className="m-b40">
                                         <label className="label-title">Password</label>
@@ -129,19 +98,6 @@ export default function Registration() {
                                         <Link href="/login" className="btn btn-outline-secondary btnhover text-uppercase">Sign In</Link>
                                     </div>
                                 </form>
-                            ) : (
-                                <form onSubmit={handleVerifyOtp}>
-                                    <div className="m-b25">
-                                        <label className="label-title">Enter OTP</label>
-                                        <input required className="form-control" placeholder="Enter OTP sent to your email" type="text" value={otp} onChange={(e) => setOtp(e.target.value)} />
-                                    </div>
-                                    <div className="text-center">
-                                        <button type="submit" className="btn btn-secondary btnhover text-uppercase me-2" disabled={loading}>
-                                            {loading ? <Spinner size="sm" animation="border" /> : "Verify OTP"}
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
                         </div>
                     </div>
                 </div>
