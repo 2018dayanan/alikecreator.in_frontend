@@ -226,6 +226,7 @@ export default function AdminProductsPage() {
     purchaseType: 'internal',
     externalLink: '',
     rewardCoins: '',
+    maxRedeemableCoins: '',
   });
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -418,6 +419,7 @@ export default function AdminProductsPage() {
       purchaseType: 'internal',
       externalLink: '',
       rewardCoins: '',
+      maxRedeemableCoins: '',
     });
     setIsAdminProductForm(isAdminProduct);
     setIsEditing(false);
@@ -444,6 +446,7 @@ export default function AdminProductsPage() {
       purchaseType: product.purchaseType || 'internal',
       externalLink: product.externalLink || '',
       rewardCoins: product.rewardCoins?.toString() || '',
+      maxRedeemableCoins: product.maxRedeemableCoins?.toString() || '',
     });
     setIsAdminProductForm(product.is_admin || false);
     setIsEditing(true);
@@ -491,6 +494,7 @@ export default function AdminProductsPage() {
       if (formData.externalLink) uploadData.append('externalLink', formData.externalLink);
       if (formData.video) uploadData.append('video', formData.video.trim());
       if (formData.rewardCoins) uploadData.append('rewardCoins', formData.rewardCoins);
+      if (formData.maxRedeemableCoins) uploadData.append('maxRedeemableCoins', formData.maxRedeemableCoins);
 
       if (formData.images) {
         const imageList = formData.images.split(',').map((s) => s.trim()).filter(Boolean);
@@ -856,12 +860,15 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <Form.Group className="mb-3">
                   <Form.Label>Product Title *</Form.Label>
                   <Form.Control type="text" name="title" value={formData.title} onChange={handleFormChange} placeholder="Enter product title" />
                 </Form.Group>
               </div>
+            </div>
+            
+            <div className="row">
               <div className="col-md-2">
                 <Form.Group className="mb-3">
                   <Form.Label>Price (₹) *</Form.Label>
@@ -876,14 +883,20 @@ export default function AdminProductsPage() {
               </div>
               <div className="col-md-2">
                 <Form.Group className="mb-3">
-                  <Form.Label>Reward Coins</Form.Label>
+                  <Form.Label>Quantity</Form.Label>
+                  <Form.Control type="number" name="quantity" value={formData.quantity} onChange={handleFormChange} placeholder="Quantity" />
+                </Form.Group>
+              </div>
+              <div className="col-md-3">
+                <Form.Group className="mb-3">
+                  <Form.Label>Earn Reward Coins</Form.Label>
                   <Form.Control type="number" name="rewardCoins" value={formData.rewardCoins} onChange={handleFormChange} placeholder="Auto calc" />
                 </Form.Group>
               </div>
-              <div className="col-md-2">
+              <div className="col-md-3">
                 <Form.Group className="mb-3">
-                  <Form.Label>Quantity</Form.Label>
-                  <Form.Control type="number" name="quantity" value={formData.quantity} onChange={handleFormChange} placeholder="Quantity" />
+                  <Form.Label>Max Redeemable</Form.Label>
+                  <Form.Control type="number" name="maxRedeemableCoins" value={formData.maxRedeemableCoins} onChange={handleFormChange} placeholder="0" />
                 </Form.Group>
               </div>
             </div>
@@ -1083,8 +1096,12 @@ export default function AdminProductsPage() {
                     </span>
                   </div>
                   <div className="col-md-4">
-                    <span className="text-muted d-block small">Reward Coins</span>
+                    <span className="text-muted d-block small">Earn Reward Coins</span>
                     <strong className="text-warning fs-5">🪙 {selectedProductDetail.rewardCoins ?? 'N/A'}</strong>
+                  </div>
+                  <div className="col-md-4">
+                    <span className="text-muted d-block small">Max Redeemable</span>
+                    <strong className="text-info fs-5">🪙 {selectedProductDetail.maxRedeemableCoins ?? 0}</strong>
                   </div>
                   {selectedProductDetail.externalLink && (
                     <div className="col-12">
