@@ -41,7 +41,7 @@ export default function MainBanner3() {
 	// Default fallback banner data
 	const defaultBanner: CarouselBanner = {
 		title: "Make your fashion look more charming",
-		description: "Sell globally in minutes with localized currencies, languages, and experiences in every market.",
+		description: "arn Reward Coins with every purchase and use them on your next order at AlikeCreator. 1 Reward Coin = ₹1, Let’s explore a whole new shopping experience!",
 		url: "/shop-cart",
 	};
 
