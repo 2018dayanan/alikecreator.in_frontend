@@ -30,6 +30,9 @@ interface ProductItem {
     sku?: string;
     externalLink?: string | null;
     video?: string | null;
+    purchaseType?: 'internal' | 'external';
+    rewardCoins?: number | null;
+    maxRedeemableCoins?: number;
     merchantId?: any;
 }
 
@@ -144,6 +147,9 @@ export default function AllProductsPage() {
                             sku: p.sku || `SKU-${(p._id || '').slice(-6).toUpperCase() || 'ECOM'}`,
                             externalLink: p.externalLink || null,
                             video: p.video || null,
+                            purchaseType: p.purchaseType || 'internal',
+                            rewardCoins: p.rewardCoins || null,
+                            maxRedeemableCoins: p.maxRedeemableCoins || 0,
                             merchantId: p.merchantId
                         };
                     });
@@ -224,7 +230,9 @@ export default function AllProductsPage() {
                 name: product.name,
                 price: product.price,
                 image: product.image,
-                quantity: 1
+                quantity: 1,
+                maxRedeemableCoins: product.maxRedeemableCoins || 0,
+                rewardCoins: product.rewardCoins || null
             });
         }
 

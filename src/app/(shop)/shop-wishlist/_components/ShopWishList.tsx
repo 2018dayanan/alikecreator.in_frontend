@@ -25,7 +25,9 @@ export default function ShopWishList() {
                     price: item.price,
                     originalPrice: item.originalPrice,
                     image: item.image,
-                    quantity: 1
+                    quantity: 1,
+                    maxRedeemableCoins: item.maxRedeemableCoins || 0,
+                    rewardCoins: item.rewardCoins || null
                 });
             }
 

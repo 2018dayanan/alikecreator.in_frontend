@@ -152,7 +152,9 @@ export default function PhotosPage() {
                 name: product.name || product.title,
                 price: product.price,
                 image: product.image,
-                quantity: 1
+                quantity: 1,
+                maxRedeemableCoins: product.maxRedeemableCoins || 0,
+                rewardCoins: product.rewardCoins || null
             });
         }
 

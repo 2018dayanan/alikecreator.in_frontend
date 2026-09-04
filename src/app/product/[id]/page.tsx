@@ -29,6 +29,7 @@ interface ProductItem {
     video?: string | null;
     purchaseType?: string;
     rewardCoins?: number | null;
+    maxRedeemableCoins?: number;
 }
 
 const DEFAULT_PRODUCT_IMAGE = "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1";
@@ -80,7 +81,8 @@ export default function ProductDetailPage() {
                         externalLink: p.externalLink || null,
                         video: p.video || null,
                         purchaseType: p.purchaseType || 'internal',
-                        rewardCoins: p.rewardCoins || null
+                        rewardCoins: p.rewardCoins || null,
+                        maxRedeemableCoins: p.maxRedeemableCoins || 0
                     });
                 } else if (isMounted) {
                     setError('Product not found');
@@ -114,7 +116,9 @@ export default function ProductDetailPage() {
                 name: product.name,
                 price: product.price,
                 image: product.image,
-                quantity: 1
+                quantity: 1,
+                maxRedeemableCoins: product.maxRedeemableCoins || 0,
+                rewardCoins: product.rewardCoins || null
             });
         }
 

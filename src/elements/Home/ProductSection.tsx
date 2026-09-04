@@ -220,6 +220,7 @@ const ProductSection = () => {
                         externalLink: item.externalLink || null,
                         video: item.video || null,
                         rewardCoins: item.rewardCoins || null,
+                        maxRedeemableCoins: item.maxRedeemableCoins || 0,
                     }));
 
                     const newHeartIcon: HeartIconsState = {};
@@ -320,6 +321,7 @@ const ProductSection = () => {
                     externalLink: item.externalLink || null,
                     video: item.video || null,
                     rewardCoins: item.rewardCoins || null,
+                    maxRedeemableCoins: item.maxRedeemableCoins || 0,
                 }));
 
                 const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
