@@ -603,10 +603,13 @@ export const adminService = {
   },
 
   // Orders Management
-  getAdminOrders: async (page = 1, limit = 10, status = '') => {
+  getAdminOrders: async (page = 1, limit = 10, status = '', merchantId = '') => {
     let url = `${API_URL}/admin/orders?page=${page}&limit=${limit}`;
     if (status) {
       url += `&status=${encodeURIComponent(status)}`;
+    }
+    if (merchantId) {
+      url += `&merchantId=${encodeURIComponent(merchantId)}`;
     }
     try {
       const res = await fetch(url, {

@@ -11,6 +11,8 @@ export default function AdminOrdersPage() {
 
   // Filtering & Pagination
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedMerchant, setSelectedMerchant] = useState('');
+  const [merchants, setMerchants] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -24,10 +26,25 @@ export default function AdminOrdersPage() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  const fetchOrders = async (page = 1, status = selectedStatus) => {
+  // Fetch list of merchants for the filter
+  useEffect(() => {
+    const fetchMerchants = async () => {
+      try {
+        const data = await adminService.getAdminMerchants(1, 100);
+        if (data.success && Array.isArray(data.data)) {
+          setMerchants(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to load merchants for orders filter:', err);
+      }
+    };
+    fetchMerchants();
+  }, []);
+
+  const fetchOrders = async (page = 1, status = selectedStatus, merchantId = selectedMerchant) => {
     try {
       setLoading(true);
-      const data = await adminService.getAdminOrders(page, 10, status);
+      const data = await adminService.getAdminOrders(page, 10, status, merchantId);
       if (data.status) {
         setOrders(data.orders || []);
         if (data.pagination) {
@@ -46,12 +63,17 @@ export default function AdminOrdersPage() {
   };
 
   useEffect(() => {
-    fetchOrders(currentPage, selectedStatus);
+    fetchOrders(currentPage, selectedStatus, selectedMerchant);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, selectedStatus]);
+  }, [currentPage, selectedStatus, selectedMerchant]);
 
   const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedStatus(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleMerchantFilterChange = (merchantId: string) => {
+    setSelectedMerchant(merchantId);
     setCurrentPage(1);
   };
 
@@ -121,26 +143,113 @@ export default function AdminOrdersPage() {
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Card className="shadow-sm border-0 rounded-3">
-        <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
-          <h5 className="mb-0 fw-bold text-dark">Order History</h5>
+        <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            <h5 className="mb-0 fw-bold text-dark">Order History</h5>
+            {selectedMerchant && (
+              <Badge bg="primary" className="fw-normal d-flex align-items-center gap-1">
+                <span>🏪</span> {merchants.find(m => m._id === selectedMerchant)?.business_name || 'Selected Merchant'}
+                <button
+                  type="button"
+                  className="btn-close btn-close-white ms-1"
+                  style={{ fontSize: '8px' }}
+                  onClick={() => handleMerchantFilterChange('')}
+                  aria-label="Clear merchant filter"
+                />
+              </Badge>
+            )}
+            {selectedStatus && (
+              <Badge bg="secondary" className="fw-normal d-flex align-items-center gap-1">
+                Status: {selectedStatus}
+                <button
+                  type="button"
+                  className="btn-close btn-close-white ms-1"
+                  style={{ fontSize: '8px' }}
+                  onClick={() => { setSelectedStatus(''); setCurrentPage(1); }}
+                  aria-label="Clear status filter"
+                />
+              </Badge>
+            )}
+          </div>
 
-          <div className="d-flex align-items-center gap-2">
-            <span className="text-muted small fw-medium">Status:</span>
-            <Form.Select
-              size="sm"
-              value={selectedStatus}
-              onChange={handleStatusFilterChange}
-              style={{ minWidth: '160px' }}
-            >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-            </Form.Select>
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            {/* Merchant Dropdown Filter */}
+            <div className="d-flex align-items-center gap-1">
+              <span className="text-muted small fw-medium">Merchant:</span>
+              <Form.Select
+                size="sm"
+                value={selectedMerchant}
+                onChange={(e) => handleMerchantFilterChange(e.target.value)}
+                style={{ minWidth: '180px' }}
+              >
+                <option value="">All Merchants</option>
+                {merchants.map((m) => (
+                  <option key={m._id} value={m._id}>
+                    🏪 {m.business_name || m.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+
+            {/* Status Dropdown Filter */}
+            <div className="d-flex align-items-center gap-1">
+              <span className="text-muted small fw-medium">Status:</span>
+              <Form.Select
+                size="sm"
+                value={selectedStatus}
+                onChange={handleStatusFilterChange}
+                style={{ minWidth: '150px' }}
+              >
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </Form.Select>
+            </div>
+
+            {(selectedMerchant || selectedStatus) && (
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={() => {
+                  setSelectedMerchant('');
+                  setSelectedStatus('');
+                  setCurrentPage(1);
+                }}
+              >
+                Reset
+              </Button>
+            )}
           </div>
         </Card.Header>
+
+        {/* Quick Merchant Filter Pills Bar */}
+        {merchants.length > 0 && (
+          <div className="bg-light px-3 py-2 border-bottom d-flex align-items-center gap-2 overflow-auto" style={{ whiteSpace: 'nowrap' }}>
+            <span className="small fw-semibold text-secondary me-1">🏪 Merchants:</span>
+            <button
+              type="button"
+              onClick={() => handleMerchantFilterChange('')}
+              className={`btn btn-sm rounded-pill py-1 px-3 ${selectedMerchant === '' ? 'btn-primary' : 'btn-outline-secondary bg-white'}`}
+              style={{ fontSize: '12px' }}
+            >
+              All Merchants
+            </button>
+            {merchants.map((m) => (
+              <button
+                key={m._id}
+                type="button"
+                onClick={() => handleMerchantFilterChange(m._id)}
+                className={`btn btn-sm rounded-pill py-1 px-3 ${selectedMerchant === m._id ? 'btn-primary' : 'btn-outline-secondary bg-white'}`}
+                style={{ fontSize: '12px' }}
+              >
+                🏪 {m.business_name || m.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <Card.Body className="p-0">
           {loading ? (
@@ -150,11 +259,12 @@ export default function AdminOrdersPage() {
             </div>
           ) : (
             <>
-              <Table responsive hover className="mb-0">
+              <Table responsive hover className="mb-0 align-middle">
                 <thead className="table-light">
                   <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
+                    <th>Merchant / Store</th>
                     <th>Date</th>
                     <th>Total Amount</th>
                     <th>Payment</th>
@@ -165,8 +275,8 @@ export default function AdminOrdersPage() {
                 <tbody>
                   {orders.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-5 text-muted">
-                        No orders found {selectedStatus ? `with status "${selectedStatus}"` : ''}.
+                      <td colSpan={8} className="text-center py-5 text-muted">
+                        No orders found {selectedStatus ? `with status "${selectedStatus}"` : ''} {selectedMerchant ? `for the selected merchant` : ''}.
                       </td>
                     </tr>
                   ) : (
@@ -180,6 +290,42 @@ export default function AdminOrdersPage() {
                             <div className="fw-medium text-dark">{order.userId?.name || 'Customer'}</div>
                             <div className="text-muted small" style={{ fontSize: '11px' }}>{order.userId?.email}</div>
                           </div>
+                        </td>
+                        <td>
+                          {(() => {
+                            const merchantMap = new Map();
+                            (order.items || []).forEach((item: any) => {
+                              if (item.merchantId) {
+                                const id = item.merchantId._id || item.merchantId;
+                                const name = item.merchantId.business_name || item.merchantId.name || 'Merchant';
+                                merchantMap.set(String(id), name);
+                              }
+                            });
+
+                            if (merchantMap.size === 0) {
+                              return (
+                                <span className="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                  Platform Direct
+                                </span>
+                              );
+                            }
+
+                            return (
+                              <div className="d-flex flex-wrap gap-1">
+                                {Array.from(merchantMap.entries()).map(([id, name]) => (
+                                  <span
+                                    key={id}
+                                    className="badge bg-info-subtle text-info-emphasis border px-2 py-1"
+                                    style={{ cursor: 'pointer' }}
+                                    title="Click to filter by this merchant"
+                                    onClick={() => handleMerchantFilterChange(id)}
+                                  >
+                                    🏪 {name}
+                                  </span>
+                                ))}
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="small text-muted">{new Date(order.createdAt).toLocaleDateString()}</td>
                         <td className="fw-bold text-success">₹{order.totalAmount}</td>
