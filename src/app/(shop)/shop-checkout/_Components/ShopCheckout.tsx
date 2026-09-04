@@ -8,6 +8,8 @@ import IMAGES from "@/constant/theme";
 import { Accordion, Badge, Spinner } from "react-bootstrap";
 import Image from 'next/image';
 import { AddressService, UserAddress } from "@/services/addressService";
+import { getMyWallet } from "@/services/walletService";
+import { OrderService, CreateOrderPayload } from "@/services/orderService";
 import toast from 'react-hot-toast';
 
 interface CartItem {
@@ -27,6 +29,11 @@ export default function ShopCheckout() {
     const [savedAddresses, setSavedAddresses] = useState<UserAddress[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<string>('new');
     const [loadingAddresses, setLoadingAddresses] = useState(true);
+
+    // Wallet State (Real money cash balance)
+    const [walletBalance, setWalletBalance] = useState<number | null>(null);
+    const [loadingWallet, setLoadingWallet] = useState(false);
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
     // Cart and order calculation state
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -48,7 +55,7 @@ export default function ShopCheckout() {
         phone: '',
         email: '',
         orderNotes: '',
-        paymentMethod: 'cod' // cod, bank, paypal
+        paymentMethod: 'wallet' // default to wallet or cod
     });
 
     useEffect(() => {
@@ -72,7 +79,7 @@ export default function ShopCheckout() {
             console.error("Failed to parse applied coins", e);
         }
 
-        // 3. Check login and load user addresses
+        // 3. Check login and load user addresses & wallet balance
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         if (token) {
             setIsLoggedIn(true);
@@ -98,7 +105,23 @@ export default function ShopCheckout() {
                     setLoadingAddresses(false);
                 }
             };
+
+            const fetchWallet = async () => {
+                try {
+                    setLoadingWallet(true);
+                    const res = await getMyWallet();
+                    if (res.status && res.data) {
+                        setWalletBalance(Number(res.data.walletBalance) || 0);
+                    }
+                } catch (err) {
+                    console.warn("Could not load user wallet", err);
+                } finally {
+                    setLoadingWallet(false);
+                }
+            };
+
             fetchAddresses();
+            fetchWallet();
         } else {
             setIsLoggedIn(false);
             setLoadingAddresses(false);
@@ -172,35 +195,99 @@ export default function ShopCheckout() {
             return;
         }
 
-        // If user entered a new address and opted to save it to their profile
-        if (isLoggedIn && selectedAddressId === 'new' && saveNewAddressToProfile) {
-            try {
-                await AddressService.addAddress({
-                    type: 'home',
-                    fullName: `${formData.firstName} ${formData.lastName}`.trim(),
-                    phone: formData.phone,
-                    street: formData.apartment ? `${formData.street}, ${formData.apartment}` : formData.street,
-                    city: formData.city,
-                    state: formData.state,
-                    zipCode: formData.zipCode,
-                    country: formData.country,
-                    isDefault: savedAddresses.length === 0
-                });
-            } catch (err) {
-                console.warn("Could not save new address to profile", err);
+        if (formData.paymentMethod === 'wallet') {
+            if (!isLoggedIn) {
+                toast.error("Please log in to pay with your wallet balance.");
+                return;
+            }
+            if ((walletBalance || 0) < finalTotal) {
+                toast.error(`You don't have sufficient wallet balance (₹${(walletBalance || 0).toFixed(2)}). Please choose Cash on Delivery or recharge your wallet.`);
+                return;
             }
         }
 
-        toast.success("Order placed successfully! Thank you for shopping with us.");
-        // Clear cart
-        localStorage.removeItem('cart');
-        localStorage.removeItem('appliedCoins');
-        window.dispatchEvent(new Event('cartUpdated'));
+        try {
+            setIsPlacingOrder(true);
 
-        // Redirect to confirmation or orders
-        setTimeout(() => {
-            window.location.href = "/account-orders";
-        }, 1500);
+            // If user entered a new address and opted to save it to their profile
+            if (isLoggedIn && selectedAddressId === 'new' && saveNewAddressToProfile) {
+                try {
+                    await AddressService.addAddress({
+                        type: 'home',
+                        fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+                        phone: formData.phone,
+                        street: formData.apartment ? `${formData.street}, ${formData.apartment}` : formData.street,
+                        city: formData.city,
+                        state: formData.state,
+                        zipCode: formData.zipCode,
+                        country: formData.country,
+                        isDefault: savedAddresses.length === 0
+                    });
+                } catch (err) {
+                    console.warn("Could not save new address to profile", err);
+                }
+            }
+
+            if (isLoggedIn) {
+                const mappedMethod = formData.paymentMethod === 'wallet' ? 'Wallet'
+                    : formData.paymentMethod === 'bank' ? 'NetBanking'
+                    : formData.paymentMethod === 'online' ? 'Card'
+                    : 'COD';
+
+                const orderPayload: CreateOrderPayload = {
+                    items: cartItems.map(item => ({
+                        productId: item._id || (typeof item.id === 'string' && item.id.length === 24 ? item.id : undefined),
+                        title: item.name || item.title || 'Product',
+                        price: parseFloat(String(item.price)) || 0,
+                        quantity: item.quantity || 1,
+                        image: item.image || ''
+                    })),
+                    totalAmount: finalTotal,
+                    paymentMethod: mappedMethod,
+                    shippingAddress: {
+                        street: formData.apartment ? `${formData.street}, ${formData.apartment}` : formData.street,
+                        city: formData.city,
+                        state: formData.state,
+                        zipCode: formData.zipCode,
+                        country: formData.country,
+                        phone: formData.phone
+                    },
+                    coinsUsed: coinsUsed,
+                    coinDiscount: coinDiscount
+                };
+
+                const res = await OrderService.createOrder(orderPayload);
+                if (!res.status) {
+                    toast.error(res.message || "Failed to place order.");
+                    setIsPlacingOrder(false);
+                    return;
+                }
+
+                if (res.remainingWalletBalance !== undefined) {
+                    setWalletBalance(res.remainingWalletBalance);
+                }
+
+                toast.success(res.message || "Order placed successfully!");
+            } else {
+                toast.success("Order placed successfully! Thank you for shopping with us.");
+            }
+
+            // Clear cart & applied coins
+            localStorage.removeItem('cart');
+            localStorage.removeItem('appliedCoins');
+            window.dispatchEvent(new Event('cartUpdated'));
+
+            // Redirect to orders
+            setTimeout(() => {
+                window.location.href = "/account-orders";
+            }, 1500);
+
+        } catch (error: any) {
+            console.error("Order error", error);
+            toast.error(error.message || "Failed to place order. Please try again.");
+        } finally {
+            setIsPlacingOrder(false);
+        }
     };
 
     if (!isClient) return null;
@@ -356,17 +443,6 @@ export default function ShopCheckout() {
                                     </div>
                                 </div>
                                 <div className="col-md-12">
-                                    <div className="form-group m-b25">
-                                        <label className="label-title">Company Name (optional)</label>
-                                        <input
-                                            name="companyName"
-                                            value={formData.companyName}
-                                            onChange={handleInputChange}
-                                            className="form-control"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-md-12">
                                     <div className="m-b25 value-select">
                                         <label className="label-title">Country / Region <span className='text-danger'>*</span></label>
                                         <Form.Select
@@ -484,22 +560,6 @@ export default function ShopCheckout() {
                                         </div>
                                     </div>
                                 )}
-
-                                <div className="col-md-12 m-b25">
-                                    <div className="form-group">
-                                        <label className="label-title">Order Notes (optional)</label>
-                                        <textarea
-                                            id="comments"
-                                            name="orderNotes"
-                                            value={formData.orderNotes}
-                                            onChange={handleInputChange}
-                                            placeholder="Notes about your order, e.g. special delivery instructions."
-                                            className="form-control"
-                                            cols={90}
-                                            rows={3}
-                                        ></textarea>
-                                    </div>
-                                </div>
                             </form>
                         </div>
 
@@ -609,9 +669,114 @@ export default function ShopCheckout() {
 
                                 {/* PAYMENT METHODS */}
                                 <div className="accordion dz-accordion accordion-sm mt-3" id="accordionFaq1">
-                                    <div className="accordion-item">
+                                    {/* 1. WALLET BALANCE (REAL MONEY) */}
+                                    <div 
+                                        className="accordion-item mb-2" 
+                                        style={{ 
+                                            border: formData.paymentMethod === 'wallet' ? '1.5px solid #28a745' : '1px solid #dee2e6', 
+                                            borderRadius: '6px', 
+                                            overflow: 'hidden' 
+                                        }}
+                                    >
+                                        <div className="accordion-header" id="headingWallet">
+                                            <div 
+                                                className="accordion-button custom-control custom-checkbox border-0 py-3 d-flex align-items-center justify-content-between"
+                                                style={{ 
+                                                    cursor: 'pointer', 
+                                                    background: formData.paymentMethod === 'wallet' ? '#f0fff4' : '#fff' 
+                                                }}
+                                                onClick={() => setFormData(p => ({ ...p, paymentMethod: 'wallet' }))}
+                                            >
+                                                <div className="d-flex align-items-center">
+                                                    <input
+                                                        className="form-check-input radio me-2"
+                                                        type="radio"
+                                                        name="paymentMethod"
+                                                        id="payWallet"
+                                                        checked={formData.paymentMethod === 'wallet'}
+                                                        onChange={() => setFormData(p => ({ ...p, paymentMethod: 'wallet' }))}
+                                                    />
+                                                    <label className="form-check-label ms-1 fw-bold mb-0 cursor-pointer d-flex align-items-center gap-2" htmlFor="payWallet">
+                                                        <span>💰</span> Pay with Wallet Balance
+                                                    </label>
+                                                </div>
+                                                {isLoggedIn && (
+                                                    <span className={`badge ${walletBalance !== null && walletBalance >= finalTotal ? 'bg-success' : 'bg-warning text-dark'} small`}>
+                                                        Balance: ₹{walletBalance !== null ? walletBalance.toFixed(2) : '0.00'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {formData.paymentMethod === 'wallet' && (
+                                            <div className="accordion-body px-3 pt-1 pb-3" style={{ background: '#f0fff4' }}>
+                                                {!isLoggedIn ? (
+                                                    <div className="alert alert-warning py-2 px-3 small mb-0">
+                                                        Please <Link href="/login" className="fw-bold text-decoration-underline">log in</Link> to pay using your wallet balance, or select Cash on Delivery.
+                                                    </div>
+                                                ) : loadingWallet ? (
+                                                    <div className="text-muted small py-2 d-flex align-items-center gap-2">
+                                                        <Spinner animation="border" size="sm" /> Checking your wallet balance...
+                                                    </div>
+                                                ) : (walletBalance || 0) >= finalTotal ? (
+                                                    <div className="alert alert-success py-2 px-3 small mb-0">
+                                                        <div className="fw-bold text-success mb-1">
+                                                            ✓ Sufficient Wallet Balance Available
+                                                        </div>
+                                                        <div className="text-muted">
+                                                            <strong>₹{finalTotal.toFixed(2)}</strong> will be deducted instantly from your available wallet balance of <strong>₹{(walletBalance || 0).toFixed(2)}</strong>.
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="alert alert-danger py-2 px-3 small mb-0">
+                                                        <div className="fw-bold mb-1 text-danger">
+                                                            ⚠️ You don&apos;t have sufficient wallet balance
+                                                        </div>
+                                                        <div className="mb-2 text-dark">
+                                                            Your wallet balance is <strong className="text-danger">₹{(walletBalance || 0).toFixed(2)}</strong>, but this order requires <strong className="text-dark">₹{finalTotal.toFixed(2)}</strong>.
+                                                        </div>
+                                                        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top border-danger-subtle">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-outline-dark btn-sm py-1 px-2"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setFormData(p => ({ ...p, paymentMethod: 'cod' }));
+                                                                }}
+                                                            >
+                                                                👉 Choose Cash on Delivery
+                                                            </button>
+                                                            <Link
+                                                                href="/account-wallet/recharge"
+                                                                target="_blank"
+                                                                className="btn btn-danger btn-sm py-1 px-3 fw-semibold text-white text-decoration-none"
+                                                            >
+                                                                + Recharge Wallet
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* 2. CASH ON DELIVERY */}
+                                    <div 
+                                        className="accordion-item mb-2"
+                                        style={{ 
+                                            border: formData.paymentMethod === 'cod' ? '1.5px solid #0d6efd' : '1px solid #dee2e6', 
+                                            borderRadius: '6px', 
+                                            overflow: 'hidden' 
+                                        }}
+                                    >
                                         <div className="accordion-header" id="heading1">
-                                            <div className="accordion-button collapsed custom-control custom-checkbox border-0">
+                                            <div 
+                                                className="accordion-button custom-control custom-checkbox border-0 py-3"
+                                                style={{ 
+                                                    cursor: 'pointer', 
+                                                    background: formData.paymentMethod === 'cod' ? '#f0f7ff' : '#fff' 
+                                                }}
+                                                onClick={() => setFormData(p => ({ ...p, paymentMethod: 'cod' }))}
+                                            >
                                                 <input
                                                     className="form-check-input radio"
                                                     type="radio"
@@ -620,15 +785,31 @@ export default function ShopCheckout() {
                                                     checked={formData.paymentMethod === 'cod'}
                                                     onChange={() => setFormData(p => ({ ...p, paymentMethod: 'cod' }))}
                                                 />
-                                                <label className="form-check-label ms-2 fw-semibold" htmlFor="payCod">
-                                                    Cash on Delivery
+                                                <label className="form-check-label ms-2 fw-semibold mb-0 cursor-pointer" htmlFor="payCod">
+                                                    Cash on Delivery (COD)
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="accordion-item">
+
+                                    {/* 3. DIRECT BANK TRANSFER */}
+                                    <div 
+                                        className="accordion-item mb-2"
+                                        style={{ 
+                                            border: formData.paymentMethod === 'bank' ? '1.5px solid #0d6efd' : '1px solid #dee2e6', 
+                                            borderRadius: '6px', 
+                                            overflow: 'hidden' 
+                                        }}
+                                    >
                                         <div className="accordion-header" id="heading2">
-                                            <div className="accordion-button collapsed custom-control custom-checkbox border-0">
+                                            <div 
+                                                className="accordion-button custom-control custom-checkbox border-0 py-3"
+                                                style={{ 
+                                                    cursor: 'pointer', 
+                                                    background: formData.paymentMethod === 'bank' ? '#f0f7ff' : '#fff' 
+                                                }}
+                                                onClick={() => setFormData(p => ({ ...p, paymentMethod: 'bank' }))}
+                                            >
                                                 <input
                                                     className="form-check-input radio"
                                                     type="radio"
@@ -637,15 +818,31 @@ export default function ShopCheckout() {
                                                     checked={formData.paymentMethod === 'bank'}
                                                     onChange={() => setFormData(p => ({ ...p, paymentMethod: 'bank' }))}
                                                 />
-                                                <label className="form-check-label ms-2 fw-semibold" htmlFor="payBank">
+                                                <label className="form-check-label ms-2 fw-semibold mb-0 cursor-pointer" htmlFor="payBank">
                                                     Direct Bank Transfer
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="accordion-item">
+
+                                    {/* 4. ONLINE PAYMENT */}
+                                    <div 
+                                        className="accordion-item mb-2"
+                                        style={{ 
+                                            border: formData.paymentMethod === 'online' ? '1.5px solid #0d6efd' : '1px solid #dee2e6', 
+                                            borderRadius: '6px', 
+                                            overflow: 'hidden' 
+                                        }}
+                                    >
                                         <div className="accordion-header" id="heading3">
-                                            <div className="accordion-button collapsed custom-control custom-checkbox border-0">
+                                            <div 
+                                                className="accordion-button custom-control custom-checkbox border-0 py-3"
+                                                style={{ 
+                                                    cursor: 'pointer', 
+                                                    background: formData.paymentMethod === 'online' ? '#f0f7ff' : '#fff' 
+                                                }}
+                                                onClick={() => setFormData(p => ({ ...p, paymentMethod: 'online' }))}
+                                            >
                                                 <input
                                                     className="form-check-input radio"
                                                     type="radio"
@@ -654,8 +851,8 @@ export default function ShopCheckout() {
                                                     checked={formData.paymentMethod === 'online'}
                                                     onChange={() => setFormData(p => ({ ...p, paymentMethod: 'online' }))}
                                                 />
-                                                <label className="form-check-label ms-2 fw-semibold" htmlFor="payOnline">
-                                                    Online Payment
+                                                <label className="form-check-label ms-2 fw-semibold mb-0 cursor-pointer" htmlFor="payOnline">
+                                                    Online Payment (Card / UPI / NetBanking)
                                                 </label>
                                             </div>
                                         </div>
@@ -669,9 +866,23 @@ export default function ShopCheckout() {
                                 <button
                                     type="button"
                                     onClick={handlePlaceOrder}
-                                    className="btn btn-secondary w-100"
+                                    disabled={isPlacingOrder || (formData.paymentMethod === 'wallet' && isLoggedIn && (walletBalance || 0) < finalTotal)}
+                                    className={`btn ${formData.paymentMethod === 'wallet' && isLoggedIn && (walletBalance || 0) < finalTotal ? 'btn-danger' : 'btn-secondary'} w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2`}
                                 >
-                                    PLACE ORDER
+                                    {isPlacingOrder ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" />
+                                            <span>Placing Order...</span>
+                                        </>
+                                    ) : formData.paymentMethod === 'wallet' ? (
+                                        isLoggedIn && (walletBalance || 0) < finalTotal ? (
+                                            'INSUFFICIENT WALLET BALANCE'
+                                        ) : (
+                                            `PAY ₹${finalTotal.toFixed(2)} WITH WALLET`
+                                        )
+                                    ) : (
+                                        'PLACE ORDER'
+                                    )}
                                 </button>
                             </div>
                         </div>
