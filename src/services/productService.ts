@@ -69,7 +69,7 @@ export const ProductService = {
     /**
      * Fetch all public products (with automatic subdomain filter, pagination, category & search)
      */
-    getPublicProducts: async (subdomain?: string, page = 1, limit = 12, categoryId = '', search = '') => {
+    getPublicProducts: async (subdomain?: string, page = 1, limit = 20, categoryId = '', search = '') => {
         try {
             const activeSubdomain = getActiveSubdomain(subdomain);
             let url = `${API_BASE_URL}/public/products?page=${page}&limit=${limit}`;
@@ -119,12 +119,12 @@ export const ProductService = {
     /**
      * Fetch products by category (with automatic subdomain filter)
      */
-    getProductsByCategory: async (categoryId: string, subdomain?: string) => {
+    getProductsByCategory: async (categoryId: string, subdomain?: string, page = 1, limit = 20) => {
         try {
             const activeSubdomain = getActiveSubdomain(subdomain);
             const url = activeSubdomain
-                ? `${API_BASE_URL}/public/categories/${categoryId}/products?subdomain=${encodeURIComponent(activeSubdomain)}`
-                : `${API_BASE_URL}/public/categories/${categoryId}/products`;
+                ? `${API_BASE_URL}/public/categories/${categoryId}/products?subdomain=${encodeURIComponent(activeSubdomain)}&page=${page}&limit=${limit}`
+                : `${API_BASE_URL}/public/categories/${categoryId}/products?page=${page}&limit=${limit}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
