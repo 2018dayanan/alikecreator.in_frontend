@@ -1,5 +1,7 @@
 // src/services/walletService.ts
 
+import { handleAuthResponse } from "./apiClient";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const getAuthToken = (): string | null => {
@@ -21,11 +23,7 @@ export const getMyWallet = async () => {
         },
     });
 
-    const data = await response.json();
-    if (!response.ok || !data.status) {
-        throw new Error(data.message || 'Failed to fetch wallet');
-    }
-    return data;
+    return await handleAuthResponse(response);
 };
 
 export const getMyTransactions = async (params: { walletType?: string; transactionType?: string; page?: number; limit?: number } = {}) => {
@@ -49,11 +47,7 @@ export const getMyTransactions = async (params: { walletType?: string; transacti
         },
     });
 
-    const data = await response.json();
-    if (!response.ok || !data.status) {
-        throw new Error(data.message || 'Failed to fetch transactions');
-    }
-    return data;
+    return await handleAuthResponse(response);
 };
 
 export const submitRechargeRequest = async (formData: FormData) => {
@@ -69,11 +63,7 @@ export const submitRechargeRequest = async (formData: FormData) => {
         body: formData
     });
 
-    const data = await response.json();
-    if (!response.ok || !data.status) {
-        throw new Error(data.message || 'Failed to submit recharge request');
-    }
-    return data;
+    return await handleAuthResponse(response);
 };
 
 export const getMyRechargeRequests = async (params: { status?: string; page?: number; limit?: number } = {}) => {
@@ -96,9 +86,5 @@ export const getMyRechargeRequests = async (params: { status?: string; page?: nu
         },
     });
 
-    const data = await response.json();
-    if (!response.ok || !data.status) {
-        throw new Error(data.message || 'Failed to fetch recharge requests');
-    }
-    return data;
+    return await handleAuthResponse(response);
 };

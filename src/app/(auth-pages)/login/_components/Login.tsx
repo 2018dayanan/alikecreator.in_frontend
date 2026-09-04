@@ -1,9 +1,10 @@
 "use client";
+
 import Link from "next/link";
 import IMAGES from "@/constant/theme";
 import PasswordInputBox from "@/components/PasswordInputBox";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Spinner } from "react-bootstrap";
 import toast from "react-hot-toast";
@@ -12,8 +13,70 @@ export default function Login() {
     const router = useRouter();
     const [mobile, setMobile] = useState("");
     const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
 
     const [loading, setLoading] = useState(false);
+    const [autoLoggingIn, setAutoLoggingIn] = useState(false);
+    const [isSessionExpired, setIsSessionExpired] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isExpired = urlParams.get('expired') === 'true';
+        const redirectUrl = urlParams.get('redirect');
+
+        if (isExpired) {
+            setIsSessionExpired(true);
+        }
+
+        // Check for remembered credentials
+        const saved = localStorage.getItem('rememberedCredentials');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.mobile && parsed.password) {
+                    setMobile(parsed.mobile);
+                    setPassword(parsed.password);
+                    setRememberMe(true);
+
+                    // If redirected due to expired session, automatically log back in!
+                    if (isExpired) {
+                        performAutoLogin(parsed.mobile, parsed.password, redirectUrl);
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading remembered credentials", e);
+            }
+        }
+    }, []);
+
+    const performAutoLogin = async (savedMobile: string, savedPass: string, redirectUrl?: string | null) => {
+        setAutoLoggingIn(true);
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ mobile: savedMobile, password: savedPass }),
+            });
+
+            const data = await response.json();
+            if (data.status) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                toast.success("Welcome back! Reconnected seamlessly.");
+                router.push(redirectUrl || "/account-dashboard");
+            } else {
+                setAutoLoggingIn(false);
+            }
+        } catch (err) {
+            console.error("Auto login error", err);
+            setAutoLoggingIn(false);
+        }
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,9 +100,19 @@ export default function Login() {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
+                // Save or clear Remember Me credentials
+                if (rememberMe) {
+                    localStorage.setItem('rememberedCredentials', JSON.stringify({ mobile, password }));
+                } else {
+                    localStorage.removeItem('rememberedCredentials');
+                }
+
                 toast.success("Login successful!");
-                // Redirect to dashboard
-                router.push("/account-dashboard");
+
+                // Redirect to requested page or account dashboard
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                router.push(redirectUrl || "/account-dashboard");
             } else {
                 toast.error(data.message || "Login failed");
             }
@@ -72,8 +145,19 @@ export default function Login() {
                         <div className="login-area">
                             <h2 className="text-secondary text-center">Login</h2>
                             <p className="text-center m-b25">welcome please login to your account</p>
-                            <form onSubmit={handleLogin}>
 
+                            {autoLoggingIn ? (
+                                <div className="alert alert-info text-center small py-2 mb-3 d-flex align-items-center justify-content-center gap-2" role="alert">
+                                    <Spinner animation="border" size="sm" />
+                                    <span>Auto-signing you in with your remembered credentials...</span>
+                                </div>
+                            ) : isSessionExpired && (
+                                <div className="alert alert-warning text-center small py-2 mb-3" role="alert">
+                                    ⚠️ Your session has expired. Please sign in again.
+                                </div>
+                            )}
+
+                            <form onSubmit={handleLogin}>
                                 <div className="m-b30">
                                     <label className="label-title">Mobile Number</label>
                                     <div className="input-group">
@@ -92,7 +176,7 @@ export default function Login() {
                                 </div>
                                 <div className="m-b15">
                                     <label className="label-title">Password</label>
-                                    <div className="secure-input ">
+                                    <div className="secure-input">
                                         <PasswordInputBox
                                             placeholder="Password"
                                             value={password}
@@ -103,8 +187,16 @@ export default function Login() {
                                 <div className="form-row d-flex justify-content-between m-b30">
                                     <div className="form-group">
                                         <div className="custom-control custom-checkbox">
-                                            <input type="checkbox" className="form-check-input" id="basic_checkbox_1" />
-                                            <label className="form-check-label" htmlFor="basic_checkbox_1">Remember Me</label>
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="basic_checkbox_1"
+                                                checked={rememberMe}
+                                                onChange={(e) => setRememberMe(e.target.checked)}
+                                            />
+                                            <label className="form-check-label ms-1" htmlFor="basic_checkbox_1">
+                                                Remember Me
+                                            </label>
                                         </div>
                                     </div>
                                     <div className="form-group">
@@ -112,8 +204,12 @@ export default function Login() {
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <button type="submit" className="btn btn-secondary btnhover text-uppercase me-2 sign-btn" disabled={loading}>
-                                        {loading ? <Spinner size="sm" animation="border" /> : "Sign In"}
+                                    <button
+                                        type="submit"
+                                        className="btn btn-secondary btnhover text-uppercase me-2 sign-btn"
+                                        disabled={loading || autoLoggingIn}
+                                    >
+                                        {loading || autoLoggingIn ? <Spinner size="sm" animation="border" /> : "Sign In"}
                                     </button>
                                     <Link href="/registration" className="btn btn-outline-secondary btnhover text-uppercase">Register</Link>
                                 </div>
@@ -123,5 +219,5 @@ export default function Login() {
                 </div>
             </section>
         </div>
-    )
+    );
 }
