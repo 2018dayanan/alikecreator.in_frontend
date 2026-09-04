@@ -8,6 +8,7 @@ import CommanLayout from "@/components/CommanLayout";
 import CommanSidebar from "@/elements/MyAccount/CommanSidebar";
 import { Spinner, Alert, Badge } from "react-bootstrap";
 import IMAGES from "@/constant/theme";
+import { handleAuthResponse } from "@/services/apiClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -49,7 +50,7 @@ export default function AccountRentalOrdersPage() {
     }, [router]);
 
     useEffect(() => {
-        if (!isAuthorized) return;
+        if (!isAuthorized || !token) return;
 
         const fetchRentalOrders = async () => {
             try {
@@ -58,15 +59,15 @@ export default function AccountRentalOrdersPage() {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                const data = await res.json();
+                const data = await handleAuthResponse(res);
                 
                 if (data.status) {
-                    setOrders(data.data);
+                    setOrders(data.data || []);
                 } else {
                     setError(data.message || "Failed to fetch rental orders");
                 }
-            } catch (err) {
-                setError("A network error occurred while fetching orders.");
+            } catch (err: any) {
+                setError(err.message || "A network error occurred while fetching orders.");
             } finally {
                 setLoading(false);
             }
